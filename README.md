@@ -1,4 +1,4 @@
-# PowerStat's FBMinApi
+# PowerStat's FBMiniApi
 
 This is a minimal Java implementation of the FritzBox AHA and TR64 APIs which will be extended by generated code.
 
@@ -16,7 +16,7 @@ For example when using Apache Maven you could add the following dependency to yo
 
     <dependency>
       <groupId>de.powerstat.fb</groupId>
-      <artifactId>minapi</artifactId>
+      <artifactId>miniapi</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
