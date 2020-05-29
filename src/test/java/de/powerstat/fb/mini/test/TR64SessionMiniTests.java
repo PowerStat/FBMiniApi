@@ -1,0 +1,428 @@
+/*
+ * Copyright (C) 2019 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ */
+package de.powerstat.fb.mini.test;
+
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import de.powerstat.fb.mini.TR64SessionMini;
+import de.powerstat.validation.values.Hostname;
+import de.powerstat.validation.values.Port;
+
+
+/**
+ * TR64SessionMini tests.
+ *
+ * @author PowerStat
+ */
+public class TR64SessionMiniTests
+ {
+  /**
+   * Logger.
+   */
+  private static final Logger LOGGER = LogManager.getLogger(TR64SessionMiniTests.class);
+
+  /**
+   * FB default hostname.
+   */
+  private static final String FBHOSTNAME = "fritz.box"; //$NON-NLS-1$
+
+  /**
+   * FB default username.
+   */
+  private static final String FBUSERNAME = "admin"; //$NON-NLS-1$
+
+  /**
+   * FB test password.
+   */
+  private static final String FBPASSWORD = "topSecret"; //$NON-NLS-1$
+
+
+  /**
+   * Default constructor.
+   */
+  public TR64SessionMiniTests()
+   {
+    super();
+   }
+
+
+  /**
+   * Test TR64SessionMini new instance creation.
+   *
+   * @throws KeyManagementException Key management exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws KeyStoreException Key store exception
+   * @throws ParserConfigurationException Parser configuration exception
+   */
+  @Test
+  public void newInstance1() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
+    final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, mockDocBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
+    assertNotNull(tr64session, "newInstance failed!"); //$NON-NLS-1$
+    tr64session.destroy();
+   }
+
+
+  /**
+   * Test TR64SessionMini new instance creation.
+   *
+   * @throws KeyManagementException Key management exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws KeyStoreException Key store exception
+   * @throws ParserConfigurationException Parser configuration exception
+   */
+  @Test
+  public void newInstance2() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+   {
+    final TR64SessionMini tr64session = TR64SessionMini.newInstance(FBUSERNAME, FBPASSWORD);
+
+    assertNotNull(tr64session, "newInstance failed!"); //$NON-NLS-1$
+    tr64session.destroy();
+   }
+
+
+  /**
+   * Test toString.
+   *
+   * @throws KeyManagementException Key management exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws KeyStoreException Key store exception
+   * @throws ParserConfigurationException Parser configuration exception
+   */
+  @Test
+  public void testToString() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
+    final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, mockDocBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
+    final String representation = tr64session.toString();
+    tr64session.destroy();
+    assertEquals("TR64SessionMini[hostname=fritz.box, port=49443]", representation, "toString result not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+   }
+
+
+  /**
+   * Test getDoc.
+   *
+   * @throws KeyManagementException Key management exception
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws SAXException SAX exception
+   * @throws KeyStoreException Key store exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws TransformerException Transformer exception
+   */
+  @Test
+  public void getDoc() throws KeyManagementException, IOException, NoSuchAlgorithmException, SAXException, KeyStoreException, ParserConfigurationException, TransformerException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final CloseableHttpResponse mockCloseableHttpResponse = mock(CloseableHttpResponse.class);
+    final HttpEntity mockHttpEntity = mock(HttpEntity.class);
+
+    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+    final DocumentBuilder docBuilder = factory.newDocumentBuilder();
+    when(mockHttpclient.execute(ArgumentMatchers.any(HttpGet.class))).thenReturn(mockCloseableHttpResponse);
+    when(mockCloseableHttpResponse.getStatusLine()).thenReturn(null);
+    when(mockCloseableHttpResponse.getEntity()).thenReturn(mockHttpEntity);
+    when(mockHttpEntity.isStreaming()).thenReturn(false);
+
+    final String testDoc = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<test>abc</test>\n"; //$NON-NLS-1$
+    when(mockHttpEntity.getContentType()).thenReturn(null);
+    when(mockHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(testDoc.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity.getContentLength()).thenReturn((long)testDoc.length());
+
+    // verify();
+    final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
+    final Document doc = tr64session.getDoc("/tr64desc.xml"); //$NON-NLS-1$
+    tr64session.destroy();
+    final String xml = TR64SessionMini.docToString(doc);
+    if (LOGGER.isInfoEnabled())
+     {
+      LOGGER.info("doc: " + xml); //$NON-NLS-1$
+
+      LOGGER.info(String.format("%072x", new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+      LOGGER.info(String.format("%072x", new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+     }
+    assertAll(
+      () -> assertNotNull(doc, "getDoc failed!"), //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replaceAll("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test do SOAP request.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyManagementException Key management exception
+   * @throws IOException IO exception
+   * @throws TransformerException Transformer exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws SAXException SAX exception
+   * @throws KeyStoreException Key store exception
+   */
+  @Test
+  public void doSOAPRequest() throws ParserConfigurationException, KeyManagementException, IOException, TransformerException, NoSuchAlgorithmException, SAXException, KeyStoreException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final CloseableHttpResponse mockCloseableHttpResponse = mock(CloseableHttpResponse.class);
+    final HttpEntity mockHttpEntity = mock(HttpEntity.class);
+
+    when(mockHttpclient.execute(ArgumentMatchers.argThat(new HttpPostMatcher("/upnp/control/deviceinfo")))).thenReturn(mockCloseableHttpResponse); //$NON-NLS-1$
+    when(mockCloseableHttpResponse.getEntity()).thenReturn(mockHttpEntity);
+
+    final String testDoc = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<test>abc</test>\n"; //$NON-NLS-1$
+    when(mockHttpEntity.isStreaming()).thenReturn(false);
+    when(mockHttpEntity.getContentType()).thenReturn(null);
+    when(mockHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(testDoc.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity.getContentLength()).thenReturn((long)testDoc.length());
+
+    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+    final DocumentBuilder docBuilder = factory.newDocumentBuilder();
+
+    final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
+    final Map<String, String> parameters = new HashMap<>();
+    parameters.put("test", "value"); //$NON-NLS-1$ //$NON-NLS-2$
+    final Document doc = tr64session.doSOAPRequest("/upnp/control/deviceinfo", "urn:dslforum-org:service:DeviceInfo:1", "GetInfo", parameters); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final String xml = TR64SessionMini.docToString(doc);
+
+    // verify(mockHttpclient).
+
+    if (LOGGER.isInfoEnabled())
+     {
+      LOGGER.info("doc: " + xml); //$NON-NLS-1$
+
+      LOGGER.info(String.format("%072x", new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+      LOGGER.info(String.format("%072x", new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+     }
+    assertAll(
+      () -> assertNotNull(doc, "doSOAPRequest failed!"), //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replaceAll("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test do SOAP request with null parameters.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyManagementException Key management exception
+   * @throws IOException IO exception
+   * @throws TransformerException Transformer exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws SAXException SAX exception
+   * @throws KeyStoreException Key store exception
+   */
+  @Test
+  public void doSOAPRequestNull() throws ParserConfigurationException, KeyManagementException, IOException, TransformerException, NoSuchAlgorithmException, SAXException, KeyStoreException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final CloseableHttpResponse mockCloseableHttpResponse = mock(CloseableHttpResponse.class);
+    final HttpEntity mockHttpEntity = mock(HttpEntity.class);
+
+    when(mockHttpclient.execute(ArgumentMatchers.any(HttpPost.class))).thenReturn(mockCloseableHttpResponse);
+    when(mockCloseableHttpResponse.getEntity()).thenReturn(mockHttpEntity);
+
+    final String testDoc = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<test>abc</test>\n"; //$NON-NLS-1$
+    when(mockHttpEntity.isStreaming()).thenReturn(false);
+    when(mockHttpEntity.getContentType()).thenReturn(null);
+    when(mockHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(testDoc.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity.getContentLength()).thenReturn((long)testDoc.length());
+
+    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+    final DocumentBuilder docBuilder = factory.newDocumentBuilder();
+
+    final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
+    final Document doc = tr64session.doSOAPRequest("/upnp/control/deviceinfo", "urn:dslforum-org:service:DeviceInfo:1", "GetInfo", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final String xml = TR64SessionMini.docToString(doc);
+
+    // verify(mockHttpclient).
+
+    if (LOGGER.isInfoEnabled())
+     {
+      LOGGER.info("doc: " + xml); //$NON-NLS-1$
+
+      LOGGER.info(String.format("%072x", new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+      LOGGER.info(String.format("%072x", new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+     }
+    assertAll(
+      () -> assertNotNull(doc, "doSOAPRequest failed!"), //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replaceAll("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test hash code.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException  Key store exception
+   * @throws NoSuchAlgorithmException  No such algorithm exception
+   * @throws KeyManagementException  Key management exception
+   */
+  @Test
+  public void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+   {
+    final TR64SessionMini session1 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session2 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session3 = TR64SessionMini.newInstance("fritz2.box", 49443, "admin2", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertAll("testHashCode", //$NON-NLS-1$
+      () -> assertEquals(session1.hashCode(), session2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
+      () -> assertNotEquals(session1.hashCode(), session3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test equals.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException  Key store exception
+   * @throws NoSuchAlgorithmException  No such algorithm exception
+   * @throws KeyManagementException  Key management exception
+   */
+  @Test
+  public void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+   {
+    final TR64SessionMini session1 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session2 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session3 = TR64SessionMini.newInstance("fritz2.box", 49443, "admin2", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session4 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertAll("testEquals", //$NON-NLS-1$
+      () -> assertTrue(session1.equals(session1), "session11 is not equal"), //$NON-NLS-1$
+      () -> assertTrue(session1.equals(session2), "session12 are not equal"), //$NON-NLS-1$
+      () -> assertTrue(session2.equals(session1), "session21 are not equal"), //$NON-NLS-1$
+      () -> assertTrue(session2.equals(session4), "session24 are not equal"), //$NON-NLS-1$
+      () -> assertTrue(session1.equals(session4), "session14 are not equal"), //$NON-NLS-1$
+      () -> assertFalse(session1.equals(session3), "session13 are equal"), //$NON-NLS-1$
+      () -> assertFalse(session3.equals(session1), "session31 are equal"), //$NON-NLS-1$
+      () -> assertFalse(session1.equals(null), "session10 is equal") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test compareTo.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException  Key store exception
+   * @throws NoSuchAlgorithmException  No such algorithm exception
+   * @throws KeyManagementException  Key management exception
+   */
+  @Test
+  public void testCompareTo() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+   {
+    final TR64SessionMini session1 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session2 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session3 = TR64SessionMini.newInstance("fritz2.box", 49443, "admin2", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session4 = TR64SessionMini.newInstance("fritz3.box", 49443, "admin3", "TopSecret3"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session5 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertAll("testCompareTo", //$NON-NLS-1$
+      () -> assertTrue(session1.compareTo(session2) == -session2.compareTo(session1), "reflexive1"), //$NON-NLS-1$
+      () -> assertTrue(session1.compareTo(session3) == -session3.compareTo(session1), "reflexive2"), //$NON-NLS-1$
+      () -> assertTrue((session4.compareTo(session3) > 0) && (session3.compareTo(session1) > 0) && (session4.compareTo(session1) > 0), "transitive1"), //$NON-NLS-1$
+      () -> assertTrue((session1.compareTo(session2) == 0) && (Math.abs(session1.compareTo(session5)) == Math.abs(session2.compareTo(session5))), "sgn1"), //$NON-NLS-1$
+      () -> assertTrue((session1.compareTo(session2) == 0) && session1.equals(session2), "equals") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * HttpPost matcher.
+   */
+  public static class HttpPostMatcher implements ArgumentMatcher<HttpPost>
+   {
+    /**
+     * URI path to match.
+     */
+    private final String path;
+
+
+    /**
+     * Constructor.
+     *
+     * @param path URI path to match
+     */
+    public HttpPostMatcher(final String path)
+     {
+      super();
+      Objects.requireNonNull(path, "path"); //$NON-NLS-1$
+      this.path = path;
+     }
+
+
+    /**
+     * Matches uri paths.
+     *
+     * @param right Right HttpGet object.
+     * @return true when match, false otherwise
+     * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
+     */
+    @Override
+    public boolean matches(final HttpPost right)
+     {
+      if (right == null)
+       {
+        return false;
+       }
+      String rpath = right.getURI().getPath();
+      if (right.getURI().getQuery() != null)
+       {
+        rpath += "?" + right.getURI().getQuery(); //$NON-NLS-1$
+       }
+      if (LOGGER.isDebugEnabled())
+       {
+        LOGGER.debug("rpath: " + rpath); //$NON-NLS-1$
+       }
+      return this.path.equals(rpath) && right.containsHeader("SoapAction") && right.containsHeader("USER-AGENT") && right.containsHeader("Content-Type") && (right.getEntity() != null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+     }
+   }
+
+ }
