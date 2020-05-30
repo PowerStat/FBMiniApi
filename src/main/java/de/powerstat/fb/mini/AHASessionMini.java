@@ -134,6 +134,56 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   private Thread timeoutThread = new Thread();
 
+  /**
+   * Enum for handling of blinds.
+   */
+  public enum HandleBlind
+   {
+    /**
+     * Close blind.
+     */
+    close(0),
+
+    /**
+     * Open blind.
+     */
+    open(1),
+
+    /**
+     * Stop blind.
+     */
+    stop(2);
+
+
+    /**
+     * Action number.
+     */
+    private final int action;
+
+
+    /**
+     * Ordinal constructor.
+     *
+     * @param action Action number
+     */
+    HandleBlind(final int action)
+     {
+      this.action = action;
+     }
+
+
+    /**
+     * Get action number.
+     *
+     * @return Action number
+     */
+    public int getAction()
+     {
+      return this.action;
+     }
+
+   }
+
 
   /**
    * Constructor.
@@ -315,6 +365,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws SAXException SAX exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
+   * @throws UnsupportedOperationException When a bad request appears, could happen when using commands from a newer api version
    *
    * TODO urlPath value object
    */
@@ -326,7 +377,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
        {
-        this.lastAccess = System.currentTimeMillis();
+        this.lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
         if (LOGGER.isDebugEnabled())
          {
           LOGGER.debug("StatusLine: " + response.getStatusLine()); //$NON-NLS-1$
@@ -349,6 +400,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
             throw new IOException("Can't logon for reconnect!", e); //$NON-NLS-1$
            }
           return getDoc(urlPath); // TODO fix endless loop
+         }
+        else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST)
+         {
+          throw new UnsupportedOperationException("Possibly you used a command from a newer api version?"); //$NON-NLS-1$
          }
        }
       final HttpEntity entity = response.getEntity();
@@ -382,6 +437,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @return String
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
+   * @throws UnsupportedOperationException When a bad request appears, could happen when using commands from a newer api version
    *
    * TODO urlPath value object
    */
@@ -393,7 +449,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
        {
-        this.lastAccess = System.currentTimeMillis();
+        this.lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
         if (LOGGER.isDebugEnabled())
          {
           LOGGER.debug(response.getStatusLine());
@@ -416,6 +472,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
             throw new IOException("Can't logon for reconnect!", e); //$NON-NLS-1$
            }
           return getString(urlPath); // TODO fix endless loop
+         }
+        else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST)
+         {
+          throw new UnsupportedOperationException("Possibly you used a command from a newer api version?"); //$NON-NLS-1$
          }
        }
       final HttpEntity entity = response.getEntity();
@@ -774,75 +834,6 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     return getDoc("/webservices/homeautoswitch.lua?switchcmd=getdevicelistinfos&sid=" + this.sid); //$NON-NLS-1$
    }
 
-/*
-<devicelist version="1">
-  <device identifier="" id="" fwversion="" manufacturer="AVM" productname="" functionbitmask="">
-    <present></present>
-    <name></name>
-
-    <batterylow></batterylow>
-    <battery></battery>
-
-    <switch>
-      <state></state>
-      <mode></mode>
-      <lock></lock>
-      <devicelock></devicelock>
-    </switch>
-
-    <powermeter>
-      <power></power>
-      <energy></energy>
-      <voltage></voltage>
-    </powermeter>
-
-    <temperature>
-      <celsius></celsius>
-      <ofset></ofset>
-    </temperature>
-
-    <alert>
-      <state></state>
-    </alert>
-
-    <button identifier="" id="">
-      <lastpressedtimestamp></lastpressedtimestamp>
-      <name></name>
-    </button>
-
-    <etsiunitinfo>
-      <etsideviceid></etsideviceid>
-      <unittype></unittype>
-      <interfaces></interfaces>
-    </etsiunitinfo>
-
-    <hkr>
-      <tist></tist>
-      <tsoll></tsoll>
-      <komfort></komfort>
-      <absenk></absenk>
-      <batterylow></batterylow>
-      <battery></battery>
-      <windowopenactiv></windowopenactiv>
-      <lock></lock>
-      <devicelock></devicelock>
-      <nextchange>
-        <endperiod></endperiod>
-        <tchange</tchange
-      </nextchange>
-      <errorcode></errorcode>
-    </hkr>
-
-  </device>
-  <group identifier="" id="">
-    <groupinfo>
-      <masterdeviceid></masterdeviceid>
-      <members</members
-    </groupinfo>
-  </group>
-</devicelist>
-*/
-
 
   /**
    * Get temperature.
@@ -994,21 +985,6 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     return getDoc(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getbasicdevicestats&sid=" + this.sid); //$NON-NLS-1$
    }
 
-/*
-<devicestats>
-  <temperature>
-    <stats count="" grid=""></stats>
-  </temperature>
-
-  <voltage>
-    <stats count="" grid=""></stats>
-  </voltage>
-  <power>
-    <stats count="" grid=""></stats>
-  </power>
-</devicestats>
-*/
-
 
   /**
    * Get template list infos.
@@ -1022,24 +998,6 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     return getDoc("/webservices/homeautoswitch.lua?switchcmd=gettemplatelistinfos&sid=" + this.sid); //$NON-NLS-1$
    }
 
-/*
-<templatelist version="">
-  <template identifier="" id="" functionbitmask="">
-    <name></name>
-    <devices>
-      <device identifier=""/>
-    </devices>
-    <applymask>
-      <hkr_summer/>
-      <hkr_temperature/>
-      <hkr_holidays/>
-      <hkr_time_table/>
-      <relay_manual/>
-      <relay_automatic/>
-    </applymask>
-  </template>
-</templatelist>
-*/
 
   /**
    * Apply template.
@@ -1052,6 +1010,204 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void applyTemplate(final String templateIdentifier) throws IOException
    {
     /* final String id = */ getString(HOMEAUTOSWITCH + templateIdentifier + "&switchcmd=applytemplate"); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Set simple on off.
+   *
+   * @param ain AIN
+   * @param onoff 0: off; 1: on; 2: toggle
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain is null
+   * @throws IllegalArgumentException if onoff is not 0, 1 or 2
+   */
+  public final void setSimpleOnOff(final AIN ain, final int onoff) throws IOException
+   {
+    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    if ((onoff < 0) || (onoff > 2))
+     {
+      throw new IllegalArgumentException("onoff must be 0, 1 or 2"); //$NON-NLS-1$
+     }
+    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setsimpleonoff&onoff=" + onoff); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Set level.
+   *
+   * @param ain AIN
+   * @param level 0-255 (0%-100%)
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain is null
+   * @throws IllegalArgumentException if level is not 0-255
+   */
+  public final void setLevel(final AIN ain, final int level) throws IOException
+   {
+    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    if ((level < 0) || (level > 255))
+     {
+      throw new IllegalArgumentException("level must be 0-255"); //$NON-NLS-1$
+     }
+    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setlevel&level=" + level); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Set level percentage.
+   *
+   * @param ain AIN
+   * @param level 0-100
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain is null
+   * @throws IllegalArgumentException if level is not 0-255
+   */
+  public final void setLevelPercentage(final AIN ain, final int level) throws IOException
+   {
+    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    if ((level < 0) || (level > 100))
+     {
+      throw new IllegalArgumentException("level must be 0-100"); //$NON-NLS-1$
+     }
+    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setlevelpercentage&level=" + level); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Set color.
+   *
+   * @param ain AIN
+   * @param hue 0-359 degrees
+   * @param saturation 0-255 (0% - 100%)
+   * @param duration Duration of change in 100ms, 0 means immediately
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain is null
+   * @throws IllegalArgumentException if level is not 0-255
+   */
+  public final void setColor(final AIN ain, final int hue, final int saturation, final int duration) throws IOException
+   {
+    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    if ((hue < 0) || (hue > 359))
+     {
+      throw new IllegalArgumentException("hue must be 0-359 degrees"); //$NON-NLS-1$
+     }
+    if ((saturation < 0) || (saturation > 255))
+     {
+      throw new IllegalArgumentException("saturation must be 0-255"); //$NON-NLS-1$
+     }
+    if (duration < 0)
+     {
+      throw new IllegalArgumentException("duration must be >= 0"); //$NON-NLS-1$
+     }
+    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + "&duration=" + duration); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Set color temperature.
+   *
+   * @param ain AIN
+   * @param temperature In kelvin 2700 - 6500
+   * @param duration Duration of change in 100ms, 0 means immediately
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain is null
+   * @throws IllegalArgumentException if level is not 0-255
+   */
+  public final void setColorTemperature(final AIN ain, final int temperature, final int duration) throws IOException
+   {
+    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    if ((temperature < 2700) || (temperature > 6500))
+     {
+      throw new IllegalArgumentException("temperature must be 2700-6500 kelvin"); //$NON-NLS-1$
+     }
+    if (duration < 0)
+     {
+      throw new IllegalArgumentException("duration must be >= 0"); //$NON-NLS-1$
+     }
+    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setcolortemperature&temperature=" + temperature + "&duration=" + duration); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Get color defaults.
+   *
+   * @return Color defaults in XML format
+   * @throws ClientProtocolException Client protocol exception
+   * @throws UnsupportedEncodingException Unsupported encoding exception
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   */
+  public final Document getColorDefaults() throws IOException, SAXException
+   {
+    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=" + this.sid); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Set hkr boost.
+   *
+   * @param ain AIN
+   * @param endtimestamp 0: deactivate; seconds since 1970-01-01T00:00:00; maximum of 24 hour in the future
+   * @return Endtimestamp if successful
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws IllegalArgumentException If endtimestamp is out of range
+   * @throws NullPointerException If ain or temperature is null
+   */
+  public final long setHkrBoost(final AIN ain, final long endtimestamp) throws IOException
+   {
+    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    if ((endtimestamp != 0) && ((endtimestamp < (System.currentTimeMillis() / 1000L)) || (endtimestamp > ((System.currentTimeMillis() / 1000L) + 86400))))
+     {
+      throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
+     }
+    final String result = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=sethkrboost&endtimestamp=" + endtimestamp); //$NON-NLS-1$
+    return Long.parseLong(result.substring(0, result.length() - 1));
+   }
+
+
+  /**
+   * Set hkr window open.
+   *
+   * @param ain AIN
+   * @return Endtimestamp if successful
+   * @param endtimestamp 0: deactivate; seconds since 1970-01-01T00:00:00; maximum of 24 hour in the future
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws IllegalArgumentException If endtimestamp is out of range
+   * @throws NullPointerException If ain or temperature is null
+   */
+  public final long setHkrWindowOpen(final AIN ain, final long endtimestamp) throws IOException
+   {
+    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    if ((endtimestamp != 0) && ((endtimestamp < (System.currentTimeMillis() / 1000L)) || (endtimestamp > ((System.currentTimeMillis() / 1000L) + 86400))))
+     {
+      throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
+     }
+    final String result = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=sethkrwindowopen&endtimestamp=" + endtimestamp); //$NON-NLS-1$
+    return Long.parseLong(result.substring(0, result.length() - 1));
+   }
+
+
+  /**
+   * Set blind.
+   *
+   * @param ain AIN
+   * @param target HandleBlind close, open, stop
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws IllegalArgumentException If endtimestamp is out of range
+   * @throws NullPointerException If ain or temperature is null
+   */
+  public final void setBlind(final AIN ain, final HandleBlind target) throws IOException
+   {
+    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setblind&target=" + target.name()); //$NON-NLS-1$
    }
 
 

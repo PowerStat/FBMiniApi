@@ -44,8 +44,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatcher;
 import org.w3c.dom.Document;
@@ -53,6 +56,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import de.powerstat.fb.mini.AHASessionMini;
+import de.powerstat.fb.mini.AHASessionMini.HandleBlind;
 import de.powerstat.fb.mini.AIN;
 import de.powerstat.fb.mini.Energy;
 import de.powerstat.fb.mini.Power;
@@ -2115,6 +2119,967 @@ public class AHASessionMiniTests
 
 
   /**
+   * Test set simple on off.
+   *
+   * @param onoff 0: off; 1: on; 2: toggle
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(ints = {0, 1, 2})
+  public void setSimpleOnOff(final int onoff) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    ahasession.setSimpleOnOff(AIN.of("000000000001"), onoff); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test set simple on off with failure.
+   *
+   * @param onoff 0: off; 1: on; 2: toggle
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(ints = {-1, 3})
+  public void setSimpleOnOffFailure(final int onoff) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      ahasession.setSimpleOnOff(AIN.of("000000000001"), onoff); //$NON-NLS-1$
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test set simple on off unsupported.
+   *
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @Test
+  public void setSimpleOnOffUnsupported() throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final StatusLine mockStatusLineBadRequest = mock(StatusLine.class);
+    when(mockStatusLineBadRequest.getStatusCode()).thenReturn(HttpURLConnection.HTTP_BAD_REQUEST);
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineBadRequest);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=0&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(UnsupportedOperationException.class, () ->
+     {
+      ahasession.setSimpleOnOff(AIN.of("000000000001"), 0); //$NON-NLS-1$
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test set level.
+   *
+   * @param level 0-255
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(ints = {0, 255})
+  public void setLevel(final int level) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    ahasession.setLevel(AIN.of("000000000001"), level); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test set level with failure.
+   *
+   * @param level 0-255
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(ints = {-1, 256})
+  public void setLevelFailure(final int level) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      ahasession.setLevel(AIN.of("000000000001"), level); //$NON-NLS-1$
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test set level percentage.
+   *
+   * @param level 0-100
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(ints = {0, 100})
+  public void setLevelPercentage(final int level) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    ahasession.setLevelPercentage(AIN.of("000000000001"), level); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test set level percentage with failure.
+   *
+   * @param level 0-100
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(ints = {-1, 101})
+  public void setLevelPercentageFailure(final int level) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      ahasession.setLevelPercentage(AIN.of("000000000001"), level); //$NON-NLS-1$
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test set color.
+   *
+   * @param hue 0-359 degrees
+   * @param saturation 0-255 (0% - 100%)
+   * @param duration Duration of change in 100ms, 0 means immediately
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @CsvSource({"0, 0, 0", "359, 255, 10"})
+  public void setColor(final int hue, final int saturation, final int duration) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + "&duration=" + duration + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$ //$NON-NLS-3$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    ahasession.setColor(AIN.of("000000000001"), hue, saturation, duration); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test set color with failure.
+   *
+   * @param hue 0-359 degrees
+   * @param saturation 0-255 (0% - 100%)
+   * @param duration Duration of change in 100ms, 0 means immediately
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @CsvSource({"-1, 0, 0", "360, 0, 0", "0, -1, 0", "0, 256, 0", "0, 0, -1"})
+  public void setColorFailure(final int hue, final int saturation, final int duration) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + "&duration=" + duration + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$ //$NON-NLS-3$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      ahasession.setColor(AIN.of("000000000001"), hue, saturation, duration); //$NON-NLS-1$
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test set color temperature.
+   *
+   * @param temperature In kelvin 2700 - 6500
+   * @param duration Duration of change in 100ms, 0 means immediately
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @CsvSource({"2700, 0", "6500, 10"})
+  public void setColorTemperature(final int temperature, final int duration) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + "&duration=" + duration + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$ //$NON-NLS-3$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    ahasession.setColorTemperature(AIN.of("000000000001"), temperature, duration); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test set color temperature with failure.
+   *
+   * @param temperature In kelvin 2700 - 6500
+   * @param duration Duration of change in 100ms, 0 means immediately
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @CsvSource({"2699, 0", "6501, 0", "2700, -1"})
+  public void setColorTemperatureFailure(final int temperature, final int duration) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
+    when(mockHttpEntity5.isStreaming()).thenReturn(false);
+
+    final String testDoc5 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity5.getContentType()).thenReturn(null);
+    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + "&duration=" + duration + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$ //$NON-NLS-3$
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      ahasession.setColorTemperature(AIN.of("000000000001"), temperature, duration); //$NON-NLS-1$
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test get color defaults.
+   *
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @Test
+  public void getColorDefaults() throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final String testDoc7 = "<colordefaults></colordefaults>\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    final Document doc = ahasession.getColorDefaults();
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<colordefaults/>\n", TR64SessionMini.docToString(doc).replaceAll("\r", ""), "device info list not as expected"), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test get color defaults unsupported.
+   *
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @Test
+  public void getColorDefaultsUnsupported() throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final String testDoc7 = "<colordefaults></colordefaults>\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final StatusLine mockStatusLineBadRequest = mock(StatusLine.class);
+    when(mockStatusLineBadRequest.getStatusCode()).thenReturn(HttpURLConnection.HTTP_BAD_REQUEST);
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineBadRequest);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(UnsupportedOperationException.class, () ->
+     {
+      final Document doc = ahasession.getColorDefaults();
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test set hkr boost with 0 as endtime.
+   *
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @Test
+  public void setHkrBoost0() throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final String testDoc7 = "0\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=0&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    final long endtime = ahasession.setHkrBoost(AIN.of("000000000001"), 0); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertEquals(0, endtime, "Wrong endtime"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test set hkr boost with new plus seconds as endtime.
+   *
+   * @param seconds Seconds to add to now
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(longs = {0, 3600, 86400})
+  public void setHkrBoostNowPlusSeconds(final long seconds) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final long boostend = (System.currentTimeMillis() / 1000L) + seconds;
+
+    final String testDoc7 = String.valueOf(boostend) + "\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    final long endtime = ahasession.setHkrBoost(AIN.of("000000000001"), boostend); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertEquals(boostend, endtime, "Wrong endtime"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test set hkr boost with new plus seconds as endtime with failure.
+   *
+   * @param seconds Seconds to add to now
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(longs = {-1, 87000})
+  public void setHkrBoostNowPlusSecondsFailure(final long seconds) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final long boostend = (System.currentTimeMillis() / 1000L) + seconds;
+
+    final String testDoc7 = String.valueOf(boostend) + "\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      final long endtime = ahasession.setHkrBoost(AIN.of("000000000001"), boostend); //$NON-NLS-1$
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test set hkr window open with new plus seconds as endtime.
+   *
+   * @param seconds Seconds to add to now
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(longs = {0, 3600, 86400})
+  public void setHkrWindowOpenNowPlusSeconds(final long seconds) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final long openend = (System.currentTimeMillis() / 1000L) + seconds;
+
+    final String testDoc7 = String.valueOf(openend) + "\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    final long endtime = ahasession.setHkrWindowOpen(AIN.of("000000000001"), openend); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertEquals(openend, endtime, "Wrong endtime"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test set hkr window open with new plus seconds as endtime with failure.
+   *
+   * @param seconds Seconds to add to now
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @ValueSource(longs = {-1, 87000})
+  public void setHkrWindowOpenNowPlusSecondsFailure(final long seconds) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final long openend = (System.currentTimeMillis() / 1000L) + seconds;
+
+    final String testDoc7 = String.valueOf(openend) + "\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      final long endtime = ahasession.setHkrWindowOpen(AIN.of("000000000001"), openend); //$NON-NLS-1$
+     }
+    );
+    final boolean successLogoff = ahasession.logoff();
+   }
+
+
+  /**
+   * Test set blind.
+   *
+   * @param target HandleBlind: close, open, stop
+   * @throws IOException IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   */
+  @ParameterizedTest
+  @EnumSource(HandleBlind.class)
+  public void setBlind(final HandleBlind target) throws ClientProtocolException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000000000</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final String testDoc7 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setblind&target=" + target.name() + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), "fritz.box", 443, "", FBPASSWORD); //$NON-NLS-1$ //$NON-NLS-2$
+    final boolean successLogon = ahasession.logon();
+    ahasession.setBlind(AIN.of("000000000001"), target); //$NON-NLS-1$
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, "Logon failed"), //$NON-NLS-1$
+      () -> assertEquals("close".equals(target.name()) ? 0 : ("open".equals(target.name()) ? 1 : 2), target.getAction(), "Wrong action"), //$NON-NLS-1$
+      () -> assertTrue(successLogoff, "Logoff failed") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
    * Test against real fritz box.
    *
    * @throws ParserConfigurationException Parser configuration exception
@@ -2125,7 +3090,8 @@ public class AHASessionMiniTests
    * @throws IOException IO exception
    * @throws TransformerException Transformer exception
    */
-  // @Test
+  @Test
+  @Disabled
   public void real() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, TransformerException
    {
     LOGGER.debug("---------- real start ----------"); //$NON-NLS-1$
@@ -2133,7 +3099,7 @@ public class AHASessionMiniTests
     /* final boolean successLogon = */ ahasession.logon();
     // final Document result = ahasession.getTemplateListInfos();
     // LOGGER.debug("Stats: " + TR64SessionMini.docToString(result));
-    ahasession.applyTemplate("tmp000000-000000000"); //$NON-NLS-1$
+    ahasession.setSimpleOnOff(AIN.of(""), 1); //$NON-NLS-1$
     /* final boolean successLogoff = */ ahasession.logoff();
     LOGGER.debug("---------- real end ----------"); //$NON-NLS-1$
    }
@@ -2147,7 +3113,8 @@ public class AHASessionMiniTests
    * @throws SAXException SAX exception
    * @throws TransformerException Transformer exception
    */
-  // @Test
+  @Test
+  @Disabled
   public void security() throws ParserConfigurationException, SAXException, IOException, TransformerException
    {
     // final String string = "<test>&lt;script&gt;alert();&lt;/script&gt;</test>";
