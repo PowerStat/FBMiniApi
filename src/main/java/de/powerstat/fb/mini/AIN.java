@@ -13,9 +13,9 @@ import java.util.Objects;
 public final class AIN implements Comparable<AIN>
  {
   /**
-   * AIN.
+   * Aktor Identifikationsnummer.
    */
-  private final String ain;
+  private final String aiNr;
 
 
   /**
@@ -40,7 +40,7 @@ public final class AIN implements Comparable<AIN>
      {
       throw new IllegalArgumentException("AIN with wrong format"); //$NON-NLS-1$
      }
-    this.ain = intAIN;
+    this.aiNr = intAIN;
    }
 
 
@@ -63,7 +63,7 @@ public final class AIN implements Comparable<AIN>
    */
   public String getAIN()
    {
-    return this.ain;
+    return this.aiNr;
    }
 
 
@@ -76,7 +76,7 @@ public final class AIN implements Comparable<AIN>
   @Override
   public int hashCode()
    {
-    return this.ain.hashCode();
+    return this.aiNr.hashCode();
    }
 
 
@@ -99,7 +99,7 @@ public final class AIN implements Comparable<AIN>
       return false;
      }
     final AIN other = (AIN)obj;
-    return this.ain.equals(other.ain);
+    return this.aiNr.equals(other.aiNr);
    }
 
 
@@ -117,7 +117,7 @@ public final class AIN implements Comparable<AIN>
   public String toString()
    {
     final StringBuilder builder = new StringBuilder();
-    builder.append("AIN[ain=").append(this.ain).append(']'); //$NON-NLS-1$
+    builder.append("AIN[ain=").append(this.aiNr).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -133,7 +133,7 @@ public final class AIN implements Comparable<AIN>
   public int compareTo(final AIN obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return this.ain.compareTo(obj.ain);
+    return this.aiNr.compareTo(obj.aiNr);
    }
 
  }

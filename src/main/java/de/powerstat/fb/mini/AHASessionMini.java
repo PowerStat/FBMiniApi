@@ -90,6 +90,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   private static final String INVALID = "invalid"; //$NON-NLS-1$
 
   /**
+   * SID.
+   */
+  private static final String SID = "SID";
+
+  /**
+   * AIN.
+   */
+  private static final String AIN_STR = "ain";
+
+
+  /**
    * Document builder.
    */
   private final DocumentBuilder docBuilder;
@@ -515,7 +526,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     */
     // get first challenge
     Document doc = getDoc("/login_sid.lua"); //$NON-NLS-1$
-    this.sid = doc.getElementsByTagName("SID").item(0).getTextContent(); //$NON-NLS-1$
+    this.sid = doc.getElementsByTagName(SID).item(0).getTextContent();
     if (LOGGER.isDebugEnabled())
      {
       LOGGER.debug("sid: " + this.sid); //$NON-NLS-1$
@@ -536,7 +547,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
         LOGGER.debug("challenge: " + challenge); //$NON-NLS-1$
        }
       doc = getDoc("/login_sid.lua?username=" + this.username.getUsername() + "&response=" + challenge + "-" + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + "-" + this.password.getPassword()).getBytes(Charset.forName("utf-16le")))))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-      this.sid = doc.getElementsByTagName("SID").item(0).getTextContent(); //$NON-NLS-1$
+      this.sid = doc.getElementsByTagName(SID).item(0).getTextContent();
       if (LOGGER.isDebugEnabled())
        {
         LOGGER.debug("sid: " + this.sid); //$NON-NLS-1$
@@ -556,7 +567,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
 
     // check sid validity
     doc = getDoc("/login_sid.lua?sid=" + this.sid); //$NON-NLS-1$
-    this.sid = doc.getElementsByTagName("SID").item(0).getTextContent(); //$NON-NLS-1$
+    this.sid = doc.getElementsByTagName(SID).item(0).getTextContent();
     if ("0000000000000000".equals(this.sid)) //$NON-NLS-1$
      {
       LOGGER.error("login invalid"); //$NON-NLS-1$
@@ -594,7 +605,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
        }
     */
     final Document doc = getDoc("/login_sid.lua?logout=1&sid=" + this.sid); //$NON-NLS-1$
-    this.sid = doc.getElementsByTagName("SID").item(0).getTextContent(); //$NON-NLS-1$
+    this.sid = doc.getElementsByTagName(SID).item(0).getTextContent();
     if ("0000000000000000".equals(this.sid)) //$NON-NLS-1$
      {
       // TODO check for existing thread
@@ -645,7 +656,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean setSwitchOn(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String result = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setswitchon"); //$NON-NLS-1$
     if (LOGGER.isInfoEnabled())
      {
@@ -666,7 +677,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean setSwitchOff(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String result = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setswitchoff"); //$NON-NLS-1$
     if (LOGGER.isInfoEnabled())
      {
@@ -687,7 +698,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean setSwitchToggle(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String state = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setswitchtoggle"); //$NON-NLS-1$
     if (LOGGER.isInfoEnabled())
      {
@@ -708,7 +719,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean getSwitchState(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String state = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchstate"); //$NON-NLS-1$
     if (LOGGER.isInfoEnabled())
      {
@@ -733,7 +744,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean isSwitchPresent(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String present = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchpresent"); //$NON-NLS-1$
     if (LOGGER.isInfoEnabled())
      {
@@ -755,7 +766,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Power getSwitchPower(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     String power = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchpower"); //$NON-NLS-1$
     if (LOGGER.isInfoEnabled())
      {
@@ -785,7 +796,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Energy getSwitchEnergy(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     String energy = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchenergy"); //$NON-NLS-1$
     if (LOGGER.isInfoEnabled())
      {
@@ -814,7 +825,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final String getSwitchName(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String name = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchname"); //$NON-NLS-1$
     return (name.length() > 0) ? name.substring(0, name.length() - 1) : ""; //$NON-NLS-1$
    }
@@ -847,7 +858,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Temperature getTemperature(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String temperature = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=gettemperature"); //$NON-NLS-1$
     return Temperature.of((temperature.length() > 0) ? temperature.substring(0, temperature.length() - 1) : ""); //$NON-NLS-1$
    }
@@ -894,7 +905,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Temperature getHkrtSoll(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String resultStr = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=gethkrtsoll"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
@@ -912,7 +923,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Temperature getHkrKomfort(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String resultStr = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=gethkrkomfort"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
@@ -930,7 +941,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Temperature getHkrAbsenk(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     final String resultStr = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=gethkrabsenk"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
@@ -945,10 +956,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws IndexOutOfBoundsException If temperature is out of range or undefined
    * @throws NullPointerException If ain or temperature is null
+   * @since 6.35
    */
   public final void setHkrtSoll(final AIN ain, final Temperature temperature) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     Objects.requireNonNull(temperature, "temperature"); //$NON-NLS-1$
     long fbTemperature;
     if (temperature.getTemperatureDeciCelsius() == 0)
@@ -978,10 +990,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @return XML document
    * @throws IOException IO exception
    * @throws SAXException SAX exception
+   * @since 6.98
    */
   public final Document getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     return getDoc(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getbasicdevicestats&sid=" + this.sid); //$NON-NLS-1$
    }
 
@@ -992,6 +1005,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @return XML document
    * @throws IOException IO exception
    * @throws SAXException SAX exception
+   * @since 6.98
    */
   public final Document getTemplateListInfos() throws IOException, SAXException
    {
@@ -1004,6 +1018,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    *
    * @param templateIdentifier Template identifier
    * @throws IOException IO exception
+   * @since 6.98
    *
    * TODO Template identifier value object
    */
@@ -1022,10 +1037,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if onoff is not 0, 1 or 2
+   * @since 7.15
    */
   public final void setSimpleOnOff(final AIN ain, final int onoff) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     if ((onoff < 0) || (onoff > 2))
      {
       throw new IllegalArgumentException("onoff must be 0, 1 or 2"); //$NON-NLS-1$
@@ -1043,10 +1059,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if level is not 0-255
+   * @since 7.15
    */
   public final void setLevel(final AIN ain, final int level) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     if ((level < 0) || (level > 255))
      {
       throw new IllegalArgumentException("level must be 0-255"); //$NON-NLS-1$
@@ -1064,10 +1081,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if level is not 0-255
+   * @since 7.15
    */
   public final void setLevelPercentage(final AIN ain, final int level) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     if ((level < 0) || (level > 100))
      {
       throw new IllegalArgumentException("level must be 0-100"); //$NON-NLS-1$
@@ -1087,10 +1105,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if level is not 0-255
+   * @since 7.15
    */
   public final void setColor(final AIN ain, final int hue, final int saturation, final int duration) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     if ((hue < 0) || (hue > 359))
      {
       throw new IllegalArgumentException("hue must be 0-359 degrees"); //$NON-NLS-1$
@@ -1117,10 +1136,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if level is not 0-255
+   * @since 7.15
    */
   public final void setColorTemperature(final AIN ain, final int temperature, final int duration) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     if ((temperature < 2700) || (temperature > 6500))
      {
       throw new IllegalArgumentException("temperature must be 2700-6500 kelvin"); //$NON-NLS-1$
@@ -1141,6 +1161,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws IOException IO exception
    * @throws SAXException SAX exception
+   * @since 7.15
    */
   public final Document getColorDefaults() throws IOException, SAXException
    {
@@ -1158,10 +1179,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws IllegalArgumentException If endtimestamp is out of range
    * @throws NullPointerException If ain or temperature is null
+   * @since 7.15
    */
   public final long setHkrBoost(final AIN ain, final long endtimestamp) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     if ((endtimestamp != 0) && ((endtimestamp < (System.currentTimeMillis() / 1000L)) || (endtimestamp > ((System.currentTimeMillis() / 1000L) + 86400))))
      {
       throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
@@ -1175,16 +1197,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * Set hkr window open.
    *
    * @param ain AIN
-   * @return Endtimestamp if successful
    * @param endtimestamp 0: deactivate; seconds since 1970-01-01T00:00:00; maximum of 24 hour in the future
+   * @return Endtimestamp if successful
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws IllegalArgumentException If endtimestamp is out of range
    * @throws NullPointerException If ain or temperature is null
+   * @since 7.15
    */
   public final long setHkrWindowOpen(final AIN ain, final long endtimestamp) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     if ((endtimestamp != 0) && ((endtimestamp < (System.currentTimeMillis() / 1000L)) || (endtimestamp > ((System.currentTimeMillis() / 1000L) + 86400))))
      {
       throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
@@ -1203,10 +1226,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws IllegalArgumentException If endtimestamp is out of range
    * @throws NullPointerException If ain or temperature is null
+   * @since 7.15
    */
   public final void setBlind(final AIN ain, final HandleBlind target) throws IOException
    {
-    Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AIN_STR);
     /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setblind&target=" + target.name()); //$NON-NLS-1$
    }
 
@@ -1260,7 +1284,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   @Override
   public String toString()
    {
-    return new StringBuilder().append("AHASessionMini[hostname=").append(this.hostname.getHostname()).append(", username=").append(this.username.getUsername()).append(", sid=").append(this.sid).append("]").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    return new StringBuilder().append("AHASessionMini[hostname=").append(this.hostname.getHostname()).append(", username=").append(this.username.getUsername()).append(", sid=").append(this.sid).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

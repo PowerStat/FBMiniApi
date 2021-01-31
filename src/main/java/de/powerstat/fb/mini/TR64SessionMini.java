@@ -64,17 +64,12 @@ import de.powerstat.validation.values.Username;
  *
  * @author Kai Hofmann
  */
-public class TR64SessionMini implements Runnable, Comparable<TR64SessionMini>
+public class TR64SessionMini implements Comparable<TR64SessionMini>
  {
   /**
    * Logger.
    */
   private static final Logger LOGGER = LogManager.getLogger(TR64SessionMini.class);
-
-  /**
-   * Timeout: 30 minutes - 15 seconds.
-   */
-  private static long timeout = (long)(30 * 60 * 1000) - (15 * 1000);
 
   /**
    * HTTP client.
@@ -95,16 +90,6 @@ public class TR64SessionMini implements Runnable, Comparable<TR64SessionMini>
    * Port.
    */
   private final Port port;
-
-  /**
-   * Last session access to FB timestamp.
-   */
-  private long lastAccess;
-
-  /**
-   * Timeout thread.
-   */
-  private final Thread timeoutThread = new Thread();
 
 
   /**
@@ -127,7 +112,6 @@ public class TR64SessionMini implements Runnable, Comparable<TR64SessionMini>
     this.docBuilder = Objects.requireNonNull(docBuilder, "docBuilder"); //$NON-NLS-1$
     this.hostname = Objects.requireNonNull(hostname, "hostname"); //$NON-NLS-1$
     this.port = Objects.requireNonNull(port, "port"); //$NON-NLS-1$
-    this.timeoutThread.start(); // TODO Don't start thread in constructor
    }
 
 
@@ -223,56 +207,6 @@ public class TR64SessionMini implements Runnable, Comparable<TR64SessionMini>
 
 
   /**
-   * Destroy object.
-   */
-  public final void destroy()
-   {
-    this.timeoutThread.interrupt();
-   }
-
-
-  /**
-   * Anti timeout action.
-   *
-   * Has to be overridden in api subclass, because it could not be complete before the generator has been run.
-   */
-  protected void antiTimeoutAction()
-   {
-    // Will be implemented in subclass, because of dependencies that still have to be generated.
-   }
-
-
-  /**
-   * Prevent from timeout.
-   *
-   * TODO https://stackoverflow.com/questions/4909655/java-privately-calling-run-in-runnable-class
-   */
-  @Override
-  public final void run()
-   {
-    while (true)
-     {
-      try
-       {
-        LOGGER.debug("Checking timeout"); //$NON-NLS-1$
-        if ((this.lastAccess + TR64SessionMini.timeout) >= System.currentTimeMillis())
-         {
-          LOGGER.debug("Preventing from timeout!"); //$NON-NLS-1$
-          antiTimeoutAction();
-         }
-        Thread.sleep((this.lastAccess + TR64SessionMini.timeout) - System.currentTimeMillis());
-       }
-      catch (final InterruptedException e)
-       {
-        LOGGER.debug("Timeout thread interupted", e); //$NON-NLS-1$
-        Thread.currentThread().interrupt();
-        return;
-       }
-     }
-   }
-
-
-  /**
    * XML doc to string.
    *
    * @param doc XML document
@@ -321,7 +255,6 @@ public class TR64SessionMini implements Runnable, Comparable<TR64SessionMini>
   public final Document getDoc(final String urlPath) throws IOException, SAXException
    {
     Objects.requireNonNull(urlPath, "urlPath"); //$NON-NLS-1$
-    this.lastAccess = System.currentTimeMillis();
     try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
      {
       LOGGER.debug(response.getStatusLine());
@@ -376,7 +309,6 @@ public class TR64SessionMini implements Runnable, Comparable<TR64SessionMini>
     httpPost.setHeader("Content-Type", "text/xml; charset=utf-8"); //$NON-NLS-1$ //$NON-NLS-2$
 
     httpPost.setEntity(new StringEntity(requestBuffer.toString()));
-    this.lastAccess = System.currentTimeMillis();
     try (CloseableHttpResponse response = this.httpclient.execute(httpPost))
      {
       // LOGGER.info(response.getStatusLine());
@@ -442,7 +374,7 @@ public class TR64SessionMini implements Runnable, Comparable<TR64SessionMini>
   @Override
   public String toString()
    {
-    return new StringBuilder().append("TR64SessionMini[hostname=").append(this.hostname.getHostname()).append(", port=").append(this.port.getPort()).append("]").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    return new StringBuilder().append("TR64SessionMini[hostname=").append(this.hostname.getHostname()).append(", port=").append(this.port.getPort()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

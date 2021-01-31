@@ -15,7 +15,7 @@ public class Temperature implements Comparable<Temperature>
   /**
    * Temperature in deci celsius.
    */
-  private final long temperature;
+  private final long temperatureCelsius;
 
 
   /**
@@ -31,7 +31,7 @@ public class Temperature implements Comparable<Temperature>
      {
       throw new IndexOutOfBoundsException("temperature must be >= -2732"); //$NON-NLS-1$
      }
-    this.temperature = temperature;
+    this.temperatureCelsius = temperature;
    }
 
 
@@ -69,7 +69,7 @@ public class Temperature implements Comparable<Temperature>
    */
   public long getTemperatureDeciCelsius()
    {
-    return this.temperature;
+    return this.temperatureCelsius;
    }
 
 
@@ -80,7 +80,7 @@ public class Temperature implements Comparable<Temperature>
    */
   public long getTemperatureCelsius()
    {
-    return this.temperature / 10;
+    return this.temperatureCelsius / 10;
    }
 
 
@@ -93,7 +93,7 @@ public class Temperature implements Comparable<Temperature>
   @Override
   public int hashCode()
    {
-    return Long.hashCode(this.temperature);
+    return Long.hashCode(this.temperatureCelsius);
    }
 
 
@@ -116,7 +116,7 @@ public class Temperature implements Comparable<Temperature>
       return false;
      }
     final Temperature other = (Temperature)obj;
-    return this.temperature == other.temperature;
+    return this.temperatureCelsius == other.temperatureCelsius;
    }
 
 
@@ -134,7 +134,7 @@ public class Temperature implements Comparable<Temperature>
   public String toString()
    {
     final StringBuilder builder = new StringBuilder(25);
-    builder.append("Temperature[temperature=").append(this.temperature).append(']'); //$NON-NLS-1$
+    builder.append("Temperature[temperature=").append(this.temperatureCelsius).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -150,7 +150,7 @@ public class Temperature implements Comparable<Temperature>
   public int compareTo(final Temperature obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Long.compare(this.temperature, obj.temperature);
+    return Long.compare(this.temperatureCelsius, obj.temperatureCelsius);
    }
 
  }

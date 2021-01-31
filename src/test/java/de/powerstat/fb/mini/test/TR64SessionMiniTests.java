@@ -20,9 +20,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -75,6 +75,16 @@ public class TR64SessionMiniTests
    */
   private static final String FBPASSWORD = "topSecret"; //$NON-NLS-1$
 
+  /**
+   * Password.
+   */
+  private static final String FBPASSWORD2 = "TopSecret"; //$NON-NLS-1$
+
+  /**
+   * %072x constant.
+   */
+  private static final String CONST_072X = "%072x"; //$NON-NLS-1$
+
 
   /**
    * Default constructor.
@@ -100,7 +110,6 @@ public class TR64SessionMiniTests
     final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, mockDocBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
     assertNotNull(tr64session, "newInstance failed!"); //$NON-NLS-1$
-    tr64session.destroy();
    }
 
 
@@ -118,7 +127,6 @@ public class TR64SessionMiniTests
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(FBUSERNAME, FBPASSWORD);
 
     assertNotNull(tr64session, "newInstance failed!"); //$NON-NLS-1$
-    tr64session.destroy();
    }
 
 
@@ -137,7 +145,6 @@ public class TR64SessionMiniTests
     final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, mockDocBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
     final String representation = tr64session.toString();
-    tr64session.destroy();
     assertEquals("TR64SessionMini[hostname=fritz.box, port=49443]", representation, "toString result not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -177,14 +184,13 @@ public class TR64SessionMiniTests
     // verify();
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
     final Document doc = tr64session.getDoc("/tr64desc.xml"); //$NON-NLS-1$
-    tr64session.destroy();
     final String xml = TR64SessionMini.docToString(doc);
     if (LOGGER.isInfoEnabled())
      {
       LOGGER.info("doc: " + xml); //$NON-NLS-1$
 
-      LOGGER.info(String.format("%072x", new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
-      LOGGER.info(String.format("%072x", new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+      LOGGER.info(String.format(CONST_072X, new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8))));
+      LOGGER.info(String.format(CONST_072X, new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8))));
      }
     assertAll(
       () -> assertNotNull(doc, "getDoc failed!"), //$NON-NLS-1$
@@ -226,7 +232,7 @@ public class TR64SessionMiniTests
     final DocumentBuilder docBuilder = factory.newDocumentBuilder();
 
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
-    final Map<String, String> parameters = new HashMap<>();
+    final Map<String, String> parameters = new ConcurrentHashMap<>();
     parameters.put("test", "value"); //$NON-NLS-1$ //$NON-NLS-2$
     final Document doc = tr64session.doSOAPRequest("/upnp/control/deviceinfo", "urn:dslforum-org:service:DeviceInfo:1", "GetInfo", parameters); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     final String xml = TR64SessionMini.docToString(doc);
@@ -237,8 +243,8 @@ public class TR64SessionMiniTests
      {
       LOGGER.info("doc: " + xml); //$NON-NLS-1$
 
-      LOGGER.info(String.format("%072x", new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
-      LOGGER.info(String.format("%072x", new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+      LOGGER.info(String.format(CONST_072X, new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8))));
+      LOGGER.info(String.format(CONST_072X, new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8))));
      }
     assertAll(
       () -> assertNotNull(doc, "doSOAPRequest failed!"), //$NON-NLS-1$
@@ -289,8 +295,8 @@ public class TR64SessionMiniTests
      {
       LOGGER.info("doc: " + xml); //$NON-NLS-1$
 
-      LOGGER.info(String.format("%072x", new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
-      LOGGER.info(String.format("%072x", new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8)))); //$NON-NLS-1$
+      LOGGER.info(String.format(CONST_072X, new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8))));
+      LOGGER.info(String.format(CONST_072X, new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8))));
      }
     assertAll(
       () -> assertNotNull(doc, "doSOAPRequest failed!"), //$NON-NLS-1$
@@ -310,8 +316,8 @@ public class TR64SessionMiniTests
   @Test
   public void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    final TR64SessionMini session1 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final TR64SessionMini session2 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
+    final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
     final TR64SessionMini session3 = TR64SessionMini.newInstance("fritz2.box", 49443, "admin2", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertAll("testHashCode", //$NON-NLS-1$
       () -> assertEquals(session1.hashCode(), session2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
@@ -331,10 +337,10 @@ public class TR64SessionMiniTests
   @Test
   public void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    final TR64SessionMini session1 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final TR64SessionMini session2 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
+    final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
     final TR64SessionMini session3 = TR64SessionMini.newInstance("fritz2.box", 49443, "admin2", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final TR64SessionMini session4 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session4 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(session1.equals(session1), "session11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(session1.equals(session2), "session12 are not equal"), //$NON-NLS-1$
@@ -359,11 +365,11 @@ public class TR64SessionMiniTests
   @Test
   public void testCompareTo() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    final TR64SessionMini session1 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final TR64SessionMini session2 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
+    final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
     final TR64SessionMini session3 = TR64SessionMini.newInstance("fritz2.box", 49443, "admin2", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     final TR64SessionMini session4 = TR64SessionMini.newInstance("fritz3.box", 49443, "admin3", "TopSecret3"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final TR64SessionMini session5 = TR64SessionMini.newInstance("fritz.box", 49443, "admin", "TopSecret"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final TR64SessionMini session5 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(session1.compareTo(session2) == -session2.compareTo(session1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(session1.compareTo(session3) == -session3.compareTo(session1), "reflexive2"), //$NON-NLS-1$
@@ -377,8 +383,13 @@ public class TR64SessionMiniTests
   /**
    * HttpPost matcher.
    */
-  public static class HttpPostMatcher implements ArgumentMatcher<HttpPost>
+  private static class HttpPostMatcher implements ArgumentMatcher<HttpPost>
    {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(HttpPostMatcher.class);
+
     /**
      * URI path to match.
      */

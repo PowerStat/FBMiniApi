@@ -12,7 +12,9 @@
     <!-- Annotations -->
     <module name="AnnotationLocation"/>
     <!-- <module name="AnnotationOnSameLine"/> -->
-    <module name="AnnotationUseStyle"/>
+    <module name="AnnotationUseStyle">
+      <property name="elementStyle" value="compact"/>
+    </module>
     <module name="MissingDeprecated"/>
     <module name="MissingOverride"/>
     <module name="PackageAnnotation"/>
@@ -57,7 +59,7 @@
     <module name="MutableException"/>
     <module name="OneTopLevelClass"/>
     <module name="ThrowsCount">
-      <property name="max" value="6"/>
+      <property name="max" value="7"/>
     </module>
     <module name="VisibilityModifier">
       <property name="severity" value="warning"/>
@@ -329,6 +331,7 @@
     <module name="TypecastParenPad"/>
     <module name="WhitespaceAfter">
       <property name="severity" value="warning"/>
+      <property name="tokens" value="COMMA, SEMI, LITERAL_IF, LITERAL_ELSE, LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, DO_WHILE"/>
     </module>
     <module name="WhitespaceAround">
       <property name="severity" value="warning"/>

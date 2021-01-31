@@ -44,6 +44,34 @@ To make a new release:
     git push -–tags
     git push origin master
 
+To run checkstyle:
+
+    mvn checkstyle:check
+    
+To run pmd:
+
+    mvn pmd:check
+    
+To run spotbugs:
+
+    mvn spotbugs:check
+    
+To run arch-unit:
+
+    mvn arch-unit:arch-test
+    
+To run JDeprScan:
+
+    mvn jdeprscan:jdeprscan jdeprscan:test-jdeprscan
+    
+If you use [infer][https://fbinfer.com/]:
+
+    infer run -- mvn clean compile
+    
+Run toolchain:
+
+    mvn toolchains:toolchain
+
 ## Usage
 
 For usage in your own projects please read the Javadoc's and follow the examples in the unittests.

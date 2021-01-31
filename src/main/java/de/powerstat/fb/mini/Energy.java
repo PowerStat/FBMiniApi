@@ -15,7 +15,7 @@ public class Energy implements Comparable<Energy>
   /**
    * Energy in Wh.
    */
-  private final long energy;
+  private final long energyWh;
 
 
   /**
@@ -31,7 +31,7 @@ public class Energy implements Comparable<Energy>
      {
       throw new IndexOutOfBoundsException("energy must be >= 0"); //$NON-NLS-1$
      }
-    this.energy = energy;
+    this.energyWh = energy;
    }
 
 
@@ -69,7 +69,7 @@ public class Energy implements Comparable<Energy>
    */
   public long getEnergyWattHours()
    {
-    return this.energy;
+    return this.energyWh;
    }
 
 
@@ -80,7 +80,7 @@ public class Energy implements Comparable<Energy>
    */
   public long getEnergyKiloWattHours()
    {
-    return this.energy / 1000;
+    return this.energyWh / 1000;
    }
 
 
@@ -93,7 +93,7 @@ public class Energy implements Comparable<Energy>
   @Override
   public int hashCode()
    {
-    return Long.hashCode(this.energy);
+    return Long.hashCode(this.energyWh);
    }
 
 
@@ -116,7 +116,7 @@ public class Energy implements Comparable<Energy>
       return false;
      }
     final Energy other = (Energy)obj;
-    return this.energy == other.energy;
+    return this.energyWh == other.energyWh;
    }
 
 
@@ -134,7 +134,7 @@ public class Energy implements Comparable<Energy>
   public String toString()
    {
     final StringBuilder builder = new StringBuilder();
-    builder.append("Energy[energy=").append(this.energy).append(']'); //$NON-NLS-1$
+    builder.append("Energy[energy=").append(this.energyWh).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -150,7 +150,7 @@ public class Energy implements Comparable<Energy>
   public int compareTo(final Energy obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Long.compare(this.energy, obj.energy);
+    return Long.compare(this.energyWh, obj.energyWh);
    }
 
  }

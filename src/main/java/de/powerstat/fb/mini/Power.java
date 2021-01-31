@@ -15,7 +15,7 @@ public final class Power implements Comparable<Power>
   /**
    * Power in mW.
    */
-  private final long power;
+  private final long powerMW;
 
 
   /**
@@ -31,7 +31,7 @@ public final class Power implements Comparable<Power>
      {
       throw new IndexOutOfBoundsException("power must be >= 0"); //$NON-NLS-1$
      }
-    this.power = power;
+    this.powerMW = power;
    }
 
 
@@ -69,7 +69,7 @@ public final class Power implements Comparable<Power>
    */
   public long getPowerMilliWatt()
    {
-    return this.power;
+    return this.powerMW;
    }
 
 
@@ -80,7 +80,7 @@ public final class Power implements Comparable<Power>
    */
   public long getPowerWatt()
    {
-    return this.power / 1000;
+    return this.powerMW / 1000;
    }
 
 
@@ -93,7 +93,7 @@ public final class Power implements Comparable<Power>
   @Override
   public int hashCode()
    {
-    return Long.hashCode(this.power);
+    return Long.hashCode(this.powerMW);
    }
 
 
@@ -116,7 +116,7 @@ public final class Power implements Comparable<Power>
       return false;
      }
     final Power other = (Power)obj;
-    return this.power == other.power;
+    return this.powerMW == other.powerMW;
    }
 
 
@@ -134,7 +134,7 @@ public final class Power implements Comparable<Power>
   public String toString()
    {
     final StringBuilder builder = new StringBuilder();
-    builder.append("Power[power=").append(this.power).append(']'); //$NON-NLS-1$
+    builder.append("Power[power=").append(this.powerMW).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -150,7 +150,7 @@ public final class Power implements Comparable<Power>
   public int compareTo(final Power obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Long.compare(this.power, obj.power);
+    return Long.compare(this.powerMW, obj.powerMW);
    }
 
  }
