@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.xml.XMLConstants;
@@ -153,17 +154,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     /**
      * Close blind.
      */
-    close(0),
+    CLOSE(0),
 
     /**
      * Open blind.
      */
-    open(1),
+    OPEN(1),
 
     /**
      * Stop blind.
      */
-    stop(2);
+    STOP(2);
 
 
     /**
@@ -1221,7 +1222,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * Set blind.
    *
    * @param ain AIN
-   * @param target HandleBlind close, open, stop
+   * @param target HandleBlind CLOSE, OPEN, STOP
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws IllegalArgumentException If endtimestamp is out of range
@@ -1231,7 +1232,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setBlind(final AIN ain, final HandleBlind target) throws IOException
    {
     Objects.requireNonNull(ain, AIN_STR);
-    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setblind&target=" + target.name()); //$NON-NLS-1$
+    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault())); //$NON-NLS-1$
    }
 
 

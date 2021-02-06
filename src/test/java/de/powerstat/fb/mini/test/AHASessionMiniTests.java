@@ -27,6 +27,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.xml.XMLConstants;
@@ -3104,7 +3105,7 @@ public class AHASessionMiniTests
   /**
    * Test set blind.
    *
-   * @param target HandleBlind: close, open, stop
+   * @param target HandleBlind: CLOSE, OPEN, STOP
    * @throws IOException IO exception
    * @throws NoSuchAlgorithmException No such algorithm exception
    * @throws ClientProtocolException Client protocol exception
@@ -3138,7 +3139,7 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setblind&target=" + target.name() + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault()) + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -3148,7 +3149,7 @@ public class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals("close".equals(target.name()) ? 0 : ("open".equals(target.name()) ? 1 : 2), target.getAction(), "Wrong action"), //$NON-NLS-1$
+      () -> assertEquals("CLOSE".equals(target.name()) ? 0 : ("OPEN".equals(target.name()) ? 1 : 2), target.getAction(), "Wrong action"), //$NON-NLS-1$
       () -> assertTrue(successLogoff, LOGOFF_FAILED)
     );
    }
@@ -3176,6 +3177,7 @@ public class AHASessionMiniTests
     // LOGGER.debug("Stats: " + TR64SessionMini.docToString(result));
     ahasession.setSimpleOnOff(AIN.of(""), 1); //$NON-NLS-1$
     /* final boolean successLogoff = */ ahasession.logoff();
+    assertNotNull(ahasession, "Dummy");
     LOGGER.debug("---------- real end ----------"); //$NON-NLS-1$
    }
 
@@ -3222,6 +3224,7 @@ public class AHASessionMiniTests
      {
       LOGGER.debug("XMLString: " + TR64SessionMini.docToString(doc)); //$NON-NLS-1$
      }
+    assertNotNull(doc, "Dummy");
    }
 
 

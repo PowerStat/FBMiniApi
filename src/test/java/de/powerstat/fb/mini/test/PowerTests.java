@@ -16,11 +16,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import de.powerstat.fb.mini.Power;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 /**
  * Power tests.
  */
+@SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO"})
 public class PowerTests
  {
   /**

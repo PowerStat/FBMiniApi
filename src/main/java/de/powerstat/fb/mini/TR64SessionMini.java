@@ -220,13 +220,13 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     final StringWriter strWriter = new StringWriter();
     final TransformerFactory factory = TransformerFactory.newInstance();
     factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_DTD, false);
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, false);
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, false);
+    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); //$NON-NLS-1$
+    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); //$NON-NLS-1$
+    // factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); //$NON-NLS-1$
     // factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
-    // factory.setFeature("http://xml.org/sax/features/external-general-entities", true); //$NON-NLS-1$
-    // factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true); //$NON-NLS-1$
-    // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", true); //$NON-NLS-1$
+    // factory.setFeature("http://xml.org/sax/features/external-general-entities", false); //$NON-NLS-1$ //$NON-NLS-2$
+    // factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false); //$NON-NLS-1$
+    // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
     // factory.setXIncludeAware(false);
     // factory.setExpandEntityReferences(false);
     final Transformer transformer = factory.newTransformer();
