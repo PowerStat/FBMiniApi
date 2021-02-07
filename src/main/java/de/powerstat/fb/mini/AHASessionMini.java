@@ -637,8 +637,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       return Collections.emptyList();
      }
-    final List<AIN> ains = new ArrayList<>();
-    for (final String ain : list.substring(0, list.length() - 1).split(",")) //$NON-NLS-1$
+    final String[] ainStrList = list.substring(0, list.length() - 1).split(","); //$NON-NLS-1$
+    final List<AIN> ains = new ArrayList<>(ainStrList.length);
+    for (final String ain : ainStrList)
      {
       ains.add(AIN.of(ain));
      }

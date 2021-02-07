@@ -46,6 +46,7 @@ import org.xml.sax.SAXException;
 import de.powerstat.fb.mini.TR64SessionMini;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Port;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 /**
@@ -53,6 +54,7 @@ import de.powerstat.validation.values.Port;
  *
  * @author PowerStat
  */
+@SuppressFBWarnings({"EC_NULL_ARG", "NAB_NEEDLESS_BOOLEAN_CONSTANT_CONVERSION", "RV_NEGATING_RESULT_OF_COMPARETO", "SPP_USE_ZERO_WITH_COMPARATOR"})
 public class TR64SessionMiniTests
  {
   /**

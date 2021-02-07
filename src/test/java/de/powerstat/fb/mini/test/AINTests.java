@@ -22,7 +22,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * AIN tests.
  */
-@SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO"})
+@SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO", "EC_NULL_ARG", "SPP_USE_ZERO_WITH_COMPARATOR"})
 public class AINTests
  {
   /**

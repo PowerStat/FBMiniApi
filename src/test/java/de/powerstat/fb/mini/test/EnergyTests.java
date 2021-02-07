@@ -22,7 +22,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Energy tests.
  */
-@SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO"})
+@SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO", "EC_NULL_ARG", "SPP_USE_ZERO_WITH_COMPARATOR", "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"})
 public class EnergyTests
  {
   /**
