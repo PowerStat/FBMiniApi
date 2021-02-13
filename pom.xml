@@ -543,7 +543,7 @@
         <artifactId>maven-jdeps-plugin</artifactId>
         <version>3.1.2</version>
         <configuration>
-          <module>de.powerstat.phplib.templateengine</module>
+          <module>de.powerstat.fb.mini</module>
           <multiRelease>11</multiRelease>
         </configuration>
       </plugin>
