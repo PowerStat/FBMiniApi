@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2015-2021 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.ProviderNotFoundException;
+import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,6 +49,7 @@ import org.xml.sax.SAXException;
 
 import de.powerstat.validation.ValidationUtils;
 import de.powerstat.validation.values.Hostname;
+import de.powerstat.validation.values.Milliseconds;
 import de.powerstat.validation.values.Password;
 import de.powerstat.validation.values.Port;
 import de.powerstat.validation.values.Username;
@@ -61,7 +65,11 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
  * @author Kai Hofmann
  * @see <a href="https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/AHA-HTTP-Interface.pdf">AHA-HTTP-Interface</a>
  *
- * TODO version number handling?
+ * TODO Template identifier value object tmp653A18-38AE7FDE
+ * TODO group identifer 5:3A:18-900
+ * TODO urlPath, urlParameters value objects
+ * TODO Version number handling? (ask fritzbox for it's version)
+ * TODO Rigths handling
  */
 public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
  {
@@ -73,7 +81,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * Timeout: 10 minutes - 15 seconds.
    */
-  private static final long TIMEOUT = (long)(10 * 60 * 1000) - (15 * 1000);
+  private static final Milliseconds TIMEOUT = new Milliseconds((long)(10 * 60 * 1000) - (15 * 1000));
 
   /**
    * Url constant.
@@ -93,13 +101,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * SID.
    */
-  private static final String SID = "SID";
+  private static final String SESSIONID = "SID"; //$NON-NLS-1$
 
   /**
    * AIN.
    */
-  private static final String AIN_STR = "ain";
+  private static final String AIN_STR = "ain"; //$NON-NLS-1$
 
+  /**
+   * Hmac SHA256 algorithm.
+   */
+  private static final String SHA256 = "HmacSHA256"; //$NON-NLS-1$
 
   /**
    * Document builder.
@@ -134,7 +146,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * Session id.
    */
-  private String sid = ""; //$NON-NLS-1$
+  private SID sid = SID.ofInvalid();
 
   /**
    * Last session access to fb timestamp.
@@ -207,6 +219,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @param username FB Username
    * @param password FB Password
    * @throws NullPointerException If a parameter is null
+   *
+   * docBuilder must be secure:
+   * final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+   * factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+   * factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+   * final DocumentBuilder docBuilder = factory.newDocumentBuilder();
    */
   protected AHASessionMini(final CloseableHttpClient httpclient, final DocumentBuilder docBuilder, final Hostname hostname, final Port port, final Username username, final Password password)
    {
@@ -231,6 +249,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @param password FB password
    * @return A new AHASessionMini instance.
    * @throws NullPointerException If hostname or password is null
+   *
+   * docBuilder must be secure:
+   * final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+   * factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+   * factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+   * final DocumentBuilder docBuilder = factory.newDocumentBuilder();
    */
   public static AHASessionMini newInstance(final CloseableHttpClient httpclient, final DocumentBuilder docBuilder, final Hostname hostname, final Port port, final Username username, final Password password)
    {
@@ -249,6 +273,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @param password FB password
    * @return A new AHASessionMini instance.
    * @throws NullPointerException If a parameter is null
+   *
+   * docBuilder must be secure:
+   * final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+   * factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+   * factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+   * final DocumentBuilder docBuilder = factory.newDocumentBuilder();
    */
   public static AHASessionMini newInstance(final CloseableHttpClient httpclient, final DocumentBuilder docBuilder, final String hostname, final int port, final String username, final String password)
    {
@@ -276,10 +306,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
 
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
     // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_DTD, false);
     // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, false);
     // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, false);
-    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
     // factory.setFeature("http://xml.org/sax/features/external-general-entities", true); //$NON-NLS-1$
     // factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true); //$NON-NLS-1$
     // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", true); //$NON-NLS-1$
@@ -342,7 +372,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           LOGGER.debug("Checking timeout"); //$NON-NLS-1$
          }
-        if ((this.lastAccess + AHASessionMini.TIMEOUT) >= System.currentTimeMillis())
+        if ((this.lastAccess + AHASessionMini.TIMEOUT.getMilliseconds()) >= System.currentTimeMillis())
          {
           if (LOGGER.isDebugEnabled())
            {
@@ -352,7 +382,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           // TODO check disconnect and login again
           // TODO update device infos
          }
-        Thread.sleep((this.lastAccess + AHASessionMini.TIMEOUT) - System.currentTimeMillis());
+        Thread.sleep((this.lastAccess + AHASessionMini.TIMEOUT.getMilliseconds()) - System.currentTimeMillis());
        }
       catch (final InterruptedException e)
        {
@@ -407,7 +437,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
               throw new IOException("Connection lost and no reconnection possible!"); //$NON-NLS-1$
              }
            }
-          catch (final NoSuchAlgorithmException | SAXException e)
+          catch (final NoSuchAlgorithmException | SAXException | InvalidKeyException e)
            {
             throw new IOException("Can't logon for reconnect!", e); //$NON-NLS-1$
            }
@@ -456,7 +486,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   private String getString(final String urlPath) throws IOException
    {
     assert urlPath != null;
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath) + "&sid=" + this.sid)))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath) + "&sid=" + this.sid.getSID())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
@@ -479,7 +509,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
               throw new IOException("Connection lost and no reconnection possible!"); //$NON-NLS-1$
              }
            }
-          catch (final NoSuchAlgorithmException | SAXException e)
+          catch (final NoSuchAlgorithmException | SAXException | InvalidKeyException e)
            {
             throw new IOException("Can't logon for reconnect!", e); //$NON-NLS-1$
            }
@@ -506,6 +536,87 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
 
 
   /**
+   * Convert hex string to byte array.
+   *
+   * @param hexStr Hex string ([0-9a-f]{2,4,6,8,10})
+   * @return Byte array
+   */
+  private static byte[] fromHex(final String hexStr)
+   {
+    Objects.requireNonNull(hexStr);
+    if ((hexStr.length() % 2) != 0)
+     {
+      throw new IllegalArgumentException("Length must be even");
+     }
+    final int len = hexStr.length() / 2;
+    final byte[] ret = new byte[len];
+    for (int i = 0; i < len; ++i)
+     {
+      final int pos = i * 2;
+      ret[i] = (byte)Integer.parseInt(hexStr.substring(pos, pos + 2), 16);
+     }
+    return ret;
+   }
+
+
+  /**
+   * Convert byte array to hex string.
+   *
+   * @param bytes Byte array
+   * @return String Hex string
+   */
+  private static String toHex(final byte[] bytes)
+   {
+    final StringBuilder hexStr = new StringBuilder(bytes.length * 2);
+    for (final byte byt : bytes)
+     {
+      hexStr.append(String.format("%02x", byt)); //$NON-NLS-1$
+     }
+    return hexStr.toString();
+   }
+
+
+  /**
+   * Create a pbkdf2 HMAC by appling the Hmac iter times as specified.
+   *
+   * @param password Password
+   * @param salt Salt
+   * @param iters Iterator
+   * @return Byte array
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws InvalidKeyException Invalid key exception
+   */
+  private static byte[] pbkdf2HmacSha256(final byte[] password, final byte[] salt, final int iters) throws NoSuchAlgorithmException, InvalidKeyException
+   {
+    Objects.requireNonNull(password);
+    Objects.requireNonNull(salt);
+    if (iters < 0)
+     {
+      throw new IllegalArgumentException("iters < 0"); //$NON-NLS-1$
+     }
+    final Mac sha256mac = Mac.getInstance(SHA256);
+    sha256mac.init(new SecretKeySpec(password, SHA256));
+    final byte[] ret = new byte[sha256mac.getMacLength()];
+    byte[] tmp = new byte[salt.length + 4];
+    System.arraycopy(salt, 0, tmp, 0, salt.length);
+    tmp[salt.length + 3] = 1;
+    for (int i = 0; i < iters; ++i)
+     {
+      tmp = sha256mac.doFinal(tmp);
+      for (int j = 0; j < ret.length; ++j)
+       {
+        ret[j] ^= tmp[j];
+       }
+     }
+    return ret;
+   }
+
+
+
+
+
+
+  /**
    * Logon to FB.
    *
    * @return true on success; otherwise false
@@ -514,8 +625,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws SAXException SAX exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws InvalidKeyException Invalid key exception
    */
-  public final boolean logon() throws IOException, SAXException, NoSuchAlgorithmException
+  public final boolean logon() throws IOException, SAXException, NoSuchAlgorithmException, InvalidKeyException
    {
     /*
     synchronized(AHASessionMini.class)
@@ -526,32 +638,55 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
        }
     */
     // get first challenge
-    Document doc = getDoc("/login_sid.lua"); //$NON-NLS-1$
-    this.sid = doc.getElementsByTagName(SID).item(0).getTextContent();
+    Document doc = getDoc("/login_sid.lua?version=2"); //$NON-NLS-1$
+    this.sid = SID.of(doc.getElementsByTagName(SESSIONID).item(0).getTextContent());
     if (LOGGER.isDebugEnabled())
      {
-      LOGGER.debug("sid: " + this.sid); //$NON-NLS-1$
+      LOGGER.debug("sid: " + this.sid.getSID()); //$NON-NLS-1$
      }
     if (LOGGER.isDebugEnabled())
      {
       final String blocktime = doc.getElementsByTagName("BlockTime").item(0).getTextContent(); //$NON-NLS-1$
       LOGGER.debug("blocktime: " + blocktime); //$NON-NLS-1$
      }
+    // Users?
     // Rigths ?
 
     // login
-    if ("0000000000000000".equals(this.sid)) //$NON-NLS-1$
+    if (!this.sid.isValidSession())
      {
       String challenge = doc.getElementsByTagName("Challenge").item(0).getTextContent(); //$NON-NLS-1$
       if (LOGGER.isDebugEnabled())
        {
         LOGGER.debug("challenge: " + challenge); //$NON-NLS-1$
        }
-      doc = getDoc("/login_sid.lua?username=" + this.username.getUsername() + "&response=" + challenge + "-" + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + "-" + this.password.getPassword()).getBytes(Charset.forName("utf-16le")))))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-      this.sid = doc.getElementsByTagName(SID).item(0).getTextContent();
+      String response;
+      if (challenge.startsWith("2$")) // PBKDF2 //$NON-NLS-1$
+       {
+        // challenge = 2$<iter1>$<salt1>$<iter2>$<salt2>
+        final String[] challengeParts = challenge.split("\\$"); //$NON-NLS-1$
+        final int iter1 = Integer.parseInt(challengeParts[1]);
+        final byte[] salt1 = fromHex(challengeParts[2]);
+        final int iter2 = Integer.parseInt(challengeParts[3]);
+        final byte[] salt2 = fromHex(challengeParts[4]);
+        // <hash1> = pbdkf2_hmac_sha256(<password>, <salt1>, <iter1>)
+        final byte[] hash1 = pbkdf2HmacSha256(this.password.getPassword().getBytes(StandardCharsets.UTF_8), salt1, iter1);
+        // <response> = <salt2>$ + pbdkf2_hmac_sha256(<hash1>, <salt2>, <iter2>)
+        final byte[] hash2 = pbkdf2HmacSha256(hash1, salt2, iter2);
+        response = challengeParts[4] + '$' + toHex(hash2);
+       }
+      else // MD5
+       {
+        // TODO
+        // Aus Kompatibilitätsgründen muss für jedes Zeichen, dessen Unicode Codepoint > 255 ist, die Codierung des "."-Zeichens benutzt werden (0x2e 0x00 in UTF-16LE).
+        // Dies betrifft also alle Zeichen, die nicht in ISO-8859-1 dargestellt werden können, z.B. das Euro-Zeichen
+        response = challenge + '-' + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + '-' + this.password.getPassword()).getBytes(Charset.forName("utf-16le"))))); //$NON-NLS-1$ //$NON-NLS-2$
+       }
+      doc = getDoc("/login_sid.lua?version=2&username=" + this.username.getUsername() + "&response=" + response); //$NON-NLS-1$ //$NON-NLS-2$
+      this.sid = SID.of(doc.getElementsByTagName(SESSIONID).item(0).getTextContent());
       if (LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("sid: " + this.sid); //$NON-NLS-1$
+        LOGGER.debug("sid: " + this.sid.getSID()); //$NON-NLS-1$
        }
       if (LOGGER.isDebugEnabled())
        {
@@ -567,9 +702,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      }
 
     // check sid validity
-    doc = getDoc("/login_sid.lua?sid=" + this.sid); //$NON-NLS-1$
-    this.sid = doc.getElementsByTagName(SID).item(0).getTextContent();
-    if ("0000000000000000".equals(this.sid)) //$NON-NLS-1$
+    doc = getDoc("/login_sid.lua?version=2&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    this.sid = SID.of(doc.getElementsByTagName(SESSIONID).item(0).getTextContent());
+    if (!this.sid.isValidSession())
      {
       LOGGER.error("login invalid"); //$NON-NLS-1$
       return false;
@@ -605,9 +740,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
         return true;
        }
     */
-    final Document doc = getDoc("/login_sid.lua?logout=1&sid=" + this.sid); //$NON-NLS-1$
-    this.sid = doc.getElementsByTagName(SID).item(0).getTextContent();
-    if ("0000000000000000".equals(this.sid)) //$NON-NLS-1$
+    final Document doc = getDoc("/login_sid.lua?version=2&logout=1&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    this.sid = SID.of(doc.getElementsByTagName(SESSIONID).item(0).getTextContent());
+    if (!this.sid.isValidSession())
      {
       // TODO check for existing thread
       this.timeoutThread.interrupt();
@@ -844,7 +979,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Document getDeviceListInfos() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getdevicelistinfos&sid=" + this.sid); //$NON-NLS-1$
+    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getdevicelistinfos&sid=" + this.sid.getSID()); //$NON-NLS-1$
    }
 
 
@@ -997,7 +1132,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final Document getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AIN_STR);
-    return getDoc(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getbasicdevicestats&sid=" + this.sid); //$NON-NLS-1$
+    return getDoc(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getbasicdevicestats&sid=" + this.sid.getSID()); //$NON-NLS-1$
    }
 
 
@@ -1011,7 +1146,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Document getTemplateListInfos() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=gettemplatelistinfos&sid=" + this.sid); //$NON-NLS-1$
+    return getDoc("/webservices/homeautoswitch.lua?switchcmd=gettemplatelistinfos&sid=" + this.sid.getSID()); //$NON-NLS-1$
    }
 
 
@@ -1167,7 +1302,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Document getColorDefaults() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=" + this.sid); //$NON-NLS-1$
+    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=" + this.sid.getSID()); //$NON-NLS-1$
    }
 
 
@@ -1246,7 +1381,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.hostname, this.username, this.password, this.sid);
+    return Objects.hash(this.hostname, this.username, this.password, this.sid.getSID());
    }
 
 
@@ -1286,7 +1421,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   @Override
   public String toString()
    {
-    return new StringBuilder().append("AHASessionMini[hostname=").append(this.hostname.getHostname()).append(", username=").append(this.username.getUsername()).append(", sid=").append(this.sid).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    return new StringBuilder().append("AHASessionMini[hostname=").append(this.hostname.getHostname()).append(", username=").append(this.username.getUsername()).append(", sid=").append(this.sid.getSID()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

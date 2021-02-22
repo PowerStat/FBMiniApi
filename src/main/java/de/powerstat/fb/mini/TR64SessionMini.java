@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2015-2021 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -99,13 +99,15 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    * @param docBuilder DocumentBuilder
    * @param hostname FB hostname
    * @param port FB port number
-   * @throws KeyStoreException Key store exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws KeyManagementException Key management exception
-   * @throws ParserConfigurationException Parser configuration exception
    * @throws NullPointerException If hostname, username or password is null
+   *
+   * docBuilder must be secure:
+   * final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+   * factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+   * factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+   * final DocumentBuilder docBuilder = factory.newDocumentBuilder();
    */
-  protected TR64SessionMini(final CloseableHttpClient httpclient, final DocumentBuilder docBuilder, final Hostname hostname, final Port port) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, ParserConfigurationException
+  protected TR64SessionMini(final CloseableHttpClient httpclient, final DocumentBuilder docBuilder, final Hostname hostname, final Port port)
    {
     super();
     this.httpclient = Objects.requireNonNull(httpclient, "httpclient"); //$NON-NLS-1$
@@ -128,6 +130,12 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    * @throws KeyManagementException Key management exception
    * @throws ParserConfigurationException Parser configuration exception
    * @throws NullPointerException If hostname, username or password is null
+   *
+   * docBuilder must be secure:
+   * final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+   * factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+   * factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+   * final DocumentBuilder docBuilder = factory.newDocumentBuilder();
    */
   public static TR64SessionMini newInstance(final CloseableHttpClient httpclient, final DocumentBuilder docBuilder, final Hostname hostname, final Port port) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
