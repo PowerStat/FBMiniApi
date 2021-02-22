@@ -156,7 +156,7 @@
   <rule ref="category/java/design.xml/CouplingBetweenObjects" />
   <rule ref="category/java/design.xml/CyclomaticComplexity">
     <properties>
-      <property name="classReportLevel" value="153" />
+      <property name="classReportLevel" value="165" />
       <property name="methodReportLevel" value="15" />
     </properties> </rule>
   <rule ref="category/java/design.xml/DataClass" />
@@ -164,12 +164,12 @@
   <rule ref="category/java/design.xml/ExceptionAsFlowControl" />
   <rule ref="category/java/design.xml/ExcessiveClassLength">
     <properties>
-      <property name="minimum" value="3300.0" />
+      <property name="minimum" value="3500.0" />
     </properties>
   </rule>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
-      <property name="minimum" value="56"/>
+      <property name="minimum" value="58"/>
     </properties>
   </rule>
   <rule ref="category/java/design.xml/ExcessiveMethodLength" />
@@ -192,7 +192,7 @@
   <rule ref="category/java/design.xml/NcssCount" />
   <rule ref="category/java/design.xml/NPathComplexity">
     <properties>
-      <property name="reportLevel" value="273" />
+      <property name="reportLevel" value="529" />
     </properties></rule>
   <rule ref="category/java/design.xml/SignatureDeclareThrowsException" />
   <rule ref="category/java/design.xml/SimplifiedTernary" />
