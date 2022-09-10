@@ -4,7 +4,7 @@ This is a minimal Java implementation of the FritzBox AHA and TR64 APIs which wi
 
 See:
 
-* [AVM Entwicklungssupport](https://avm.de/service/schnittstellen/)
+* [AVM Entwicklungssupport](https://avm.de/service/schnittstellen/) (1.36 2020-09-16)
 
 Please note that I am not related to AVM in any way and that AVM will not support this code in any way!
 

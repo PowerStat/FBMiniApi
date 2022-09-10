@@ -222,7 +222,7 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse2.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse2.getEntity()).thenReturn(mockHttpEntity2);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?version=2&username=&response=deadbeef-" + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest(("deadbeef-" + FBPASSWORD).getBytes(Charset.forName("utf-16le"))))))))).thenReturn(mockCloseableHttpResponse2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?version=2&username=&response=deadbeef-" + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest(("deadbeef-" + AHASessionMiniTests.FBPASSWORD).getBytes(Charset.forName("utf-16le"))))))))).thenReturn(mockCloseableHttpResponse2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     // ----------
 
@@ -284,7 +284,7 @@ public class AHASessionMiniTests
   @Test
   public void newInstance1() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    final AHASessionMini ahasession = AHASessionMini.newInstance(FBPASSWORD);
+    final AHASessionMini ahasession = AHASessionMini.newInstance(AHASessionMiniTests.FBPASSWORD);
     assertNotNull(ahasession, "newInstance failed!"); //$NON-NLS-1$
    }
 
@@ -302,7 +302,7 @@ public class AHASessionMiniTests
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, mockDocBuilder, FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, mockDocBuilder, AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     assertNotNull(ahasession, "newInstance failed!"); //$NON-NLS-1$
    }
 
@@ -320,9 +320,9 @@ public class AHASessionMiniTests
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, mockDocBuilder, FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, mockDocBuilder, AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final String representation = ahasession.toString();
-    assertEquals("AHASessionMini[hostname=" + FRITZ_BOX + ", username=, sid=0000000000000000]", representation, "toString with unexpected result"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("AHASessionMini[hostname=" + AHASessionMiniTests.FRITZ_BOX + ", username=, sid=0000000000000000]", representation, "toString with unexpected result"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -343,17 +343,17 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
 
     final boolean successLogon = ahasession.logon();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -375,10 +375,10 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, false);
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
 
     final boolean successLogon = ahasession.logon();
     assertAll(
@@ -404,17 +404,17 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     final String testDoc2 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><SessionInfo><SID>0000000000004711</SID><Challenge>deadbeef</Challenge><BlockTime>0</BlockTime><Rights></Rights></SessionInfo>"; //$NON-NLS-1$
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc2);
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
 
     final boolean successLogon = ahasession.logon();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertFalse(successLogoff, "Logoff success") //$NON-NLS-1$
     );
    }
@@ -437,7 +437,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -456,18 +456,18 @@ public class AHASessionMiniTests
     when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getswitchlist&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final List<AIN> results = new ArrayList<>();
-    results.add(AIN.of(AIN1));
+    results.add(AIN.of(AHASessionMiniTests.AIN1));
     results.add(AIN.of("000000000002")); //$NON-NLS-1$
     results.add(AIN.of("000000000003")); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
     final List<AIN> switches = ahasession.getSwitchList();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertEquals(results, switches, "Switches are not as expected"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -489,7 +489,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -508,16 +508,16 @@ public class AHASessionMiniTests
     when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getswitchlist&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final List<AIN> results = new ArrayList<>();
-    results.add(AIN.of(AIN1));
+    results.add(AIN.of(AHASessionMiniTests.AIN1));
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
     final List<AIN> switches = ahasession.getSwitchList();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertEquals(results, switches, "Switches are not as expected"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -539,7 +539,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -559,14 +559,14 @@ public class AHASessionMiniTests
 
     final List<AIN> results = new ArrayList<>();
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
     final List<AIN> switches = ahasession.getSwitchList();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertEquals(results, switches, "Switches are not as expected"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -589,14 +589,14 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
     final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
     when(mockHttpEntity5.isStreaming()).thenReturn(false);
 
-    final String testDoc5 = TEST_CONTENT_1;
+    final String testDoc5 = AHASessionMiniTests.TEST_CONTENT_1;
     when(mockHttpEntity5.getContentType()).thenReturn(null);
     when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
@@ -605,16 +605,16 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH1)))).thenReturn(mockCloseableHttpResponse5);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH1)))).thenReturn(mockCloseableHttpResponse5);
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean result = ahasession.setSwitchOn(AIN.of(AIN1));
+    final boolean result = ahasession.setSwitchOn(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertTrue(result, "Switch not on"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -637,7 +637,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -647,7 +647,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
     when(mockHttpEntity5.isStreaming()).thenReturn(false);
 
-    final String testDoc5 = TEST_CONTENT_1;
+    final String testDoc5 = AHASessionMiniTests.TEST_CONTENT_1;
     when(mockHttpEntity5.getContentType()).thenReturn(null);
     when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
@@ -656,13 +656,13 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineFailure);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH1)))).thenReturn(mockCloseableHttpResponse5);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH1)))).thenReturn(mockCloseableHttpResponse5);
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IOException.class, () ->
      {
-      /* final boolean result = */ ahasession.setSwitchOn(AIN.of(AIN1));
+      /* final boolean result = */ ahasession.setSwitchOn(AIN.of(AHASessionMiniTests.AIN1));
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -687,7 +687,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -703,16 +703,16 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH1)))).thenReturn(mockCloseableHttpResponse5);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH1)))).thenReturn(mockCloseableHttpResponse5);
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean result = ahasession.setSwitchOn(AIN.of(AIN1));
+    final boolean result = ahasession.setSwitchOn(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertFalse(result, "Switch on"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -735,14 +735,14 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
     final HttpEntity mockHttpEntity6 = mock(HttpEntity.class);
     when(mockHttpEntity6.isStreaming()).thenReturn(false);
 
-    final String testDoc6 = TEST_CONTENT_0;
+    final String testDoc6 = AHASessionMiniTests.TEST_CONTENT_0;
     when(mockHttpEntity6.getContentType()).thenReturn(null);
     when(mockHttpEntity6.getContent()).thenReturn(new ByteArrayInputStream(testDoc6.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity6.getContentLength()).thenReturn((long)testDoc6.length());
@@ -751,16 +751,16 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse6.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse6.getEntity()).thenReturn(mockHttpEntity6);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean result = ahasession.setSwitchOff(AIN.of(AIN1));
+    final boolean result = ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(result, SWITCH_NOT_OFF),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(result, AHASessionMiniTests.SWITCH_NOT_OFF),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -783,7 +783,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -799,16 +799,16 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse6.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse6.getEntity()).thenReturn(mockHttpEntity6);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean result = ahasession.setSwitchOff(AIN.of(AIN1));
+    final boolean result = ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertFalse(result, "Switch off"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -831,7 +831,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -840,7 +840,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity6 = mock(HttpEntity.class);
     when(mockHttpEntity6.isStreaming()).thenReturn(false);
 
-    final String testDoc6 = TEST_CONTENT_0;
+    final String testDoc6 = AHASessionMiniTests.TEST_CONTENT_0;
     when(mockHttpEntity6.getContentType()).thenReturn(null);
     when(mockHttpEntity6.getContent()).thenReturn(new ByteArrayInputStream(testDoc6.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity6.getContentLength()).thenReturn((long)testDoc6.length());
@@ -849,14 +849,14 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse6.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse6.getEntity()).thenReturn(mockHttpEntity6);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
 
     // ----------
 
     final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
     when(mockHttpEntity7.isStreaming()).thenReturn(false);
 
-    final String testDoc7 = TEST_CONTENT_1;
+    final String testDoc7 = AHASessionMiniTests.TEST_CONTENT_1;
     when(mockHttpEntity7.getContentType()).thenReturn(null);
     when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
@@ -869,17 +869,17 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean resultOff1 = ahasession.setSwitchOff(AIN.of(AIN1));
-    final boolean resultToggle1 = ahasession.setSwitchToggle(AIN.of(AIN1));
-    /* final boolean resultOff2 = */ ahasession.setSwitchOff(AIN.of(AIN1));
+    final boolean resultOff1 = ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
+    final boolean resultToggle1 = ahasession.setSwitchToggle(AIN.of(AHASessionMiniTests.AIN1));
+    /* final boolean resultOff2 = */ ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(resultOff1, SWITCH_NOT_OFF),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(resultOff1, AHASessionMiniTests.SWITCH_NOT_OFF),
       () -> assertTrue(resultToggle1, "Switch not on"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -902,7 +902,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -911,7 +911,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity6 = mock(HttpEntity.class);
     when(mockHttpEntity6.isStreaming()).thenReturn(false);
 
-    final String testDoc6 = TEST_CONTENT_0;
+    final String testDoc6 = AHASessionMiniTests.TEST_CONTENT_0;
     when(mockHttpEntity6.getContentType()).thenReturn(null);
     when(mockHttpEntity6.getContent()).thenReturn(new ByteArrayInputStream(testDoc6.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity6.getContentLength()).thenReturn((long)testDoc6.length());
@@ -920,7 +920,7 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse6.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse6.getEntity()).thenReturn(mockHttpEntity6);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
 
     // ----------
 
@@ -940,17 +940,17 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean resultOff1 = ahasession.setSwitchOff(AIN.of(AIN1));
-    final boolean resultToggle1 = ahasession.setSwitchToggle(AIN.of(AIN1));
-    /* final boolean resultOff2 = */ ahasession.setSwitchOff(AIN.of(AIN1));
+    final boolean resultOff1 = ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
+    final boolean resultToggle1 = ahasession.setSwitchToggle(AIN.of(AHASessionMiniTests.AIN1));
+    /* final boolean resultOff2 = */ ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(resultOff1, SWITCH_NOT_OFF),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(resultOff1, AHASessionMiniTests.SWITCH_NOT_OFF),
       () -> assertFalse(resultToggle1, "Switch on"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -973,7 +973,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -982,7 +982,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity6 = mock(HttpEntity.class);
     when(mockHttpEntity6.isStreaming()).thenReturn(false);
 
-    final String testDoc6 = TEST_CONTENT_1;
+    final String testDoc6 = AHASessionMiniTests.TEST_CONTENT_1;
     when(mockHttpEntity6.getContentType()).thenReturn(null);
     when(mockHttpEntity6.getContent()).thenReturn(new ByteArrayInputStream(testDoc6.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity6.getContentLength()).thenReturn((long)testDoc6.length());
@@ -991,14 +991,14 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse6.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse6.getEntity()).thenReturn(mockHttpEntity6);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH1)))).thenReturn(mockCloseableHttpResponse6);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH1)))).thenReturn(mockCloseableHttpResponse6);
 
     // ----------
 
     final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
     when(mockHttpEntity7.isStreaming()).thenReturn(false);
 
-    final String testDoc7 = TEST_CONTENT_1;
+    final String testDoc7 = AHASessionMiniTests.TEST_CONTENT_1;
     when(mockHttpEntity7.getContentType()).thenReturn(null);
     when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
@@ -1011,16 +1011,16 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean resultOn = ahasession.setSwitchOn(AIN.of(AIN1));
-    final boolean resultState = ahasession.getSwitchState(AIN.of(AIN1));
+    final boolean resultOn = ahasession.setSwitchOn(AIN.of(AHASessionMiniTests.AIN1));
+    final boolean resultState = ahasession.getSwitchState(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertTrue(resultOn, "Switch not on"), //$NON-NLS-1$
       () -> assertTrue(resultState, "Switch state not on"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1045,7 +1045,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1054,7 +1054,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity6 = mock(HttpEntity.class);
     when(mockHttpEntity6.isStreaming()).thenReturn(false);
 
-    final String testDoc6 = TEST_CONTENT_0;
+    final String testDoc6 = AHASessionMiniTests.TEST_CONTENT_0;
     when(mockHttpEntity6.getContentType()).thenReturn(null);
     when(mockHttpEntity6.getContent()).thenReturn(new ByteArrayInputStream(testDoc6.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity6.getContentLength()).thenReturn((long)testDoc6.length());
@@ -1063,7 +1063,7 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse6.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse6.getEntity()).thenReturn(mockHttpEntity6);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
 
     // ----------
 
@@ -1083,12 +1083,12 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
-    /* final boolean resultOff = */ ahasession.setSwitchOff(AIN.of(AIN1));
+    /* final boolean resultOff = */ ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
     assertThrows(ProviderNotFoundException.class, () ->
      {
-      /* final boolean resultState = */ ahasession.getSwitchState(AIN.of(AIN1));
+      /* final boolean resultState = */ ahasession.getSwitchState(AIN.of(AHASessionMiniTests.AIN1));
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1113,7 +1113,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1122,7 +1122,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity6 = mock(HttpEntity.class);
     when(mockHttpEntity6.isStreaming()).thenReturn(false);
 
-    final String testDoc6 = TEST_CONTENT_0;
+    final String testDoc6 = AHASessionMiniTests.TEST_CONTENT_0;
     when(mockHttpEntity6.getContentType()).thenReturn(null);
     when(mockHttpEntity6.getContent()).thenReturn(new ByteArrayInputStream(testDoc6.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity6.getContentLength()).thenReturn((long)testDoc6.length());
@@ -1131,7 +1131,7 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse6.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse6.getEntity()).thenReturn(mockHttpEntity6);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher(HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher(AHASessionMiniTests.HOMEAUTOSWITCH2)))).thenReturn(mockCloseableHttpResponse6);
 
     // ----------
 
@@ -1151,16 +1151,16 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean resultOff = ahasession.setSwitchOff(AIN.of(AIN1));
-    final boolean resultState = ahasession.getSwitchState(AIN.of(AIN1));
+    final boolean resultOff = ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
+    final boolean resultState = ahasession.getSwitchState(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(resultOff, SWITCH_NOT_OFF),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(resultOff, AHASessionMiniTests.SWITCH_NOT_OFF),
       () -> assertFalse(resultState, "Switch state not off"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1183,7 +1183,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1192,7 +1192,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
     when(mockHttpEntity7.isStreaming()).thenReturn(false);
 
-    final String testDoc7 = TEST_CONTENT_1;
+    final String testDoc7 = AHASessionMiniTests.TEST_CONTENT_1;
     when(mockHttpEntity7.getContentType()).thenReturn(null);
     when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
@@ -1205,14 +1205,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean present = ahasession.isSwitchPresent(AIN.of(AIN1));
+    final boolean present = ahasession.isSwitchPresent(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertTrue(present, "Switch state not off"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1235,7 +1235,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1257,14 +1257,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final boolean present = ahasession.isSwitchPresent(AIN.of(AIN1));
+    final boolean present = ahasession.isSwitchPresent(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertFalse(present, "Switch state not off"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1289,7 +1289,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1311,14 +1311,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Power power = ahasession.getSwitchPower(AIN.of(AIN1));
+    final Power power = ahasession.getSwitchPower(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(powerValue.replaceAll("\n", "")), power.getPowerMilliWatt(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals(Long.parseLong(powerValue.replace("\n", "")), power.getPowerMilliWatt(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1341,7 +1341,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1363,11 +1363,11 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(ProviderNotFoundException.class, () ->
      {
-      /* final Power power = */ ahasession.getSwitchPower(AIN.of(AIN1));
+      /* final Power power = */ ahasession.getSwitchPower(AIN.of(AHASessionMiniTests.AIN1));
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1394,7 +1394,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1416,14 +1416,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Energy energy = ahasession.getSwitchEnergy(AIN.of(AIN1));
+    final Energy energy = ahasession.getSwitchEnergy(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(energyValue.replaceAll("\n", "")), energy.getEnergyWattHours(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals(Long.parseLong(energyValue.replace("\n", "")), energy.getEnergyWattHours(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1446,7 +1446,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1468,11 +1468,11 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(ProviderNotFoundException.class, () ->
      {
-      /* final Energy energy = */ ahasession.getSwitchEnergy(AIN.of(AIN1));
+      /* final Energy energy = */ ahasession.getSwitchEnergy(AIN.of(AHASessionMiniTests.AIN1));
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1499,7 +1499,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1521,14 +1521,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final String switchName = ahasession.getSwitchName(AIN.of(AIN1));
+    final String switchName = ahasession.getSwitchName(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals(name.replaceAll("\n", ""), switchName, "Switch name not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals(name.replace("\n", ""), switchName, "Switch name not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1551,7 +1551,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1573,14 +1573,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
     final Document doc = ahasession.getDeviceListInfos();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<devicelist version=\"1\"/>\n", TR64SessionMini.docToString(doc).replaceAll("\r", ""), DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<devicelist version=\"1\"/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1603,7 +1603,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1628,7 +1628,7 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IOException.class, () ->
      {
@@ -1659,7 +1659,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1681,14 +1681,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Temperature temperature = ahasession.getTemperature(AIN.of(AIN1));
+    final Temperature temperature = ahasession.getTemperature(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(temperatureValue.replaceAll("\n", "")), temperature.getTemperatureDeciCelsius(), TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals(Long.parseLong(temperatureValue.replace("\n", "")), temperature.getTemperatureDeciCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1713,7 +1713,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1735,11 +1735,11 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(NumberFormatException.class, () ->
      {
-      /* final Temperature temperature = */ ahasession.getTemperature(AIN.of(AIN1));
+      /* final Temperature temperature = */ ahasession.getTemperature(AIN.of(AHASessionMiniTests.AIN1));
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1766,7 +1766,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1788,14 +1788,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Temperature temperature = ahasession.getHkrtSoll(AIN.of(AIN1));
+    final Temperature temperature = ahasession.getHkrtSoll(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> {
-        long expected = (Long.parseLong(soll.replaceAll("\n", "")) * 10) / 2; //$NON-NLS-1$ //$NON-NLS-2$
+        long expected = (Long.parseLong(soll.replace("\n", "")) * 10) / 2; //$NON-NLS-1$ //$NON-NLS-2$
         if (expected == ((253 * 10) / 2))
          {
           expected = 0;
@@ -1804,9 +1804,9 @@ public class AHASessionMiniTests
          {
           expected = 300;
          }
-        assertEquals(expected, temperature.getTemperatureDeciCelsius(), TEMPERATURE_NOT_AS_EXPECTED);
+        assertEquals(expected, temperature.getTemperatureDeciCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED);
        },
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1831,7 +1831,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1853,11 +1853,11 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(NumberFormatException.class, () ->
      {
-      /* final Temperature temperature = */ ahasession.getHkrtSoll(AIN.of(AIN1));
+      /* final Temperature temperature = */ ahasession.getHkrtSoll(AIN.of(AHASessionMiniTests.AIN1));
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1884,7 +1884,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1906,14 +1906,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Temperature temperature = ahasession.getHkrKomfort(AIN.of(AIN1));
+    final Temperature temperature = ahasession.getHkrKomfort(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals((Long.parseLong(komfort.replaceAll("\n", "")) * 10) / 2, temperature.getTemperatureDeciCelsius(), TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals((Long.parseLong(komfort.replace("\n", "")) * 10) / 2, temperature.getTemperatureDeciCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1938,7 +1938,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -1960,14 +1960,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Temperature temperature = ahasession.getHkrAbsenk(AIN.of(AIN1));
+    final Temperature temperature = ahasession.getHkrAbsenk(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals((Long.parseLong(absenk.replaceAll("\n", "")) * 10) / 2, temperature.getTemperatureDeciCelsius(), TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals((Long.parseLong(absenk.replace("\n", "")) * 10) / 2, temperature.getTemperatureDeciCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -1992,7 +1992,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2010,17 +2010,17 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrtsoll&param=" + ((temperature == 0) ? "253" : (temperature == 300 ? "254" : ((temperature * 2) / 10))) + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$ //$NON-NLS-2$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrtsoll&param=" + ((temperature == 0) ? "253" : (temperature == 300 ? "254" : ((temperature * 2) / 10))) + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$ //$NON-NLS-2$
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setHkrtSoll(AIN.of(AIN1), Temperature.of(temperature));
+    ahasession.setHkrtSoll(AIN.of(AHASessionMiniTests.AIN1), Temperature.of(temperature));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2045,7 +2045,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2063,15 +2063,15 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrtsoll&param=" + temperature + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrtsoll&param=" + temperature + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
-      ahasession.setHkrtSoll(AIN.of(AIN1), Temperature.of(temperature));
+      ahasession.setHkrtSoll(AIN.of(AHASessionMiniTests.AIN1), Temperature.of(temperature));
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2096,7 +2096,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2118,14 +2118,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Document doc = ahasession.getBasicDeviceStats(AIN.of(AIN1));
+    final Document doc = ahasession.getBasicDeviceStats(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<devicestats/>\n", TR64SessionMini.docToString(doc).replaceAll("\r", ""), DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<devicestats/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2148,7 +2148,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2170,14 +2170,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
     final Document doc = ahasession.getTemplateListInfos();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<templatelist version=\"1\"/>\n", TR64SessionMini.docToString(doc).replaceAll("\r", ""), DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<templatelist version=\"1\"/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2200,7 +2200,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2209,7 +2209,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
     when(mockHttpEntity7.isStreaming()).thenReturn(false);
 
-    final String testDoc7 = TEST_CONTENT_0;
+    final String testDoc7 = AHASessionMiniTests.TEST_CONTENT_0;
     when(mockHttpEntity7.getContentType()).thenReturn(null);
     when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
@@ -2222,13 +2222,13 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
     ahasession.applyTemplate("tmp000000-000000000"); //$NON-NLS-1$
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2253,7 +2253,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2269,15 +2269,15 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setSimpleOnOff(AIN.of(AIN1), onoff);
+    ahasession.setSimpleOnOff(AIN.of(AHASessionMiniTests.AIN1), onoff);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2302,7 +2302,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2318,13 +2318,13 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setSimpleOnOff(AIN.of(AIN1), onoff);
+      ahasession.setSimpleOnOff(AIN.of(AHASessionMiniTests.AIN1), onoff);
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2349,7 +2349,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2370,11 +2370,11 @@ public class AHASessionMiniTests
 
     when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=0&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(UnsupportedOperationException.class, () ->
      {
-      ahasession.setSimpleOnOff(AIN.of(AIN1), 0);
+      ahasession.setSimpleOnOff(AIN.of(AHASessionMiniTests.AIN1), 0);
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2401,7 +2401,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2417,15 +2417,15 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setLevel(AIN.of(AIN1), level);
+    ahasession.setLevel(AIN.of(AHASessionMiniTests.AIN1), level);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2450,7 +2450,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2466,13 +2466,13 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setLevel(AIN.of(AIN1), level);
+      ahasession.setLevel(AIN.of(AHASessionMiniTests.AIN1), level);
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2499,7 +2499,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2515,15 +2515,15 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setLevelPercentage(AIN.of(AIN1), level);
+    ahasession.setLevelPercentage(AIN.of(AHASessionMiniTests.AIN1), level);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2548,7 +2548,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2564,13 +2564,13 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setLevelPercentage(AIN.of(AIN1), level);
+      ahasession.setLevelPercentage(AIN.of(AHASessionMiniTests.AIN1), level);
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2599,7 +2599,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2615,15 +2615,15 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + DURATION + duration + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + AHASessionMiniTests.DURATION + duration + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setColor(AIN.of(AIN1), hue, saturation, duration);
+    ahasession.setColor(AIN.of(AHASessionMiniTests.AIN1), hue, saturation, duration);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2650,7 +2650,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2666,13 +2666,13 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + DURATION + duration + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + AHASessionMiniTests.DURATION + duration + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setColor(AIN.of(AIN1), hue, saturation, duration);
+      ahasession.setColor(AIN.of(AHASessionMiniTests.AIN1), hue, saturation, duration);
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2700,7 +2700,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2716,15 +2716,15 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + DURATION + duration + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + AHASessionMiniTests.DURATION + duration + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setColorTemperature(AIN.of(AIN1), temperature, duration);
+    ahasession.setColorTemperature(AIN.of(AHASessionMiniTests.AIN1), temperature, duration);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2750,7 +2750,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2766,13 +2766,13 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + DURATION + duration + SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + AHASessionMiniTests.DURATION + duration + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setColorTemperature(AIN.of(AIN1), temperature, duration);
+      ahasession.setColorTemperature(AIN.of(AHASessionMiniTests.AIN1), temperature, duration);
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2797,7 +2797,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2819,14 +2819,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
     final Document doc = ahasession.getColorDefaults();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
-      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<colordefaults/>\n", TR64SessionMini.docToString(doc).replaceAll("\r", ""), DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<colordefaults/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2849,7 +2849,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2874,7 +2874,7 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(UnsupportedOperationException.class, () ->
      {
@@ -2903,7 +2903,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2912,7 +2912,7 @@ public class AHASessionMiniTests
     final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
     when(mockHttpEntity7.isStreaming()).thenReturn(false);
 
-    final String testDoc7 = TEST_CONTENT_0;
+    final String testDoc7 = AHASessionMiniTests.TEST_CONTENT_0;
     when(mockHttpEntity7.getContentType()).thenReturn(null);
     when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
@@ -2925,14 +2925,14 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final long endtime = ahasession.setHkrBoost(AIN.of(AIN1), 0);
+    final long endtime = ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), 0);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertEquals(0, endtime, "Wrong endtime"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -2957,7 +2957,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -2977,18 +2977,18 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final long endtime = ahasession.setHkrBoost(AIN.of(AIN1), boostend);
+    final long endtime = ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), boostend);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertEquals(boostend, endtime, "Wrong endtime"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -3013,7 +3013,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -3033,15 +3033,15 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final long endtime = */ ahasession.setHkrBoost(AIN.of(AIN1), boostend);
+      /* final long endtime = */ ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), boostend);
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -3068,7 +3068,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -3088,18 +3088,18 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final long endtime = ahasession.setHkrWindowOpen(AIN.of(AIN1), openend);
+    final long endtime = ahasession.setHkrWindowOpen(AIN.of(AHASessionMiniTests.AIN1), openend);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertEquals(openend, endtime, "Wrong endtime"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -3124,7 +3124,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -3144,15 +3144,15 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final long endtime = */ ahasession.setHkrWindowOpen(AIN.of(AIN1), openend);
+      /* final long endtime = */ ahasession.setHkrWindowOpen(AIN.of(AHASessionMiniTests.AIN1), openend);
      }
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -3179,7 +3179,7 @@ public class AHASessionMiniTests
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
     when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = MIN_SESSION;
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
     createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
     createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
 
@@ -3197,18 +3197,214 @@ public class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault()) + SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault()) + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), FRITZ_BOX, 443, "", FBPASSWORD); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setBlind(AIN.of(AIN1), target);
+    ahasession.setBlind(AIN.of(AHASessionMiniTests.AIN1), target);
     final boolean successLogoff = ahasession.logoff();
     assertAll(
-      () -> assertTrue(successLogon, LOGON_FAILED),
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertEquals("CLOSE".equals(target.name()) ? 0 : ("OPEN".equals(target.name()) ? 1 : 2), target.getAction(), "Wrong action"), //$NON-NLS-1$
-      () -> assertTrue(successLogoff, LOGOFF_FAILED)
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
+    );
+   }
+
+
+  /**
+   * Set name test.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws InvalidKeyException Invalid key exception
+   * @throws NoSuchAlgorithmException No such algorithmE exception
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   */
+  @Test
+  public void setName() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final String testDoc7 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setname&name=" + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    final boolean successLogon = ahasession.logon();
+    ahasession.setName(AIN.of("000000000001"), ""); // name = 40, > 40
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      // TODO
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
+    );
+   }
+
+
+  /**
+   * Start ule subscription test.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws InvalidKeyException Invalid key exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   */
+  @Test
+  public void startUleSubscription() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final String testDoc7 = "\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=startulesubscription" + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    final boolean successLogon = ahasession.logon();
+    ahasession.startUleSubscription();
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      // TODO
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
+    );
+   }
+
+
+  /**
+   * Get subscription state test.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws InvalidKeyException Invalid key exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   */
+  @Test
+  public void getSubscriptionState() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final String testDoc7 = "<state code=\"3\"><latestain>000000000001</latestain></state>\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getsubscriptionstate" + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    final boolean successLogon = ahasession.logon();
+    final Document result = ahasession.getSubscriptionState();
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      // TODO
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
+    );
+   }
+
+
+  /**
+   * Get device info test .
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws InvalidKeyException Invalid key exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   */
+  @Test
+  public void getDeviceInfo() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
+
+    // ----------
+
+    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
+    when(mockHttpEntity7.isStreaming()).thenReturn(false);
+
+    final String testDoc7 = "<devicelist version=\"1\"></devicelist>\n\n"; //$NON-NLS-1$
+    when(mockHttpEntity7.getContentType()).thenReturn(null);
+    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
+    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
+
+    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
+    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
+    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
+
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=getdeviceinfo" + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+
+    // ----------
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    final boolean successLogon = ahasession.logon();
+    final Document result = ahasession.getDeviceInfo(AIN.of("000000000001"));
+    final boolean successLogoff = ahasession.logoff();
+    assertAll(
+      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
+      // TODO
+      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
@@ -3229,7 +3425,7 @@ public class AHASessionMiniTests
   @Disabled
   public void real() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, TransformerException, InvalidKeyException
    {
-    LOGGER.debug("---------- real start ----------"); //$NON-NLS-1$
+    AHASessionMiniTests.LOGGER.debug("---------- real start ----------"); //$NON-NLS-1$
     final AHASessionMini ahasession = AHASessionMini.newInstance(""); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     // final Document result = ahasession.getTemplateListInfos();
@@ -3237,7 +3433,7 @@ public class AHASessionMiniTests
     ahasession.setSimpleOnOff(AIN.of(""), 1); //$NON-NLS-1$
     /* final boolean successLogoff = */ ahasession.logoff();
     assertNotNull(ahasession, "Dummy");
-    LOGGER.debug("---------- real end ----------"); //$NON-NLS-1$
+    AHASessionMiniTests.LOGGER.debug("---------- real end ----------"); //$NON-NLS-1$
    }
 
 
@@ -3280,9 +3476,9 @@ public class AHASessionMiniTests
     // factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
     final DocumentBuilder docBuilder = factory.newDocumentBuilder();
     final Document doc = docBuilder.parse(stream);
-    if (LOGGER.isDebugEnabled())
+    if (AHASessionMiniTests.LOGGER.isDebugEnabled())
      {
-      LOGGER.debug("XMLString: " + TR64SessionMini.docToString(doc)); //$NON-NLS-1$
+      AHASessionMiniTests.LOGGER.debug("XMLString: " + TR64SessionMini.docToString(doc)); //$NON-NLS-1$
      }
     assertNotNull(doc, "Dummy");
    }
@@ -3299,8 +3495,8 @@ public class AHASessionMiniTests
   @Test
   public void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    final AHASessionMini session1 = AHASessionMini.newInstance(FRITZ_BOX, 443, "", PASSWORD); //$NON-NLS-1$
-    final AHASessionMini session2 = AHASessionMini.newInstance(FRITZ_BOX, 443, "", PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session1 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session2 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
     final AHASessionMini session3 = AHASessionMini.newInstance("fritz2.box", 443, "", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     assertAll("testHashCode", //$NON-NLS-1$
       () -> assertEquals(session1.hashCode(), session2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
@@ -3320,10 +3516,10 @@ public class AHASessionMiniTests
   @Test
   public void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    final AHASessionMini session1 = AHASessionMini.newInstance(FRITZ_BOX, 443, "", PASSWORD); //$NON-NLS-1$
-    final AHASessionMini session2 = AHASessionMini.newInstance(FRITZ_BOX, 443, "", PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session1 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session2 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
     final AHASessionMini session3 = AHASessionMini.newInstance("fritz2.box", 443, "", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final AHASessionMini session4 = AHASessionMini.newInstance(FRITZ_BOX, 443, "", PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session4 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(session1.equals(session1), "session11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(session1.equals(session2), "session12 are not equal"), //$NON-NLS-1$
@@ -3348,12 +3544,12 @@ public class AHASessionMiniTests
   @Test
   public void testCompareTo() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    final AHASessionMini session1 = AHASessionMini.newInstance(FRITZ_BOX, 443, "", PASSWORD); //$NON-NLS-1$
-    final AHASessionMini session2 = AHASessionMini.newInstance(FRITZ_BOX, 443, "", PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session1 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session2 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
     final AHASessionMini session3 = AHASessionMini.newInstance("fritz2.box", 443, "", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     final AHASessionMini session4 = AHASessionMini.newInstance("fritz3.box", 443, "", "TopSecret3"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final AHASessionMini session5 = AHASessionMini.newInstance(FRITZ_BOX, 443, "", PASSWORD); //$NON-NLS-1$
-    final AHASessionMini session6 = AHASessionMini.newInstance(FRITZ_BOX, 443, "admin", PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session5 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
+    final AHASessionMini session6 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "admin", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(session1.compareTo(session2) == -session2.compareTo(session1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(session1.compareTo(session3) == -session3.compareTo(session1), "reflexive2"), //$NON-NLS-1$
@@ -3413,9 +3609,9 @@ public class AHASessionMiniTests
        {
         rpath += "?" + right.getURI().getQuery(); //$NON-NLS-1$
        }
-      if (LOGGER.isDebugEnabled())
+      if (HttpGetMatcher.LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("rpath: " + rpath); //$NON-NLS-1$
+        HttpGetMatcher.LOGGER.debug("rpath: " + rpath); //$NON-NLS-1$
        }
       return this.path.equals(rpath);
      }

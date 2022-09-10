@@ -179,10 +179,10 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   /**
    * Get new instance for a TR64SessionMini.
    *
-   * @param hostname FB hostname
-   * @param port FB port number
-   * @param username FB username
-   * @param password FB password
+   * @param hostName FB hostname
+   * @param portNr FB port number
+   * @param userName FB username
+   * @param passWord FB password
    * @return TR64SessionMini
    * @throws KeyStoreException Key store exception
    * @throws NoSuchAlgorithmException No such algorithm exception
@@ -190,17 +190,17 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    * @throws ParserConfigurationException Parser configuration exception
    * @throws NullPointerException If hostname, username or password is null
    */
-  public static TR64SessionMini newInstance(final String hostname, final int port, final String username, final String password) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  public static TR64SessionMini newInstance(final String hostName, final int portNr, final String userName, final String passWord) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    return newInstance(Hostname.of(hostname), Port.of(port), Username.of(username), Password.of(password));
+    return newInstance(Hostname.of(hostName), Port.of(portNr), Username.of(userName), Password.of(passWord));
    }
 
 
   /**
    * Get new instance for default hostname fritz.box and default port 49443.
    *
-   * @param username FB username
-   * @param password FB password
+   * @param userName FB username
+   * @param passWord FB password
    * @return TR64SessionMini
    * @throws KeyStoreException Key store exception
    * @throws NoSuchAlgorithmException No such algorithm exception
@@ -208,9 +208,9 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    * @throws ParserConfigurationException Parser configuration exception
    * @throws NullPointerException If hostname, username or password is null
    */
-  public static TR64SessionMini newInstance(final String username, final String password) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  public static TR64SessionMini newInstance(final String userName, final String passWord) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    return newInstance("fritz.box", 49443, username, password); //$NON-NLS-1$
+    return newInstance("fritz.box", 49443, userName, passWord); //$NON-NLS-1$
    }
 
 
@@ -389,20 +389,20 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   /**
    * Compare with another object.
    *
-   * @param obj Object to compare with
+   * @param tr64SessionMiniObj Object to compare with
    * @return 0: equal; 1: greater; -1: smaller
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    *
    * TODO username
    */
   @Override
-  public int compareTo(final TR64SessionMini obj)
+  public int compareTo(final TR64SessionMini tr64SessionMiniObj)
    {
-    Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.hostname.compareTo(obj.hostname);
+    Objects.requireNonNull(tr64SessionMiniObj, "obj"); //$NON-NLS-1$
+    int result = this.hostname.compareTo(tr64SessionMiniObj.hostname);
     if (result == 0)
      {
-      result = this.port.compareTo(obj.port);
+      result = this.port.compareTo(tr64SessionMiniObj.port);
      }
     return result;
    }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2015-2022 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -86,7 +86,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * Url constant.
    */
-  private static final String HOMEAUTOSWITCH = "/webservices/homeautoswitch.lua?ain="; //$NON-NLS-1$
+  private static final String HOMEAUTOSWITCH = "/webservices/homeautoswitch.lua?"; //$NON-NLS-1$
+
+  /**
+   * Url constant.
+   */
+  private static final String HOMEAUTOSWITCH_WITH_AIN = "/webservices/homeautoswitch.lua?ain="; //$NON-NLS-1$
 
   /**
    * FB invalid string constant.
@@ -209,6 +214,59 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    }
 
 
+/*
+functionbitmask: Bitmaske der Geräte-Funktionsklassen, beginnen mit Bit 0, es können mehrere
+Bits gesetzt sein
+Bit 0: HAN-FUN Gerät
+Bit 2: Licht/Lampe
+Bit 4: Alarm-Sensor
+Bit 5: AVM-Button
+Bit 6: Heizkörperregler
+Bit 7: Energie Messgerät
+Bit 8: Temperatursensor
+Bit 9: Schaltsteckdose
+Bit 10: AVM DECT Repeater
+Bit 11: Mikrofon
+Bit 13: HAN-FUN-Unit
+Bit 15: an-/ausschaltbares Gerät/Steckdose/Lampe/Aktor
+Bit 16: Gerät mit einstellbarem Dimm-, Höhen- bzw. Niveau-Level
+Bit 17: Lampe mit einstellbarer Farbe/Farbtemperatur
+Bit 18: Rollladen(Blind) - hoch, runter, stop und level 0% bis 100 %
+
+HAN-FUN Unit Typ
+273 = SIMPLE_BUTTON
+256 = SIMPLE_ON_OFF_SWITCHABLE
+257 = SIMPLE_ON_OFF_SWITCH
+262 = AC_OUTLET
+263 = AC_OUTLET_SIMPLE_POWER_METERING
+264 = SIMPLE_LIGHT
+265 = DIMMABLE_LIGHT
+266 = DIMMER_SWITCH
+277 = COLOR_BULB
+278 = DIMMABLE_COLOR_BULB
+281 = BLIND
+282 = LAMELLAR
+512 = SIMPLE_DETECTOR
+513 = DOOR_OPEN_CLOSE_DETECTOR
+514 = WINDOW_OPEN_CLOSE_DETECTOR
+515 = MOTION_DETECTOR
+518 = FLOOD_DETECTOR
+519 = GLAS_BREAK_DETECTOR
+520 = VIBRATION_DETECTOR
+640 = SIREN
+
+HAN-FUN Interfaces
+277 = KEEP_ALIVE
+256 = ALERT
+512 = ON_OFF
+513 = LEVEL_CTRL
+514 = COLOR_CTRL
+516 = OPEN_CLOSE
+517 = OPEN_CLOSE_CONFIG
+772 = SIMPLE_BUTTON
+1024 = SUOTA-Update
+*/
+
   /**
    * Constructor.
    *
@@ -267,10 +325,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    *
    * @param httpclient CloseableHttpClient
    * @param docBuilder DocumentBuilder
-   * @param hostname FB hostname
-   * @param port FB port
-   * @param username FB username
-   * @param password FB password
+   * @param hostName FB hostname
+   * @param portNr FB port
+   * @param userName FB username
+   * @param passWord FB password
    * @return A new AHASessionMini instance.
    * @throws NullPointerException If a parameter is null
    *
@@ -280,19 +338,19 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
    * final DocumentBuilder docBuilder = factory.newDocumentBuilder();
    */
-  public static AHASessionMini newInstance(final CloseableHttpClient httpclient, final DocumentBuilder docBuilder, final String hostname, final int port, final String username, final String password)
+  public static AHASessionMini newInstance(final CloseableHttpClient httpclient, final DocumentBuilder docBuilder, final String hostName, final int portNr, final String userName, final String passWord)
    {
-    return AHASessionMini.newInstance(httpclient, docBuilder, Hostname.of(hostname), Port.of(port), Username.of(UsernameConfigurableStrategy.of(0, 32, "^[@./_0-9a-zA-Z-]*$", HandleEMail.EMAIL_POSSIBLE), username), Password.of(password)); //$NON-NLS-1$
+    return AHASessionMini.newInstance(httpclient, docBuilder, Hostname.of(hostName), Port.of(portNr), Username.of(UsernameConfigurableStrategy.of(0, 32, "^[@./_0-9a-zA-Z-]*$", HandleEMail.EMAIL_POSSIBLE), userName), Password.of(passWord)); //$NON-NLS-1$
    }
 
 
   /**
    * Get new instance for a FB hostname with password.
    *
-   * @param hostname FB hostname
-   * @param port FB port
-   * @param username FB username
-   * @param password FB password
+   * @param hostName FB hostname
+   * @param portNr FB port
+   * @param userName FB username
+   * @param passWord FB password
    * @return A new AHASessionMini instance.
    * @throws ParserConfigurationException Parser configuration exception
    * @throws NoSuchAlgorithmException No such algorithm exception
@@ -300,7 +358,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws KeyManagementException Key management exception
    * @throws NullPointerException If hostname or password is null
    */
-  public static AHASessionMini newInstance(final String hostname, final int port, final String username, final String password) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  public static AHASessionMini newInstance(final String hostName, final int portNr, final String userName, final String passWord) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(new SSLContextBuilder().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build())).build();
 
@@ -317,15 +375,15 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     // factory.setExpandEntityReferences(false);
     final DocumentBuilder docBuilder = factory.newDocumentBuilder();
 
-    return newInstance(httpclient, docBuilder, hostname, port, username, password);
+    return newInstance(httpclient, docBuilder, hostName, portNr, userName, passWord);
    }
 
 
   /**
    * Get new instance for a FB default hostname fritz.box, default port 443 with password.
    *
-   * @param username FB username
-   * @param password FB password
+   * @param userName FB username
+   * @param passWord FB password
    * @return A new AHASessionMini instance.
    * @throws ParserConfigurationException Parser configuration exception
    * @throws NoSuchAlgorithmException No such algorithm exception
@@ -333,16 +391,16 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws KeyManagementException Key management exception
    * @throws NullPointerException If hostname or password is null
    */
-  public static AHASessionMini newInstance(final String username, final String password) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  public static AHASessionMini newInstance(final String userName, final String passWord) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    return newInstance("fritz.box", 443, username, password); //$NON-NLS-1$
+    return newInstance("fritz.box", 443, userName, passWord); //$NON-NLS-1$
    }
 
 
   /**
    * Get new instance for a FB default hostname fritz.box with password.
    *
-   * @param password FB password
+   * @param passWord FB password
    * @return A new AHASessionMini instance.
    * @throws ParserConfigurationException Parser configuration exception
    * @throws NoSuchAlgorithmException No such algorithm exception
@@ -350,9 +408,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws KeyManagementException Key management exception
    * @throws NullPointerException If hostname or password is null
    */
-  public static AHASessionMini newInstance(final String password) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  public static AHASessionMini newInstance(final String passWord) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    return newInstance("", password); //$NON-NLS-1$
+    return newInstance("", passWord); //$NON-NLS-1$
    }
 
 
@@ -368,15 +426,15 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       try
        {
-        if (LOGGER.isDebugEnabled())
+        if (AHASessionMini.LOGGER.isDebugEnabled())
          {
-          LOGGER.debug("Checking timeout"); //$NON-NLS-1$
+          AHASessionMini.LOGGER.debug("Checking timeout"); //$NON-NLS-1$
          }
         if ((this.lastAccess + AHASessionMini.TIMEOUT.getMilliseconds()) >= System.currentTimeMillis())
          {
-          if (LOGGER.isDebugEnabled())
+          if (AHASessionMini.LOGGER.isDebugEnabled())
            {
-            LOGGER.debug("Preventing from timeout!"); //$NON-NLS-1$
+            AHASessionMini.LOGGER.debug("Preventing from timeout!"); //$NON-NLS-1$
            }
           /* final Document doc = */ getDeviceListInfos();
           // TODO check disconnect and login again
@@ -386,13 +444,13 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
        }
       catch (final InterruptedException e)
        {
-        LOGGER.debug("Timeout thread interupted", e); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("Timeout thread interupted", e); //$NON-NLS-1$
         Thread.currentThread().interrupt();
         return;
        }
       catch (final IOException | SAXException e)
        {
-        LOGGER.debug("", e); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("", e); //$NON-NLS-1$
        }
      }
    }
@@ -420,13 +478,13 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       if (responseCode != HttpURLConnection.HTTP_OK)
        {
         this.lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
-        if (LOGGER.isDebugEnabled())
+        if (AHASessionMini.LOGGER.isDebugEnabled())
          {
-          LOGGER.debug("StatusLine: " + response.getStatusLine()); //$NON-NLS-1$
+          AHASessionMini.LOGGER.debug("StatusLine: " + response.getStatusLine()); //$NON-NLS-1$
          }
-        if (LOGGER.isInfoEnabled())
+        if (AHASessionMini.LOGGER.isInfoEnabled())
          {
-          LOGGER.info("HttpStatus: " + response.getStatusLine().getStatusCode() + ":");  //$NON-NLS-1$//$NON-NLS-2$
+          AHASessionMini.LOGGER.info("HttpStatus: " + response.getStatusLine().getStatusCode() + ":");  //$NON-NLS-1$//$NON-NLS-2$
          }
         if (responseCode == HttpURLConnection.HTTP_FORBIDDEN)
          {
@@ -443,25 +501,25 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
            }
           return getDoc(urlPath); // TODO fix endless loop
          }
-        else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST)
+        if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST)
          {
           throw new UnsupportedOperationException("Possibly you used a command from a newer api version?"); //$NON-NLS-1$
          }
        }
       final HttpEntity entity = response.getEntity();
-      if (LOGGER.isDebugEnabled())
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("ContentType: " + entity.getContentType()); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("ContentType: " + entity.getContentType()); //$NON-NLS-1$
        }
       final String string = EntityUtils.toString(entity);
-      if (LOGGER.isDebugEnabled())
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("string: " + string); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("string: " + string); //$NON-NLS-1$
        }
       final byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
-      if (LOGGER.isDebugEnabled())
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("bytes: " +  new String(bytes, StandardCharsets.UTF_8)); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("bytes: " +  new String(bytes, StandardCharsets.UTF_8)); //$NON-NLS-1$
        }
       final ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
       final InputSource stream = new InputSource(byteStream);
@@ -492,13 +550,13 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       if (responseCode != HttpURLConnection.HTTP_OK)
        {
         this.lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
-        if (LOGGER.isDebugEnabled())
+        if (AHASessionMini.LOGGER.isDebugEnabled())
          {
-          LOGGER.debug(response.getStatusLine());
+          AHASessionMini.LOGGER.debug(response.getStatusLine());
          }
-        if (LOGGER.isInfoEnabled())
+        if (AHASessionMini.LOGGER.isInfoEnabled())
          {
-          LOGGER.info("HttpStatus: " + response.getStatusLine().getStatusCode() + ":");  //$NON-NLS-1$//$NON-NLS-2$
+          AHASessionMini.LOGGER.info("HttpStatus: " + response.getStatusLine().getStatusCode() + ":");  //$NON-NLS-1$//$NON-NLS-2$
          }
         if (responseCode == HttpURLConnection.HTTP_FORBIDDEN)
          {
@@ -515,20 +573,20 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
            }
           return getString(urlPath); // TODO fix endless loop
          }
-        else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST)
+        if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST)
          {
           throw new UnsupportedOperationException("Possibly you used a command from a newer api version?"); //$NON-NLS-1$
          }
        }
       final HttpEntity entity = response.getEntity();
-      if (LOGGER.isDebugEnabled())
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("ContentType: " + entity.getContentType()); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("ContentType: " + entity.getContentType()); //$NON-NLS-1$
        }
       final String result = EntityUtils.toString(entity);
-      if (LOGGER.isDebugEnabled())
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("getString: " + result); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("getString: " + result); //$NON-NLS-1$
        }
       return result;
      }
@@ -579,23 +637,23 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * Create a pbkdf2 HMAC by appling the Hmac iter times as specified.
    *
-   * @param password Password
+   * @param bPassWord Password
    * @param salt Salt
    * @param iters Iterator
    * @return Byte array
    * @throws NoSuchAlgorithmException No such algorithm exception
    * @throws InvalidKeyException Invalid key exception
    */
-  private static byte[] pbkdf2HmacSha256(final byte[] password, final byte[] salt, final int iters) throws NoSuchAlgorithmException, InvalidKeyException
+  private static byte[] pbkdf2HmacSha256(final byte[] bPassWord, final byte[] salt, final int iters) throws NoSuchAlgorithmException, InvalidKeyException
    {
-    Objects.requireNonNull(password);
+    Objects.requireNonNull(bPassWord);
     Objects.requireNonNull(salt);
     if (iters < 0)
      {
       throw new IllegalArgumentException("iters < 0"); //$NON-NLS-1$
      }
-    final Mac sha256mac = Mac.getInstance(SHA256);
-    sha256mac.init(new SecretKeySpec(password, SHA256));
+    final Mac sha256mac = Mac.getInstance(AHASessionMini.SHA256);
+    sha256mac.init(new SecretKeySpec(bPassWord, AHASessionMini.SHA256));
     final byte[] ret = new byte[sha256mac.getMacLength()];
     byte[] tmp = new byte[salt.length + 4];
     System.arraycopy(salt, 0, tmp, 0, salt.length);
@@ -639,15 +697,15 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     */
     // get first challenge
     Document doc = getDoc("/login_sid.lua?version=2"); //$NON-NLS-1$
-    this.sid = SID.of(doc.getElementsByTagName(SESSIONID).item(0).getTextContent());
-    if (LOGGER.isDebugEnabled())
+    this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
+    if (AHASessionMini.LOGGER.isDebugEnabled())
      {
-      LOGGER.debug("sid: " + this.sid.getSID()); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("sid: " + this.sid.getSID()); //$NON-NLS-1$
      }
-    if (LOGGER.isDebugEnabled())
+    if (AHASessionMini.LOGGER.isDebugEnabled())
      {
       final String blocktime = doc.getElementsByTagName("BlockTime").item(0).getTextContent(); //$NON-NLS-1$
-      LOGGER.debug("blocktime: " + blocktime); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("blocktime: " + blocktime); //$NON-NLS-1$
      }
     // Users?
     // Rigths ?
@@ -656,9 +714,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     if (!this.sid.isValidSession())
      {
       String challenge = doc.getElementsByTagName("Challenge").item(0).getTextContent(); //$NON-NLS-1$
-      if (LOGGER.isDebugEnabled())
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("challenge: " + challenge); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("challenge: " + challenge); //$NON-NLS-1$
        }
       String response;
       if (challenge.startsWith("2$")) // PBKDF2 //$NON-NLS-1$
@@ -683,37 +741,37 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
         response = challenge + '-' + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + '-' + this.password.getPassword()).getBytes(Charset.forName("utf-16le"))))); //$NON-NLS-1$ //$NON-NLS-2$
        }
       doc = getDoc("/login_sid.lua?version=2&username=" + this.username.getUsername() + "&response=" + response); //$NON-NLS-1$ //$NON-NLS-2$
-      this.sid = SID.of(doc.getElementsByTagName(SESSIONID).item(0).getTextContent());
-      if (LOGGER.isDebugEnabled())
+      this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("sid: " + this.sid.getSID()); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("sid: " + this.sid.getSID()); //$NON-NLS-1$
        }
-      if (LOGGER.isDebugEnabled())
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
         challenge = doc.getElementsByTagName("Challenge").item(0).getTextContent(); //$NON-NLS-1$
-        LOGGER.debug("challenge: " + challenge); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("challenge: " + challenge); //$NON-NLS-1$
        }
-      if (LOGGER.isDebugEnabled())
+      if (AHASessionMini.LOGGER.isDebugEnabled())
        {
         final String blocktime = doc.getElementsByTagName("BlockTime").item(0).getTextContent(); //$NON-NLS-1$
-        LOGGER.debug("blocktime: " + blocktime); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("blocktime: " + blocktime); //$NON-NLS-1$
        }
       // Rigths ?
      }
 
     // check sid validity
     doc = getDoc("/login_sid.lua?version=2&sid=" + this.sid.getSID()); //$NON-NLS-1$
-    this.sid = SID.of(doc.getElementsByTagName(SESSIONID).item(0).getTextContent());
+    this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (!this.sid.isValidSession())
      {
-      LOGGER.error("login invalid"); //$NON-NLS-1$
+      AHASessionMini.LOGGER.error("login invalid"); //$NON-NLS-1$
       return false;
      }
     this.timeoutThread = new Thread();
     this.timeoutThread.start();
-    if (LOGGER.isInfoEnabled())
+    if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      LOGGER.info("login valid"); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("login valid"); //$NON-NLS-1$
      }
     return true;
     // }
@@ -741,18 +799,18 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
        }
     */
     final Document doc = getDoc("/login_sid.lua?version=2&logout=1&sid=" + this.sid.getSID()); //$NON-NLS-1$
-    this.sid = SID.of(doc.getElementsByTagName(SESSIONID).item(0).getTextContent());
+    this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (!this.sid.isValidSession())
      {
       // TODO check for existing thread
       this.timeoutThread.interrupt();
-      if (LOGGER.isInfoEnabled())
+      if (AHASessionMini.LOGGER.isInfoEnabled())
        {
-        LOGGER.info("successfully logged out."); //$NON-NLS-1$
+        AHASessionMini.LOGGER.info("successfully logged out."); //$NON-NLS-1$
        }
       return true;
      }
-    LOGGER.warn("logout error"); //$NON-NLS-1$
+    AHASessionMini.LOGGER.warn("logout error"); //$NON-NLS-1$
     return false;
     // }
    }
@@ -793,11 +851,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean setSwitchOn(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String result = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setswitchon"); //$NON-NLS-1$
-    if (LOGGER.isInfoEnabled())
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setswitchon"); //$NON-NLS-1$
+    if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      LOGGER.info("setSwitchOn()->" + result + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("setSwitchOn()->" + result + "<"); //$NON-NLS-1$ //$NON-NLS-2$
      }
     return "1".equals((result.length() == 0) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -814,11 +872,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean setSwitchOff(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String result = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setswitchoff"); //$NON-NLS-1$
-    if (LOGGER.isInfoEnabled())
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setswitchoff"); //$NON-NLS-1$
+    if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      LOGGER.info("setSwitchOff()->" + result + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("setSwitchOff()->" + result + "<"); //$NON-NLS-1$ //$NON-NLS-2$
      }
     return "0".equals((result.length() == 0) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -835,11 +893,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean setSwitchToggle(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String state = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setswitchtoggle"); //$NON-NLS-1$
-    if (LOGGER.isInfoEnabled())
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setswitchtoggle"); //$NON-NLS-1$
+    if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      LOGGER.info("setSwitchToggle()->" + state + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("setSwitchToggle()->" + state + "<"); //$NON-NLS-1$ //$NON-NLS-2$
      }
     return "1".equals((state.length() == 0) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -856,15 +914,15 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean getSwitchState(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String state = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchstate"); //$NON-NLS-1$
-    if (LOGGER.isInfoEnabled())
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchstate"); //$NON-NLS-1$
+    if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      LOGGER.info("getSwitchState()->" + state + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("getSwitchState()->" + state + "<"); //$NON-NLS-1$ //$NON-NLS-2$
      }
-    if ((state.length() >= 5) && INVAL.equals(state.substring(0, 5)))
+    if ((state.length() >= 5) && AHASessionMini.INVAL.equals(state.substring(0, 5)))
      {
-      throw new ProviderNotFoundException(INVALID);
+      throw new ProviderNotFoundException(AHASessionMini.INVALID);
      }
     return "1".equals((state.length() == 0) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -881,11 +939,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final boolean isSwitchPresent(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String present = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchpresent"); //$NON-NLS-1$
-    if (LOGGER.isInfoEnabled())
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String present = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchpresent"); //$NON-NLS-1$
+    if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      LOGGER.info("getSwitchPresent()->" + present + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("getSwitchPresent()->" + present + "<"); //$NON-NLS-1$ //$NON-NLS-2$
      }
     return "1".equals((present.length() == 0) ? "" : present.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -903,19 +961,19 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Power getSwitchPower(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    String power = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchpower"); //$NON-NLS-1$
-    if (LOGGER.isInfoEnabled())
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    String power = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchpower"); //$NON-NLS-1$
+    if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      LOGGER.info("getSwitchPower()->" + power + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("getSwitchPower()->" + power + "<"); //$NON-NLS-1$ //$NON-NLS-2$
      }
     if (power.length() > 1)
      {
       power = power.substring(0, power.length() - 1);
      }
-    if (INVAL.equals(power))
+    if (AHASessionMini.INVAL.equals(power))
      {
-      throw new ProviderNotFoundException(INVALID);
+      throw new ProviderNotFoundException(AHASessionMini.INVALID);
      }
     return Power.of(power);
    }
@@ -933,19 +991,19 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Energy getSwitchEnergy(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    String energy = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchenergy"); //$NON-NLS-1$
-    if (LOGGER.isInfoEnabled())
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    String energy = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchenergy"); //$NON-NLS-1$
+    if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      LOGGER.info("getSwitchEnergy()->" + energy + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("getSwitchEnergy()->" + energy + "<"); //$NON-NLS-1$ //$NON-NLS-2$
      }
     if (energy.length() > 1)
      {
       energy = energy.substring(0, energy.length() - 1);
      }
-    if (INVAL.equals(energy))
+    if (AHASessionMini.INVAL.equals(energy))
      {
-      throw new ProviderNotFoundException(INVALID);
+      throw new ProviderNotFoundException(AHASessionMini.INVALID);
      }
     return Energy.of(energy);
    }
@@ -962,8 +1020,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final String getSwitchName(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String name = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getswitchname"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String name = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchname"); //$NON-NLS-1$
     return (name.length() > 0) ? name.substring(0, name.length() - 1) : ""; //$NON-NLS-1$
    }
 
@@ -995,8 +1053,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Temperature getTemperature(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String temperature = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=gettemperature"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String temperature = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=gettemperature"); //$NON-NLS-1$
     return Temperature.of((temperature.length() > 0) ? temperature.substring(0, temperature.length() - 1) : ""); //$NON-NLS-1$
    }
 
@@ -1042,8 +1100,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Temperature getHkrtSoll(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String resultStr = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=gethkrtsoll"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=gethkrtsoll"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
 
@@ -1060,8 +1118,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Temperature getHkrKomfort(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String resultStr = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=gethkrkomfort"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=gethkrkomfort"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
 
@@ -1078,8 +1136,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Temperature getHkrAbsenk(final AIN ain) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    final String resultStr = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=gethkrabsenk"); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=gethkrabsenk"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
 
@@ -1097,7 +1155,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void setHkrtSoll(final AIN ain, final Temperature temperature) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     Objects.requireNonNull(temperature, "temperature"); //$NON-NLS-1$
     long fbTemperature;
     if (temperature.getTemperatureDeciCelsius() == 0)
@@ -1116,7 +1174,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       fbTemperature = (temperature.getTemperatureDeciCelsius() * 2) / 10;
      }
-    /* String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=sethkrtsoll&param=" + fbTemperature); //$NON-NLS-1$
+    /* String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=sethkrtsoll&param=" + fbTemperature); //$NON-NLS-1$
    }
 
 
@@ -1131,8 +1189,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Document getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    return getDoc(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=getbasicdevicestats&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getbasicdevicestats&sid=" + this.sid.getSID()); //$NON-NLS-1$
    }
 
 
@@ -1161,7 +1219,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void applyTemplate(final String templateIdentifier) throws IOException
    {
-    /* final String id = */ getString(HOMEAUTOSWITCH + templateIdentifier + "&switchcmd=applytemplate"); //$NON-NLS-1$
+    /* final String id = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + templateIdentifier + "&switchcmd=applytemplate"); //$NON-NLS-1$
    }
 
 
@@ -1178,12 +1236,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void setSimpleOnOff(final AIN ain, final int onoff) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     if ((onoff < 0) || (onoff > 2))
      {
       throw new IllegalArgumentException("onoff must be 0, 1 or 2"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setsimpleonoff&onoff=" + onoff); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setsimpleonoff&onoff=" + onoff); //$NON-NLS-1$
    }
 
 
@@ -1200,12 +1258,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void setLevel(final AIN ain, final int level) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     if ((level < 0) || (level > 255))
      {
       throw new IllegalArgumentException("level must be 0-255"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setlevel&level=" + level); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setlevel&level=" + level); //$NON-NLS-1$
    }
 
 
@@ -1222,12 +1280,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void setLevelPercentage(final AIN ain, final int level) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     if ((level < 0) || (level > 100))
      {
       throw new IllegalArgumentException("level must be 0-100"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setlevelpercentage&level=" + level); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setlevelpercentage&level=" + level); //$NON-NLS-1$
    }
 
 
@@ -1246,7 +1304,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void setColor(final AIN ain, final int hue, final int saturation, final int duration) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     if ((hue < 0) || (hue > 359))
      {
       throw new IllegalArgumentException("hue must be 0-359 degrees"); //$NON-NLS-1$
@@ -1259,7 +1317,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       throw new IllegalArgumentException("duration must be >= 0"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + "&duration=" + duration); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + "&duration=" + duration); //$NON-NLS-1$
    }
 
 
@@ -1267,7 +1325,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * Set color temperature.
    *
    * @param ain AIN
-   * @param temperature In kelvin 2700 - 6500
+   * @param temperatureKelvin In kelvin 2700 - 6500
    * @param duration Duration of change in 100ms, 0 means immediately
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
@@ -1275,18 +1333,18 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws IllegalArgumentException if level is not 0-255
    * @since 7.15
    */
-  public final void setColorTemperature(final AIN ain, final int temperature, final int duration) throws IOException
+  public final void setColorTemperature(final AIN ain, final int temperatureKelvin, final int duration) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    if ((temperature < 2700) || (temperature > 6500))
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    if ((temperatureKelvin < 2700) || (temperatureKelvin > 6500))
      {
-      throw new IllegalArgumentException("temperature must be 2700-6500 kelvin"); //$NON-NLS-1$
+      throw new IllegalArgumentException("temperatureKelvin must be 2700-6500 kelvin"); //$NON-NLS-1$
      }
     if (duration < 0)
      {
       throw new IllegalArgumentException("duration must be >= 0"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setcolortemperature&temperature=" + temperature + "&duration=" + duration); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setcolortemperature&temperature=" + temperatureKelvin + "&duration=" + duration); //$NON-NLS-1$
    }
 
 
@@ -1320,12 +1378,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final long setHkrBoost(final AIN ain, final long endtimestamp) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     if ((endtimestamp != 0) && ((endtimestamp < (System.currentTimeMillis() / 1000L)) || (endtimestamp > ((System.currentTimeMillis() / 1000L) + 86400))))
      {
       throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
      }
-    final String result = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=sethkrboost&endtimestamp=" + endtimestamp); //$NON-NLS-1$
+    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=sethkrboost&endtimestamp=" + endtimestamp); //$NON-NLS-1$
     return Long.parseLong(result.substring(0, result.length() - 1));
    }
 
@@ -1344,12 +1402,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final long setHkrWindowOpen(final AIN ain, final long endtimestamp) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     if ((endtimestamp != 0) && ((endtimestamp < (System.currentTimeMillis() / 1000L)) || (endtimestamp > ((System.currentTimeMillis() / 1000L) + 86400))))
      {
       throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
      }
-    final String result = getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=sethkrwindowopen&endtimestamp=" + endtimestamp); //$NON-NLS-1$
+    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=sethkrwindowopen&endtimestamp=" + endtimestamp); //$NON-NLS-1$
     return Long.parseLong(result.substring(0, result.length() - 1));
    }
 
@@ -1367,8 +1425,87 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void setBlind(final AIN ain, final HandleBlind target) throws IOException
    {
-    Objects.requireNonNull(ain, AIN_STR);
-    /* final String result = */ getString(HOMEAUTOSWITCH + ain.getAIN() + "&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault())); //$NON-NLS-1$
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault())); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Set name.
+   *
+   * Change device or group name (UTF-8).
+   * Requires smarthome and restricted app rights.
+   *
+   * @param ain AIN
+   * @param name Device or group name in UTF-8
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws IllegalArgumentException If name is > 40 characters
+   * @throws NullPointerException If ain or temperature is null
+   * @since 7.24
+   *
+   * TODO Name validation, encoding?
+   */
+  public final void setName(final AIN ain, final String name) throws IOException
+   {
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    Objects.requireNonNull(name, "name");
+    if (name.length() > 40)
+     {
+      throw new IllegalArgumentException("Name longer than 40 characters!");
+     }
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setname&name=" + name); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Start dect-ule device subscription.
+   *
+   * Requires smarthome and restricted app rights.
+   *
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws IllegalArgumentException If name is > 40 characters
+   * @throws NullPointerException If ain or temperature is null
+   * @since 7.24
+   */
+  public final void startUleSubscription() throws IOException
+   {
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH + "switchcmd=startulesubscription"); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Get dect-ule device subscription state.
+   *
+   * Requires smarthome and restricted app rights.
+   *
+   * @return XML document
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   * @since 7.24
+   */
+  public final Document getSubscriptionState() throws IOException, SAXException
+   {
+    return getDoc(AHASessionMini.HOMEAUTOSWITCH + "switchcmd=getsubscriptionstate&sid=" + this.sid.getSID()); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Get basic device info.
+   *
+   * @param ain AIN
+   * @return Device info in XML format see getdevicelistinfos
+   * @throws ClientProtocolException Client protocol exception
+   * @throws UnsupportedEncodingException Unsupported encoding exception
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   * @since 7.24
+   */
+  public final Document getDeviceInfo(final AIN ain) throws IOException, SAXException
+   {
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getdeviceinfo&sid=" + this.sid.getSID()); //$NON-NLS-1$
    }
 
 
@@ -1428,21 +1565,21 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * Compare with another object.
    *
-   * @param obj Object to compare with
+   * @param ahaSessionMiniObj Object to compare with
    * @return 0: equal; 1: greater; -1: smaller
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
   @Override
-  public int compareTo(final AHASessionMini obj)
+  public int compareTo(final AHASessionMini ahaSessionMiniObj)
    {
-    Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.hostname.compareTo(obj.hostname);
+    Objects.requireNonNull(ahaSessionMiniObj, "obj"); //$NON-NLS-1$
+    int result = this.hostname.compareTo(ahaSessionMiniObj.hostname);
     if (result == 0)
      {
-      result = this.username.compareTo(obj.username);
+      result = this.username.compareTo(ahaSessionMiniObj.username);
       if (result == 0)
        {
-        result = this.sid.compareTo(obj.sid);
+        result = this.sid.compareTo(ahaSessionMiniObj.sid);
        }
      }
     return result;

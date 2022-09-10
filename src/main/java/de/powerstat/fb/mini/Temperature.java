@@ -22,7 +22,7 @@ public class Temperature implements Comparable<Temperature>
    * Constructor.
    *
    * @param temperature Temperature in deci celsius (20 degrees will be 200 deci degrees)
-   * @throws IndexOutOfBoundsException If temperature is < -2732
+   * @throws IndexOutOfBoundsException If temperature is &lt; -2732
    */
   public Temperature(final long temperature)
    {
