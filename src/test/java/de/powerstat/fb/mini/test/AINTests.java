@@ -46,7 +46,7 @@ public class AINTests
    * @param ain AIN
    */
   @ParameterizedTest
-  @ValueSource(strings = {AIN0, "00000 0000000"})
+  @ValueSource(strings = {AINTests.AIN0, "00000 0000000", "00000 0000000-0", "000000000000-0"})
   public void ainCorrect(final String ain)
    {
     final AIN cleanAin = AIN.of(ain);
@@ -60,7 +60,7 @@ public class AINTests
    * @param ain AIN
    */
   @ParameterizedTest
-  @ValueSource(strings = {"00000000000", "0000000000000"})
+  @ValueSource(strings = {"00000000000", "0000000000000", "000000000000000"})
   public void ainLength(final String ain)
    {
     assertThrows(IllegalArgumentException.class, () ->
@@ -77,7 +77,7 @@ public class AINTests
    * @param ain AIN
    */
   @ParameterizedTest
-  @ValueSource(strings = {"00000000000g"})
+  @ValueSource(strings = {"00000000000g", "000000000000-g", "000000000000+0"})
   public void ainWrong(final String ain)
    {
     assertThrows(IllegalArgumentException.class, () ->
@@ -94,8 +94,8 @@ public class AINTests
   @Test
   public void getAin()
    {
-    final AIN ain = AIN.of(AIN0);
-    assertEquals(AIN0, ain.getAIN(), "AIN not as expected"); //$NON-NLS-1$
+    final AIN ain = AIN.of(AINTests.AIN0);
+    assertEquals(AINTests.AIN0, ain.getAIN(), "AIN not as expected"); //$NON-NLS-1$
    }
 
 
@@ -105,12 +105,12 @@ public class AINTests
   @Test
   public void testHashCode()
    {
-    final AIN bic1 = new AIN(AIN0);
-    final AIN bic2 = new AIN(AIN0);
-    final AIN bic3 = new AIN("000000000001"); //$NON-NLS-1$
+    final AIN ain1 = new AIN(AINTests.AIN0);
+    final AIN ain2 = new AIN(AINTests.AIN0);
+    final AIN ain3 = new AIN("000000000001"); //$NON-NLS-1$
     assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(bic1.hashCode(), bic2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(bic1.hashCode(), bic3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
+      () -> assertEquals(ain1.hashCode(), ain2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
+      () -> assertNotEquals(ain1.hashCode(), ain3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
     );
    }
 
@@ -121,10 +121,10 @@ public class AINTests
   @Test
   public void testEquals()
    {
-    final AIN ain1 = new AIN(AIN0);
-    final AIN ain2 = new AIN(AIN0);
+    final AIN ain1 = new AIN(AINTests.AIN0);
+    final AIN ain2 = new AIN(AINTests.AIN0);
     final AIN ain3 = new AIN("000000000001"); //$NON-NLS-1$
-    final AIN ain4 = new AIN(AIN0);
+    final AIN ain4 = new AIN(AINTests.AIN0);
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(ain1.equals(ain1), "ain11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(ain1.equals(ain2), "ain12 are not equal"), //$NON-NLS-1$
@@ -144,7 +144,7 @@ public class AINTests
   @Test
   public void testToString()
    {
-    final AIN ain = new AIN(AIN0);
+    final AIN ain = new AIN(AINTests.AIN0);
     assertEquals("AIN[ain=000000000000]", ain.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -155,11 +155,11 @@ public class AINTests
   @Test
   public void testCompareTo()
    {
-    final AIN ain1 = new AIN(AIN0);
-    final AIN ain2 = new AIN(AIN0);
+    final AIN ain1 = new AIN(AINTests.AIN0);
+    final AIN ain2 = new AIN(AINTests.AIN0);
     final AIN ain3 = new AIN("000000000001"); //$NON-NLS-1$
     final AIN ain4 = new AIN("000000000002"); //$NON-NLS-1$
-    final AIN ain5 = new AIN(AIN0);
+    final AIN ain5 = new AIN(AINTests.AIN0);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(ain1.compareTo(ain2) == -ain2.compareTo(ain1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(ain1.compareTo(ain3) == -ain3.compareTo(ain1), "reflexive2"), //$NON-NLS-1$

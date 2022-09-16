@@ -211,6 +211,30 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       return this.action;
      }
 
+
+    /**
+     * Returns the string representation of this enum.
+     *
+     * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
+     *
+     * "close|open|stop"
+     *
+     * @return String representation of this enum (open, close, stop).
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+     {
+      switch (this.action)
+       {
+        case 0: return "close"; //$NON-NLS-1$
+        case 1: return "open"; //$NON-NLS-1$
+        case 2: return "stop"; //$NON-NLS-1$
+        default: return "close"; //$NON-NLS-1$
+       }
+     }
+
+
    }
 
 
@@ -472,6 +496,10 @@ HAN-FUN Interfaces
   private Document getDoc(final String urlPath) throws IOException, SAXException
    {
     assert urlPath != null;
+    if (AHASessionMini.LOGGER.isDebugEnabled())
+     {
+      AHASessionMini.LOGGER.debug("url: https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath)); //$NON-NLS-1$
+     }
     try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
@@ -670,8 +698,15 @@ HAN-FUN Interfaces
    }
 
 
-
-
+  /**
+   * Has valid session.
+   *
+   * @return true: session is valid; false: session is invalid
+   */
+  public final boolean hasValidSession()
+   {
+    return this.sid.isValidSession();
+   }
 
 
   /**
@@ -1275,7 +1310,7 @@ HAN-FUN Interfaces
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
-   * @throws IllegalArgumentException if level is not 0-255
+   * @throws IllegalArgumentException if level is not 0-100
    * @since 7.15
    */
   public final void setLevelPercentage(final AIN ain, final int level) throws IOException

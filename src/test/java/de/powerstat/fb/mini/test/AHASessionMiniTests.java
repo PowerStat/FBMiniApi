@@ -421,6 +421,48 @@ public class AHASessionMiniTests
 
 
   /**
+   * Test for invalid session.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   *
+   */
+  @Test
+  public void hasValidSessionFalse() throws ParserConfigurationException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    final boolean valid = ahasession.hasValidSession();
+    assertFalse(valid);
+   }
+
+
+  /**
+   * Test for valid session.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws IOException  IO exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws SAXException SAX exception
+   * @throws InvalidKeyException Invalid key exception
+   */
+  @Test
+  public void hasValidSessionTrue() throws ParserConfigurationException, NoSuchAlgorithmException, IOException, InvalidKeyException, SAXException
+   {
+    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
+    final StatusLine mockStatusLineOk = mock(StatusLine.class);
+    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
+    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
+
+    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    /* final boolean successLogon = */ ahasession.logon();
+    final boolean valid = ahasession.hasValidSession();
+    assertTrue(valid);
+   }
+
+
+  /**
    * Get switch list test.
    *
    * @throws IOException IO exception

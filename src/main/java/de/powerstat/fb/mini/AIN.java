@@ -31,12 +31,12 @@ public final class AIN implements Comparable<AIN>
    {
     super();
     Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
-    if ((ain.length() != 12) && (ain.length() != 13))
+    if ((ain.length() < 12) || (ain.length() > 15))
      {
       throw new IllegalArgumentException("AIN with wrong length"); //$NON-NLS-1$
      }
     final String intAIN = ain.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
-    if (!intAIN.matches("^[0-9]{12}$")) //$NON-NLS-1$
+    if (!intAIN.matches("^[0-9]{12}(-[0-9])?$")) //$NON-NLS-1$
      {
       throw new IllegalArgumentException("AIN with wrong format"); //$NON-NLS-1$
      }

@@ -64,7 +64,7 @@ public final class SID implements Comparable<SID>
    */
   public static SID ofInvalid()
    {
-    return INVALID;
+    return SID.INVALID;
    }
 
 
@@ -140,7 +140,7 @@ public final class SID implements Comparable<SID>
   public String toString()
    {
     final StringBuilder builder = new StringBuilder();
-    builder.append("SID[sin=").append(this.sessionId).append(']'); //$NON-NLS-1$
+    builder.append("SID[sid=").append(this.sessionId).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
