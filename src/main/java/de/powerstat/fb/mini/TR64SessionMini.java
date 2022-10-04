@@ -55,6 +55,8 @@ import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Password;
 import de.powerstat.validation.values.Port;
 import de.powerstat.validation.values.Username;
+import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy;
+import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.HandleEMail;
 
 
 /**
@@ -192,7 +194,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    */
   public static TR64SessionMini newInstance(final String hostName, final int portNr, final String userName, final String passWord) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    return newInstance(Hostname.of(hostName), Port.of(portNr), Username.of(userName), Password.of(passWord));
+    return newInstance(Hostname.of(hostName), Port.of(portNr), Username.of(UsernameConfigurableStrategy.of(0, 32, "^[@./_0-9a-zA-Z-]*$", HandleEMail.EMAIL_POSSIBLE), userName), Password.of(passWord));
    }
 
 
@@ -265,9 +267,9 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     Objects.requireNonNull(urlPath, "urlPath"); //$NON-NLS-1$
     try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
      {
-      LOGGER.debug(response.getStatusLine());
+      TR64SessionMini.LOGGER.debug(response.getStatusLine());
       final HttpEntity entity = response.getEntity();
-      LOGGER.debug(entity.getContentType());
+      TR64SessionMini.LOGGER.debug(entity.getContentType());
       final Document doc = this.docBuilder.parse(new InputSource(new ByteArrayInputStream(EntityUtils.toString(entity).getBytes(StandardCharsets.UTF_8))));
       EntityUtils.consume(entity);
       return doc;
