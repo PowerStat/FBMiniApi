@@ -8,7 +8,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.ProviderNotFoundException;
 import java.security.InvalidKeyException;
@@ -71,6 +70,7 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
  * TODO Version number handling? (ask fritzbox for it's version)
  * TODO Rigths handling
  */
+@SuppressWarnings("java:S1160")
 public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
  {
   /**
@@ -443,6 +443,7 @@ HAN-FUN Interfaces
    *
    * TODO https://stackoverflow.com/questions/4909655/java-privately-calling-run-in-runnable-class
    */
+  @SuppressWarnings("java:S2189")
   @Override
   public final void run()
    {
@@ -454,7 +455,7 @@ HAN-FUN Interfaces
          {
           AHASessionMini.LOGGER.debug("Checking timeout"); //$NON-NLS-1$
          }
-        if ((this.lastAccess + AHASessionMini.TIMEOUT.getMilliseconds()) >= System.currentTimeMillis())
+        if ((this.lastAccess + AHASessionMini.TIMEOUT.longValue()) >= System.currentTimeMillis())
          {
           if (AHASessionMini.LOGGER.isDebugEnabled())
            {
@@ -464,7 +465,7 @@ HAN-FUN Interfaces
           // TODO check disconnect and login again
           // TODO update device infos
          }
-        Thread.sleep((this.lastAccess + AHASessionMini.TIMEOUT.getMilliseconds()) - System.currentTimeMillis());
+        Thread.sleep((this.lastAccess + AHASessionMini.TIMEOUT.longValue()) - System.currentTimeMillis());
        }
       catch (final InterruptedException e)
        {
@@ -498,9 +499,9 @@ HAN-FUN Interfaces
     assert urlPath != null;
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
-      AHASessionMini.LOGGER.debug("url: https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath)); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("url: https://{}:{}{}", this.hostname.stringValue(), this.port.intValue(), ValidationUtils.sanitizeUrlPath(urlPath)); //$NON-NLS-1$
      }
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
+    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
@@ -508,11 +509,11 @@ HAN-FUN Interfaces
         this.lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
         if (AHASessionMini.LOGGER.isDebugEnabled())
          {
-          AHASessionMini.LOGGER.debug("StatusLine: " + response.getStatusLine()); //$NON-NLS-1$
+          AHASessionMini.LOGGER.debug("StatusLine: {}", response.getStatusLine()); //$NON-NLS-1$
          }
         if (AHASessionMini.LOGGER.isInfoEnabled())
          {
-          AHASessionMini.LOGGER.info("HttpStatus: " + response.getStatusLine().getStatusCode() + ":");  //$NON-NLS-1$//$NON-NLS-2$
+          AHASessionMini.LOGGER.info("HttpStatus: {}", response.getStatusLine().getStatusCode() + ":");  //$NON-NLS-1$//$NON-NLS-2$
          }
         if (responseCode == HttpURLConnection.HTTP_FORBIDDEN)
          {
@@ -537,17 +538,17 @@ HAN-FUN Interfaces
       final HttpEntity entity = response.getEntity();
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("ContentType: " + entity.getContentType()); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("ContentType: {}", entity.getContentType()); //$NON-NLS-1$
        }
       final String string = EntityUtils.toString(entity);
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("string: " + string); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("string: {}" , string); //$NON-NLS-1$
        }
       final byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("bytes: " +  new String(bytes, StandardCharsets.UTF_8)); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("bytes: {}",  new String(bytes, StandardCharsets.UTF_8)); //$NON-NLS-1$
        }
       final ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
       final InputSource stream = new InputSource(byteStream);
@@ -572,7 +573,7 @@ HAN-FUN Interfaces
   private String getString(final String urlPath) throws IOException
    {
     assert urlPath != null;
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath) + "&sid=" + this.sid.getSID())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + ValidationUtils.sanitizeUrlPath(urlPath) + "&sid=" + this.sid.stringValue())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
@@ -584,7 +585,7 @@ HAN-FUN Interfaces
          }
         if (AHASessionMini.LOGGER.isInfoEnabled())
          {
-          AHASessionMini.LOGGER.info("HttpStatus: " + response.getStatusLine().getStatusCode() + ":");  //$NON-NLS-1$//$NON-NLS-2$
+          AHASessionMini.LOGGER.info("HttpStatus: {}", response.getStatusLine().getStatusCode());  //$NON-NLS-1$
          }
         if (responseCode == HttpURLConnection.HTTP_FORBIDDEN)
          {
@@ -609,12 +610,12 @@ HAN-FUN Interfaces
       final HttpEntity entity = response.getEntity();
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("ContentType: " + entity.getContentType()); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("ContentType: {}", entity.getContentType()); //$NON-NLS-1$
        }
       final String result = EntityUtils.toString(entity);
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("getString: " + result); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("getString: {}", result); //$NON-NLS-1$
        }
       return result;
      }
@@ -632,7 +633,7 @@ HAN-FUN Interfaces
     Objects.requireNonNull(hexStr);
     if ((hexStr.length() % 2) != 0)
      {
-      throw new IllegalArgumentException("Length must be even");
+      throw new IllegalArgumentException("Length must be even"); //$NON-NLS-1$
      }
     final int len = hexStr.length() / 2;
     final byte[] ret = new byte[len];
@@ -720,6 +721,7 @@ HAN-FUN Interfaces
    * @throws NoSuchAlgorithmException No such algorithm exception
    * @throws InvalidKeyException Invalid key exception
    */
+  @SuppressWarnings("java:S4790")
   public final boolean logon() throws IOException, SAXException, NoSuchAlgorithmException, InvalidKeyException
    {
     /*
@@ -735,12 +737,12 @@ HAN-FUN Interfaces
     this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
-      AHASessionMini.LOGGER.debug("sid: " + this.sid.getSID()); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("sid: {}", this.sid.stringValue()); //$NON-NLS-1$
      }
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
       final String blocktime = doc.getElementsByTagName("BlockTime").item(0).getTextContent(); //$NON-NLS-1$
-      AHASessionMini.LOGGER.debug("blocktime: " + blocktime); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("blocktime: {}", blocktime); //$NON-NLS-1$
      }
     // Users?
     // Rigths ?
@@ -751,7 +753,7 @@ HAN-FUN Interfaces
       String challenge = doc.getElementsByTagName("Challenge").item(0).getTextContent(); //$NON-NLS-1$
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("challenge: " + challenge); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("challenge: {}", challenge); //$NON-NLS-1$
        }
       String response;
       if (challenge.startsWith("2$")) // PBKDF2 //$NON-NLS-1$
@@ -763,7 +765,7 @@ HAN-FUN Interfaces
         final int iter2 = Integer.parseInt(challengeParts[3]);
         final byte[] salt2 = fromHex(challengeParts[4]);
         // <hash1> = pbdkf2_hmac_sha256(<password>, <salt1>, <iter1>)
-        final byte[] hash1 = pbkdf2HmacSha256(this.password.getPassword().getBytes(StandardCharsets.UTF_8), salt1, iter1);
+        final byte[] hash1 = pbkdf2HmacSha256(this.password.stringValue().getBytes(StandardCharsets.UTF_8), salt1, iter1);
         // <response> = <salt2>$ + pbdkf2_hmac_sha256(<hash1>, <salt2>, <iter2>)
         final byte[] hash2 = pbkdf2HmacSha256(hash1, salt2, iter2);
         response = challengeParts[4] + '$' + toHex(hash2);
@@ -773,33 +775,34 @@ HAN-FUN Interfaces
         // TODO
         // Aus Kompatibilitätsgründen muss für jedes Zeichen, dessen Unicode Codepoint > 255 ist, die Codierung des "."-Zeichens benutzt werden (0x2e 0x00 in UTF-16LE).
         // Dies betrifft also alle Zeichen, die nicht in ISO-8859-1 dargestellt werden können, z.B. das Euro-Zeichen
-        response = challenge + '-' + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + '-' + this.password.getPassword()).getBytes(Charset.forName("utf-16le"))))); //$NON-NLS-1$ //$NON-NLS-2$
+        response = challenge + '-' + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + '-' + this.password.stringValue()).getBytes(StandardCharsets.UTF_16LE)))); //$NON-NLS-1$
        }
-      doc = getDoc("/login_sid.lua?version=2&username=" + this.username.getUsername() + "&response=" + response); //$NON-NLS-1$ //$NON-NLS-2$
+      doc = getDoc("/login_sid.lua?version=2&username=" + this.username.stringValue() + "&response=" + response); //$NON-NLS-1$ //$NON-NLS-2$
       this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("sid: " + this.sid.getSID()); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("sid: {}", this.sid.stringValue()); //$NON-NLS-1$
        }
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
         challenge = doc.getElementsByTagName("Challenge").item(0).getTextContent(); //$NON-NLS-1$
-        AHASessionMini.LOGGER.debug("challenge: " + challenge); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("challenge: {}", challenge); //$NON-NLS-1$
        }
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
         final String blocktime = doc.getElementsByTagName("BlockTime").item(0).getTextContent(); //$NON-NLS-1$
-        AHASessionMini.LOGGER.debug("blocktime: " + blocktime); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("blocktime: {}", blocktime); //$NON-NLS-1$
        }
       // Rigths ?
      }
 
     // check sid validity
-    doc = getDoc("/login_sid.lua?version=2&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    doc = getDoc("/login_sid.lua?version=2&sid=" + this.sid.stringValue()); //$NON-NLS-1$
     this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (!this.sid.isValidSession())
      {
       AHASessionMini.LOGGER.error("login invalid"); //$NON-NLS-1$
+      // blocktime
       return false;
      }
     this.timeoutThread = new Thread();
@@ -833,7 +836,7 @@ HAN-FUN Interfaces
         return true;
        }
     */
-    final Document doc = getDoc("/login_sid.lua?version=2&logout=1&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    final Document doc = getDoc("/login_sid.lua?version=2&logout=1&sid=" + this.sid.stringValue()); //$NON-NLS-1$
     this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (!this.sid.isValidSession())
      {
@@ -887,10 +890,10 @@ HAN-FUN Interfaces
   public final boolean setSwitchOn(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setswitchon"); //$NON-NLS-1$
+    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setswitchon"); //$NON-NLS-1$
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("setSwitchOn()->" + result + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("setSwitchOn()->{}<", result); //$NON-NLS-1$
      }
     return "1".equals((result.length() == 0) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -908,10 +911,10 @@ HAN-FUN Interfaces
   public final boolean setSwitchOff(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setswitchoff"); //$NON-NLS-1$
+    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setswitchoff"); //$NON-NLS-1$
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("setSwitchOff()->" + result + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("setSwitchOff()->{}<", result); //$NON-NLS-1$
      }
     return "0".equals((result.length() == 0) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -929,10 +932,10 @@ HAN-FUN Interfaces
   public final boolean setSwitchToggle(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setswitchtoggle"); //$NON-NLS-1$
+    final String state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setswitchtoggle"); //$NON-NLS-1$
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("setSwitchToggle()->" + state + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("setSwitchToggle()->{}<",state); //$NON-NLS-1$
      }
     return "1".equals((state.length() == 0) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -947,13 +950,14 @@ HAN-FUN Interfaces
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException    If ain is null
    */
+  @SuppressWarnings("java:S2047")
   public final boolean getSwitchState(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchstate"); //$NON-NLS-1$
+    final String state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchstate"); //$NON-NLS-1$
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("getSwitchState()->" + state + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("getSwitchState()->{}<", state); //$NON-NLS-1$
      }
     if ((state.length() >= 5) && AHASessionMini.INVAL.equals(state.substring(0, 5)))
      {
@@ -975,10 +979,10 @@ HAN-FUN Interfaces
   public final boolean isSwitchPresent(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String present = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchpresent"); //$NON-NLS-1$
+    final String present = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchpresent"); //$NON-NLS-1$
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("getSwitchPresent()->" + present + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("getSwitchPresent()->{}<", present); //$NON-NLS-1$
      }
     return "1".equals((present.length() == 0) ? "" : present.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -997,10 +1001,10 @@ HAN-FUN Interfaces
   public final Power getSwitchPower(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    String power = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchpower"); //$NON-NLS-1$
+    String power = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchpower"); //$NON-NLS-1$
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("getSwitchPower()->" + power + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("getSwitchPower()->{}<", power); //$NON-NLS-1$
      }
     if (power.length() > 1)
      {
@@ -1027,10 +1031,10 @@ HAN-FUN Interfaces
   public final Energy getSwitchEnergy(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    String energy = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchenergy"); //$NON-NLS-1$
+    String energy = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchenergy"); //$NON-NLS-1$
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("getSwitchEnergy()->" + energy + "<"); //$NON-NLS-1$ //$NON-NLS-2$
+      AHASessionMini.LOGGER.info("getSwitchEnergy()->{}<", energy); //$NON-NLS-1$
      }
     if (energy.length() > 1)
      {
@@ -1056,7 +1060,7 @@ HAN-FUN Interfaces
   public final String getSwitchName(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String name = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getswitchname"); //$NON-NLS-1$
+    final String name = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchname"); //$NON-NLS-1$
     return (name.length() > 0) ? name.substring(0, name.length() - 1) : ""; //$NON-NLS-1$
    }
 
@@ -1072,7 +1076,7 @@ HAN-FUN Interfaces
    */
   public final Document getDeviceListInfos() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getdevicelistinfos&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getdevicelistinfos&sid=" + this.sid.stringValue()); //$NON-NLS-1$
    }
 
 
@@ -1089,7 +1093,7 @@ HAN-FUN Interfaces
   public final Temperature getTemperature(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String temperature = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=gettemperature"); //$NON-NLS-1$
+    final String temperature = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=gettemperature"); //$NON-NLS-1$
     return Temperature.of((temperature.length() > 0) ? temperature.substring(0, temperature.length() - 1) : ""); //$NON-NLS-1$
    }
 
@@ -1102,10 +1106,10 @@ HAN-FUN Interfaces
    * @throws IndexOutOfBoundsException If temperature is out of range or undefined
    * @throws NumberFormatException If fbTemerature is of wrong format
    */
-  private Temperature temperatureConversion(final String fbTemperatureString)
+  private static Temperature temperatureConversion(final String fbTemperatureString)
    {
     assert fbTemperatureString != null;
-    final int fbTemperature = Integer.parseInt((fbTemperatureString.length() > 0) ? fbTemperatureString.substring(0, fbTemperatureString.length() - 1) : "");
+    final int fbTemperature = Integer.parseInt((fbTemperatureString.length() > 0) ? fbTemperatureString.substring(0, fbTemperatureString.length() - 1) : ""); //$NON-NLS-1$
     long temperature;
     if (fbTemperature == 253)
      {
@@ -1136,7 +1140,7 @@ HAN-FUN Interfaces
   public final Temperature getHkrtSoll(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=gethkrtsoll"); //$NON-NLS-1$
+    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=gethkrtsoll"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
 
@@ -1154,7 +1158,7 @@ HAN-FUN Interfaces
   public final Temperature getHkrKomfort(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=gethkrkomfort"); //$NON-NLS-1$
+    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=gethkrkomfort"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
 
@@ -1172,7 +1176,7 @@ HAN-FUN Interfaces
   public final Temperature getHkrAbsenk(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=gethkrabsenk"); //$NON-NLS-1$
+    final String resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=gethkrabsenk"); //$NON-NLS-1$
     return temperatureConversion(resultStr);
    }
 
@@ -1193,23 +1197,23 @@ HAN-FUN Interfaces
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     Objects.requireNonNull(temperature, "temperature"); //$NON-NLS-1$
     long fbTemperature;
-    if (temperature.getTemperatureDeciCelsius() == 0)
+    if (temperature.longValue() == 0)
      {
       fbTemperature = 253;
      }
-    else if (temperature.getTemperatureDeciCelsius() == 300)
+    else if (temperature.longValue() == 300)
      {
       fbTemperature = 254;
      }
-    else if ((temperature.getTemperatureDeciCelsius() < 80) || (temperature.getTemperatureDeciCelsius() > 280))
+    else if ((temperature.longValue() < 80) || (temperature.longValue() > 280))
      {
       throw new IndexOutOfBoundsException("Illegal temperature value!"); //$NON-NLS-1$
      }
     else
      {
-      fbTemperature = (temperature.getTemperatureDeciCelsius() * 2) / 10;
+      fbTemperature = (temperature.longValue() * 2) / 10;
      }
-    /* String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=sethkrtsoll&param=" + fbTemperature); //$NON-NLS-1$
+    /* String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrtsoll&param=" + fbTemperature); //$NON-NLS-1$
    }
 
 
@@ -1225,7 +1229,7 @@ HAN-FUN Interfaces
   public final Document getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getbasicdevicestats&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getbasicdevicestats&sid=" + this.sid.stringValue()); //$NON-NLS-1$
    }
 
 
@@ -1239,7 +1243,7 @@ HAN-FUN Interfaces
    */
   public final Document getTemplateListInfos() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=gettemplatelistinfos&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    return getDoc("/webservices/homeautoswitch.lua?switchcmd=gettemplatelistinfos&sid=" + this.sid.stringValue()); //$NON-NLS-1$
    }
 
 
@@ -1276,7 +1280,7 @@ HAN-FUN Interfaces
      {
       throw new IllegalArgumentException("onoff must be 0, 1 or 2"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setsimpleonoff&onoff=" + onoff); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setsimpleonoff&onoff=" + onoff); //$NON-NLS-1$
    }
 
 
@@ -1298,7 +1302,7 @@ HAN-FUN Interfaces
      {
       throw new IllegalArgumentException("level must be 0-255"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setlevel&level=" + level); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setlevel&level=" + level); //$NON-NLS-1$
    }
 
 
@@ -1320,7 +1324,7 @@ HAN-FUN Interfaces
      {
       throw new IllegalArgumentException("level must be 0-100"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setlevelpercentage&level=" + level); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setlevelpercentage&level=" + level); //$NON-NLS-1$
    }
 
 
@@ -1352,7 +1356,7 @@ HAN-FUN Interfaces
      {
       throw new IllegalArgumentException("duration must be >= 0"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + "&duration=" + duration); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + "&duration=" + duration); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
    }
 
 
@@ -1379,7 +1383,7 @@ HAN-FUN Interfaces
      {
       throw new IllegalArgumentException("duration must be >= 0"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setcolortemperature&temperature=" + temperatureKelvin + "&duration=" + duration); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setcolortemperature&temperature=" + temperatureKelvin + "&duration=" + duration); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1395,7 +1399,7 @@ HAN-FUN Interfaces
    */
   public final Document getColorDefaults() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=" + this.sid.stringValue()); //$NON-NLS-1$
    }
 
 
@@ -1418,7 +1422,7 @@ HAN-FUN Interfaces
      {
       throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
      }
-    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=sethkrboost&endtimestamp=" + endtimestamp); //$NON-NLS-1$
+    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrboost&endtimestamp=" + endtimestamp); //$NON-NLS-1$
     return Long.parseLong(result.substring(0, result.length() - 1));
    }
 
@@ -1442,7 +1446,7 @@ HAN-FUN Interfaces
      {
       throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
      }
-    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=sethkrwindowopen&endtimestamp=" + endtimestamp); //$NON-NLS-1$
+    final String result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrwindowopen&endtimestamp=" + endtimestamp); //$NON-NLS-1$
     return Long.parseLong(result.substring(0, result.length() - 1));
    }
 
@@ -1461,7 +1465,7 @@ HAN-FUN Interfaces
   public final void setBlind(final AIN ain, final HandleBlind target) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault())); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault())); //$NON-NLS-1$
    }
 
 
@@ -1475,7 +1479,7 @@ HAN-FUN Interfaces
    * @param name Device or group name in UTF-8
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
-   * @throws IllegalArgumentException If name is > 40 characters
+   * @throws IllegalArgumentException If name is &gt; 40 characters
    * @throws NullPointerException If ain or temperature is null
    * @since 7.24
    *
@@ -1484,12 +1488,12 @@ HAN-FUN Interfaces
   public final void setName(final AIN ain, final String name) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    Objects.requireNonNull(name, "name");
+    Objects.requireNonNull(name, "name"); //$NON-NLS-1$
     if (name.length() > 40)
      {
-      throw new IllegalArgumentException("Name longer than 40 characters!");
+      throw new IllegalArgumentException("Name longer than 40 characters!"); //$NON-NLS-1$
      }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=setname&name=" + name); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setname&name=" + name); //$NON-NLS-1$
    }
 
 
@@ -1500,7 +1504,7 @@ HAN-FUN Interfaces
    *
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
-   * @throws IllegalArgumentException If name is > 40 characters
+   * @throws IllegalArgumentException If name is &gt; 40 characters
    * @throws NullPointerException If ain or temperature is null
    * @since 7.24
    */
@@ -1522,7 +1526,7 @@ HAN-FUN Interfaces
    */
   public final Document getSubscriptionState() throws IOException, SAXException
    {
-    return getDoc(AHASessionMini.HOMEAUTOSWITCH + "switchcmd=getsubscriptionstate&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    return getDoc(AHASessionMini.HOMEAUTOSWITCH + "switchcmd=getsubscriptionstate&sid=" + this.sid.stringValue()); //$NON-NLS-1$
    }
 
 
@@ -1540,7 +1544,7 @@ HAN-FUN Interfaces
   public final Document getDeviceInfo(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.getAIN() + "&switchcmd=getdeviceinfo&sid=" + this.sid.getSID()); //$NON-NLS-1$
+    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getdeviceinfo&sid=" + this.sid.stringValue()); //$NON-NLS-1$
    }
 
 
@@ -1553,7 +1557,7 @@ HAN-FUN Interfaces
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.hostname, this.username, this.password, this.sid.getSID());
+    return Objects.hash(this.hostname, this.username, this.password, this.sid.stringValue());
    }
 
 
@@ -1571,7 +1575,8 @@ HAN-FUN Interfaces
      {
       return true;
      }
-    if (!(obj instanceof AHASessionMini))
+    if ((obj == null) || (this.getClass() != obj.getClass()))
+    // if (!(obj instanceof AHASessionMini))
      {
       return false;
      }
@@ -1593,7 +1598,7 @@ HAN-FUN Interfaces
   @Override
   public String toString()
    {
-    return new StringBuilder().append("AHASessionMini[hostname=").append(this.hostname.getHostname()).append(", username=").append(this.username.getUsername()).append(", sid=").append(this.sid.getSID()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    return new StringBuilder().append("AHASessionMini[hostname=").append(this.hostname.stringValue()).append(", username=").append(this.username.stringValue()).append(", sid=").append(this.sid.stringValue()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
    }
 
 

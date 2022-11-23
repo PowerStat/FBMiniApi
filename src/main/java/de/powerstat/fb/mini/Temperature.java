@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Temperature in deci celsius.
  */
-public class Temperature implements Comparable<Temperature>
+public final class Temperature implements Comparable<Temperature>
  {
   /**
    * Temperature in deci celsius.
@@ -66,8 +66,21 @@ public class Temperature implements Comparable<Temperature>
    * Get temperature in deci celsius.
    *
    * @return Temperature in deci celsius
+   * @deprecated Use longValue() instead
    */
+  @Deprecated
   public long getTemperatureDeciCelsius()
+   {
+    return this.temperatureCelsius;
+   }
+
+
+  /**
+   * Returns the value of this Energy as a long in deci celsius.
+   *
+   * @return The numeric value represented by this object after conversion to type long in deci celsius
+   */
+  public long longValue()
    {
     return this.temperatureCelsius;
    }

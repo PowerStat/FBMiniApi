@@ -50,7 +50,7 @@ public class AINTests
   public void ainCorrect(final String ain)
    {
     final AIN cleanAin = AIN.of(ain);
-    assertEquals(ain.replaceAll("\\s", ""), cleanAin.getAIN(), "AIN not as expected"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assertEquals(ain.replaceAll("\\s", ""), cleanAin.stringValue(), "AIN not as expected"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
    }
 
 
@@ -66,7 +66,7 @@ public class AINTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final AIN cleanAin = */ AIN.of(ain);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
 
@@ -83,7 +83,7 @@ public class AINTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final AIN cleanAin = */ AIN.of(ain);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
 
@@ -95,7 +95,7 @@ public class AINTests
   public void getAin()
    {
     final AIN ain = AIN.of(AINTests.AIN0);
-    assertEquals(AINTests.AIN0, ain.getAIN(), "AIN not as expected"); //$NON-NLS-1$
+    assertEquals(AINTests.AIN0, ain.stringValue(), "AIN not as expected"); //$NON-NLS-1$
    }
 
 

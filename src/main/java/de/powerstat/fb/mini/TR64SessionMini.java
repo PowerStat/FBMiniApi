@@ -66,6 +66,7 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
  *
  * @author Kai Hofmann
  */
+@SuppressWarnings({"java:S1160", "java:S1130"})
 public class TR64SessionMini implements Comparable<TR64SessionMini>
  {
   /**
@@ -166,7 +167,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     Objects.requireNonNull(username, "username"); //$NON-NLS-1$
     Objects.requireNonNull(password, "password"); //$NON-NLS-1$
     final CredentialsProvider credsProvider = new BasicCredentialsProvider();
-    credsProvider.setCredentials(new AuthScope(hostname.getHostname(), port.getPort()), new UsernamePasswordCredentials(username.getUsername(), password.getPassword()));
+    credsProvider.setCredentials(new AuthScope(hostname.stringValue(), port.intValue()), new UsernamePasswordCredentials(username.stringValue(), password.stringValue()));
     final CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(new SSLContextBuilder().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build())).setDefaultCredentialsProvider(credsProvider).build();
 
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -194,7 +195,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    */
   public static TR64SessionMini newInstance(final String hostName, final int portNr, final String userName, final String passWord) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    return newInstance(Hostname.of(hostName), Port.of(portNr), Username.of(UsernameConfigurableStrategy.of(0, 32, "^[@./_0-9a-zA-Z-]*$", HandleEMail.EMAIL_POSSIBLE), userName), Password.of(passWord));
+    return newInstance(Hostname.of(hostName), Port.of(portNr), Username.of(UsernameConfigurableStrategy.of(0, 32, "^[@./_0-9a-zA-Z-]*$", HandleEMail.EMAIL_POSSIBLE), userName), Password.of(passWord)); //$NON-NLS-1$
    }
 
 
@@ -265,7 +266,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   public final Document getDoc(final String urlPath) throws IOException, SAXException
    {
     Objects.requireNonNull(urlPath, "urlPath"); //$NON-NLS-1$
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
+    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
      {
       TR64SessionMini.LOGGER.debug(response.getStatusLine());
       final HttpEntity entity = response.getEntity();
@@ -313,7 +314,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     requestBuffer.append("    </u:" + action + ">  </s:Body></s:Envelope>"); //$NON-NLS-1$ //$NON-NLS-2$
     // LOGGER.info(sb.toString());
 
-    final HttpPost httpPost = new HttpPost("https://" + this.hostname.getHostname() + ":" + this.port.getPort() + controlURL); //$NON-NLS-1$ //$NON-NLS-2$
+    final HttpPost httpPost = new HttpPost("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + controlURL); //$NON-NLS-1$ //$NON-NLS-2$
     httpPost.setHeader("SoapAction", "\"" + serviceType + "#" + action + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     httpPost.setHeader("USER-AGENT", "PowerStats FB TR64 mini client"); //$NON-NLS-1$ //$NON-NLS-2$
     httpPost.setHeader("Content-Type", "text/xml; charset=utf-8"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -362,7 +363,8 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
      {
       return true;
      }
-    if (!(obj instanceof TR64SessionMini))
+    if ((obj == null) || (this.getClass() != obj.getClass()))
+    // if (!(obj instanceof TR64SessionMini))
      {
       return false;
      }
@@ -384,7 +386,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   @Override
   public String toString()
    {
-    return new StringBuilder().append("TR64SessionMini[hostname=").append(this.hostname.getHostname()).append(", port=").append(this.port.getPort()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    return new StringBuilder().append("TR64SessionMini[hostname=").append(this.hostname.stringValue()).append(", port=").append(this.port.intValue()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

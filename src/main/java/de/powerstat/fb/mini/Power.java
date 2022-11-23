@@ -66,8 +66,21 @@ public final class Power implements Comparable<Power>
    * Get power in milli watt.
    *
    * @return Power in mW
+   * @deprecated Use longValue() instead
    */
+  @Deprecated
   public long getPowerMilliWatt()
+   {
+    return this.powerMW;
+   }
+
+
+  /**
+   * Returns the value of this Power as a long in milli watt.
+   *
+   * @return The numeric value represented by this object after conversion to type long in mW
+   */
+  public long longValue()
    {
     return this.powerMW;
    }

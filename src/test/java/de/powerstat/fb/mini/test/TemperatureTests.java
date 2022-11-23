@@ -42,7 +42,7 @@ public class TemperatureTests
   @ValueSource(longs = {-2732, 0, 200})
   public void isTemperatureValue(final long temperature)
    {
-    assertEquals(temperature, Temperature.of(temperature).getTemperatureDeciCelsius(), "Not a temperature value!"); //$NON-NLS-1$
+    assertEquals(temperature, Temperature.of(temperature).longValue(), "Not a temperature value!"); //$NON-NLS-1$
    }
 
 
@@ -58,7 +58,7 @@ public class TemperatureTests
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
       /* final Temperature temperature = */ Temperature.of(temperature);
-     }
+     }, "Index out of bounds exception expected" //$NON-NLS-1$
     );
    }
 

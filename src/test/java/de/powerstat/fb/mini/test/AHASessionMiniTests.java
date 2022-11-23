@@ -433,7 +433,7 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean valid = ahasession.hasValidSession();
-    assertFalse(valid);
+    assertFalse(valid, "No valid session"); //$NON-NLS-1$
    }
 
 
@@ -458,7 +458,7 @@ public class AHASessionMiniTests
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     final boolean valid = ahasession.hasValidSession();
-    assertTrue(valid);
+    assertTrue(valid, "No valid session"); //$NON-NLS-1$
    }
 
 
@@ -705,7 +705,7 @@ public class AHASessionMiniTests
     assertThrows(IOException.class, () ->
      {
       /* final boolean result = */ ahasession.setSwitchOn(AIN.of(AHASessionMiniTests.AIN1));
-     }
+     }, "IO exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -1131,7 +1131,7 @@ public class AHASessionMiniTests
     assertThrows(ProviderNotFoundException.class, () ->
      {
       /* final boolean resultState = */ ahasession.getSwitchState(AIN.of(AHASessionMiniTests.AIN1));
-     }
+     }, "Provider not found exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -1359,7 +1359,7 @@ public class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(powerValue.replace("\n", "")), power.getPowerMilliWatt(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      () -> assertEquals(Long.parseLong(powerValue.replace("\n", "")), power.longValue(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -1410,7 +1410,7 @@ public class AHASessionMiniTests
     assertThrows(ProviderNotFoundException.class, () ->
      {
       /* final Power power = */ ahasession.getSwitchPower(AIN.of(AHASessionMiniTests.AIN1));
-     }
+     }, "Provider not found exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -1464,7 +1464,7 @@ public class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(energyValue.replace("\n", "")), energy.getEnergyWattHours(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      () -> assertEquals(Long.parseLong(energyValue.replace("\n", "")), energy.longValue(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -1515,7 +1515,7 @@ public class AHASessionMiniTests
     assertThrows(ProviderNotFoundException.class, () ->
      {
       /* final Energy energy = */ ahasession.getSwitchEnergy(AIN.of(AHASessionMiniTests.AIN1));
-     }
+     }, "Provider not found exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -1675,7 +1675,7 @@ public class AHASessionMiniTests
     assertThrows(IOException.class, () ->
      {
       /* final Document doc = */ ahasession.getDeviceListInfos();
-     }
+     }, "IO exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -1729,7 +1729,7 @@ public class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(temperatureValue.replace("\n", "")), temperature.getTemperatureDeciCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertEquals(Long.parseLong(temperatureValue.replace("\n", "")), temperature.longValue(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -1782,7 +1782,7 @@ public class AHASessionMiniTests
     assertThrows(NumberFormatException.class, () ->
      {
       /* final Temperature temperature = */ ahasession.getTemperature(AIN.of(AHASessionMiniTests.AIN1));
-     }
+     }, "Number format exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -1846,7 +1846,7 @@ public class AHASessionMiniTests
          {
           expected = 300;
          }
-        assertEquals(expected, temperature.getTemperatureDeciCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED);
+        assertEquals(expected, temperature.longValue(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED);
        },
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
@@ -1900,7 +1900,7 @@ public class AHASessionMiniTests
     assertThrows(NumberFormatException.class, () ->
      {
       /* final Temperature temperature = */ ahasession.getHkrtSoll(AIN.of(AHASessionMiniTests.AIN1));
-     }
+     }, "Number format exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -1954,7 +1954,7 @@ public class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals((Long.parseLong(komfort.replace("\n", "")) * 10) / 2, temperature.getTemperatureDeciCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertEquals((Long.parseLong(komfort.replace("\n", "")) * 10) / 2, temperature.longValue(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -2008,7 +2008,7 @@ public class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals((Long.parseLong(absenk.replace("\n", "")) * 10) / 2, temperature.getTemperatureDeciCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertEquals((Long.parseLong(absenk.replace("\n", "")) * 10) / 2, temperature.longValue(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -2114,7 +2114,7 @@ public class AHASessionMiniTests
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
       ahasession.setHkrtSoll(AIN.of(AHASessionMiniTests.AIN1), Temperature.of(temperature));
-     }
+     }, "Index out of bounds exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2367,7 +2367,7 @@ public class AHASessionMiniTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       ahasession.setSimpleOnOff(AIN.of(AHASessionMiniTests.AIN1), onoff);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2417,7 +2417,7 @@ public class AHASessionMiniTests
     assertThrows(UnsupportedOperationException.class, () ->
      {
       ahasession.setSimpleOnOff(AIN.of(AHASessionMiniTests.AIN1), 0);
-     }
+     }, "Unsupported operation exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2515,7 +2515,7 @@ public class AHASessionMiniTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       ahasession.setLevel(AIN.of(AHASessionMiniTests.AIN1), level);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2613,7 +2613,7 @@ public class AHASessionMiniTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       ahasession.setLevelPercentage(AIN.of(AHASessionMiniTests.AIN1), level);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2715,7 +2715,7 @@ public class AHASessionMiniTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       ahasession.setColor(AIN.of(AHASessionMiniTests.AIN1), hue, saturation, duration);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2815,7 +2815,7 @@ public class AHASessionMiniTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       ahasession.setColorTemperature(AIN.of(AHASessionMiniTests.AIN1), temperature, duration);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2921,7 +2921,7 @@ public class AHASessionMiniTests
     assertThrows(UnsupportedOperationException.class, () ->
      {
       /* final Document doc = */ ahasession.getColorDefaults();
-     }
+     }, "Unsupported operation exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -3084,7 +3084,7 @@ public class AHASessionMiniTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final long endtime = */ ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), boostend);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -3195,7 +3195,7 @@ public class AHASessionMiniTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final long endtime = */ ahasession.setHkrWindowOpen(AIN.of(AHASessionMiniTests.AIN1), openend);
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -3464,7 +3464,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  @Disabled
+  @Disabled("Logon depends on user")
   public void real() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, TransformerException, InvalidKeyException
    {
     AHASessionMiniTests.LOGGER.debug("---------- real start ----------"); //$NON-NLS-1$
@@ -3488,7 +3488,7 @@ public class AHASessionMiniTests
    * @throws TransformerException Transformer exception
    */
   @Test
-  @Disabled
+  @Disabled("TODO")
   public void security() throws ParserConfigurationException, SAXException, IOException, TransformerException
    {
     // final String string = "<test>&lt;script&gt;alert();&lt;/script&gt;</test>";

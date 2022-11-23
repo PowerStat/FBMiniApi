@@ -31,7 +31,7 @@ public class SIDTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final SID test = */ new SID(null);
-     }
+     }, "Null pointer exception expected" //$NON-NLS-1$
     );
    }
 
@@ -45,7 +45,7 @@ public class SIDTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final SID test = */ new SID(""); //$NON-NLS-1$
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
 
@@ -59,7 +59,7 @@ public class SIDTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final SID test = */ new SID("0123456789abcdeg"); //$NON-NLS-1$
-     }
+     }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
 
@@ -90,7 +90,7 @@ public class SIDTests
   @Test
   public void ofInvalid()
    {
-    assertEquals("0000000000000000", SID.ofInvalid().getSID(), "Not INVALID."); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("0000000000000000", SID.ofInvalid().stringValue(), "Not INVALID."); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

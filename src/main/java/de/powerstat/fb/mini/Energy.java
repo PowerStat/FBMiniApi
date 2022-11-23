@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Energy in Wh.
  */
-public class Energy implements Comparable<Energy>
+public final class Energy implements Comparable<Energy>
  {
   /**
    * Energy in Wh.
@@ -66,8 +66,21 @@ public class Energy implements Comparable<Energy>
    * Get energy in watt hours.
    *
    * @return Energy in Wh
+   * @deprecated Use longValue() instead
    */
+  @Deprecated
   public long getEnergyWattHours()
+   {
+    return this.energyWh;
+   }
+
+
+  /**
+   * Returns the value of this Energy as a long in watt hours.
+   *
+   * @return The numeric value represented by this object after conversion to type long in Wh.
+   */
+  public long longValue()
    {
     return this.energyWh;
    }

@@ -5,6 +5,7 @@ package de.powerstat.fb.mini;
 
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 
 /**
@@ -12,6 +13,16 @@ import java.util.Objects;
  */
 public final class AIN implements Comparable<AIN>
  {
+  /**
+   * AIN regexp.
+   */
+  private static final Pattern AIN_REGEXP = Pattern.compile("^[0-9]{12}(-[0-9])?$"); //$NON-NLS-1$
+
+  /**
+   * Space regexp.
+   */
+  private static final Pattern SPACE_REGEXP = Pattern.compile("\\s"); //$NON-NLS-1$
+
   /**
    * Aktor Identifikationsnummer.
    */
@@ -35,8 +46,8 @@ public final class AIN implements Comparable<AIN>
      {
       throw new IllegalArgumentException("AIN with wrong length"); //$NON-NLS-1$
      }
-    final String intAIN = ain.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
-    if (!intAIN.matches("^[0-9]{12}(-[0-9])?$")) //$NON-NLS-1$
+    final String intAIN = AIN.SPACE_REGEXP.matcher(ain).replaceAll(""); //$NON-NLS-1$
+    if (!AIN.AIN_REGEXP.matcher(intAIN).matches())
      {
       throw new IllegalArgumentException("AIN with wrong format"); //$NON-NLS-1$
      }
@@ -60,8 +71,21 @@ public final class AIN implements Comparable<AIN>
    * Get ain string.
    *
    * @return AIN string
+   * @deprecated Use stringValue() instead
    */
+  @Deprecated
   public String getAIN()
+   {
+    return this.aiNr;
+   }
+
+
+  /**
+   * Returns the value of this AIN as a string.
+   *
+   * @return The numeric value represented by this object after conversion to type string.
+   */
+  public String stringValue()
    {
     return this.aiNr;
    }

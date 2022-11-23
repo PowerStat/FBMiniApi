@@ -43,7 +43,7 @@ public class PowerTests
   @ValueSource(longs = {0, 1, 10150})
   public void isPowerValue(final long power)
    {
-    assertEquals(power, Power.of(power).getPowerMilliWatt(), "Not a power value!"); //$NON-NLS-1$
+    assertEquals(power, Power.of(power).longValue(), "Not a power value!"); //$NON-NLS-1$
    }
 
 
@@ -59,7 +59,7 @@ public class PowerTests
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
       /* final Power power = */ Power.of(power);
-     }
+     }, "Index out of bounds exception expected" //$NON-NLS-1$
     );
    }
 

@@ -5,6 +5,7 @@ package de.powerstat.fb.mini;
 
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 
 /**
@@ -12,6 +13,11 @@ import java.util.Objects;
  */
 public final class SID implements Comparable<SID>
  {
+  /**
+   * SID regexp.
+   */
+  private static final Pattern SID_REGEXP = Pattern.compile("^[0-9a-f]{16}$"); //$NON-NLS-1$
+
   /**
    * Invalid session identifier.
    */
@@ -37,7 +43,7 @@ public final class SID implements Comparable<SID>
      {
       throw new IllegalArgumentException("sessionid with wrong length"); //$NON-NLS-1$
      }
-    if (!sid.matches("^[0-9a-f]{16}$")) //$NON-NLS-1$
+    if (!SID.SID_REGEXP.matcher(sid).matches())
      {
       throw new IllegalArgumentException("sessionid with wrong format"); //$NON-NLS-1$
      }
@@ -72,8 +78,21 @@ public final class SID implements Comparable<SID>
    * Get sid string.
    *
    * @return SID string
+   * @deprecated Use stringValue() instead
    */
+  @Deprecated
   public String getSID()
+   {
+    return this.sessionId;
+   }
+
+
+  /**
+   * Returns the value of this SID as a string.
+   *
+   * @return The numeric value represented by this object after conversion to type string.
+   */
+  public String stringValue()
    {
     return this.sessionId;
    }

@@ -43,7 +43,7 @@ public class EnergyTests
   @ValueSource(longs = {0, 1, 75519})
   public void isEnergyValue(final long energy)
    {
-    assertEquals(energy, Energy.of(energy).getEnergyWattHours(), "Not an energy value!"); //$NON-NLS-1$
+    assertEquals(energy, Energy.of(energy).longValue(), "Not an energy value!"); //$NON-NLS-1$
    }
 
 
@@ -59,7 +59,7 @@ public class EnergyTests
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
       /* final Energy energy = */ Energy.of(energy);
-     }
+     }, "Index out of bounds exception expected" //$NON-NLS-1$
     );
    }
 
