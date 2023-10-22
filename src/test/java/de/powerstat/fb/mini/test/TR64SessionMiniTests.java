@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -55,7 +55,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author PowerStat
  */
 @SuppressFBWarnings({"EC_NULL_ARG", "NAB_NEEDLESS_BOOLEAN_CONSTANT_CONVERSION", "RV_NEGATING_RESULT_OF_COMPARETO", "SPP_USE_ZERO_WITH_COMPARATOR"})
-public class TR64SessionMiniTests
+final class TR64SessionMiniTests
  {
   /**
    * Logger.
@@ -91,7 +91,7 @@ public class TR64SessionMiniTests
   /**
    * Default constructor.
    */
-  public TR64SessionMiniTests()
+  /* default */ TR64SessionMiniTests()
    {
     super();
    }
@@ -106,7 +106,7 @@ public class TR64SessionMiniTests
    * @throws ParserConfigurationException Parser configuration exception
    */
   @Test
-  public void newInstance1() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  /* default */ void testNewInstance1() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
@@ -124,7 +124,7 @@ public class TR64SessionMiniTests
    * @throws ParserConfigurationException Parser configuration exception
    */
   @Test
-  public void newInstance2() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  /* default */ void testNewInstance2() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(FBUSERNAME, FBPASSWORD);
 
@@ -141,7 +141,7 @@ public class TR64SessionMiniTests
    * @throws ParserConfigurationException Parser configuration exception
    */
   @Test
-  public void testToString() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  /* default */ void testToString() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
@@ -163,7 +163,7 @@ public class TR64SessionMiniTests
    * @throws TransformerException Transformer exception
    */
   @Test
-  public void getDoc() throws KeyManagementException, IOException, NoSuchAlgorithmException, SAXException, KeyStoreException, ParserConfigurationException, TransformerException
+  /* default */ void testGetDoc() throws KeyManagementException, IOException, NoSuchAlgorithmException, SAXException, KeyStoreException, ParserConfigurationException, TransformerException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final CloseableHttpResponse mockCloseableHttpResponse = mock(CloseableHttpResponse.class);
@@ -196,7 +196,7 @@ public class TR64SessionMiniTests
      }
     assertAll(
       () -> assertNotNull(doc, "getDoc failed!"), //$NON-NLS-1$
-      () -> assertEquals(testDoc, xml.replaceAll("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replace("\r", ""), "docToString result not as expected") //$NON-NLS-1$
     );
    }
 
@@ -213,7 +213,7 @@ public class TR64SessionMiniTests
    * @throws KeyStoreException Key store exception
    */
   @Test
-  public void doSOAPRequest() throws ParserConfigurationException, KeyManagementException, IOException, TransformerException, NoSuchAlgorithmException, SAXException, KeyStoreException
+  /* default */ void testDoSOAPRequest() throws ParserConfigurationException, KeyManagementException, IOException, TransformerException, NoSuchAlgorithmException, SAXException, KeyStoreException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final CloseableHttpResponse mockCloseableHttpResponse = mock(CloseableHttpResponse.class);
@@ -250,7 +250,7 @@ public class TR64SessionMiniTests
      }
     assertAll(
       () -> assertNotNull(doc, "doSOAPRequest failed!"), //$NON-NLS-1$
-      () -> assertEquals(testDoc, xml.replaceAll("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replace("\r", ""), "docToString result not as expected") //$NON-NLS-1$
     );
    }
 
@@ -267,7 +267,7 @@ public class TR64SessionMiniTests
    * @throws KeyStoreException Key store exception
    */
   @Test
-  public void doSOAPRequestNull() throws ParserConfigurationException, KeyManagementException, IOException, TransformerException, NoSuchAlgorithmException, SAXException, KeyStoreException
+  /* default */ void testDoSOAPRequestNull() throws ParserConfigurationException, KeyManagementException, IOException, TransformerException, NoSuchAlgorithmException, SAXException, KeyStoreException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final CloseableHttpResponse mockCloseableHttpResponse = mock(CloseableHttpResponse.class);
@@ -302,7 +302,7 @@ public class TR64SessionMiniTests
      }
     assertAll(
       () -> assertNotNull(doc, "doSOAPRequest failed!"), //$NON-NLS-1$
-      () -> assertEquals(testDoc, xml.replaceAll("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replace("\r", ""), "docToString result not as expected") //$NON-NLS-1$
     );
    }
 
@@ -316,7 +316,7 @@ public class TR64SessionMiniTests
    * @throws KeyManagementException  Key management exception
    */
   @Test
-  public void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  /* default */ void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
     final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
@@ -337,7 +337,8 @@ public class TR64SessionMiniTests
    * @throws KeyManagementException  Key management exception
    */
   @Test
-  public void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
+  /* default */ void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
     final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
@@ -357,6 +358,26 @@ public class TR64SessionMiniTests
 
 
   /**
+   * Test equals.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException  Key store exception
+   * @throws NoSuchAlgorithmException  No such algorithm exception
+   * @throws KeyManagementException  Key management exception
+   */
+  @Test
+  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
+  /* default */ void testEquals2() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+   {
+    final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
+    final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49444, FBUSERNAME, FBPASSWORD2);
+    assertAll("testEquals", //$NON-NLS-1$
+      () -> assertFalse(session1.equals(session2), "session11 is not equal") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
    * Test compareTo.
    *
    * @throws ParserConfigurationException Parser configuration exception
@@ -365,7 +386,8 @@ public class TR64SessionMiniTests
    * @throws KeyManagementException  Key management exception
    */
   @Test
-  public void testCompareTo() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  @SuppressWarnings("java:S5785")
+  /* default */ void testCompareTo() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
     final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
@@ -403,7 +425,7 @@ public class TR64SessionMiniTests
      *
      * @param path URI path to match
      */
-    public HttpPostMatcher(final String path)
+    /* default */ HttpPostMatcher(final String path)
      {
       super();
       Objects.requireNonNull(path, "path"); //$NON-NLS-1$

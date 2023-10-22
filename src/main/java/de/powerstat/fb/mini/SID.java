@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2021-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -75,19 +75,6 @@ public final class SID implements Comparable<SID>
 
 
   /**
-   * Get sid string.
-   *
-   * @return SID string
-   * @deprecated Use stringValue() instead
-   */
-  @Deprecated
-  public String getSID()
-   {
-    return this.sessionId;
-   }
-
-
-  /**
    * Returns the value of this SID as a string.
    *
    * @return The numeric value represented by this object after conversion to type string.
@@ -158,7 +145,7 @@ public final class SID implements Comparable<SID>
   @Override
   public String toString()
    {
-    final StringBuilder builder = new StringBuilder();
+    final var builder = new StringBuilder();
     builder.append("SID[sid=").append(this.sessionId).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

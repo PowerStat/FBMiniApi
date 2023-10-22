@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -23,7 +23,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * AIN tests.
  */
 @SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO", "EC_NULL_ARG", "SPP_USE_ZERO_WITH_COMPARATOR"})
-public class AINTests
+final class AINTests
  {
   /**
    * AIN of 000000000000.
@@ -34,7 +34,7 @@ public class AINTests
   /**
    * Default constructor.
    */
-  public AINTests()
+  /* default */ AINTests()
    {
     super();
    }
@@ -47,7 +47,7 @@ public class AINTests
    */
   @ParameterizedTest
   @ValueSource(strings = {AINTests.AIN0, "00000 0000000", "00000 0000000-0", "000000000000-0"})
-  public void ainCorrect(final String ain)
+  /* default */ void testAinCorrect(final String ain)
    {
     final AIN cleanAin = AIN.of(ain);
     assertEquals(ain.replaceAll("\\s", ""), cleanAin.stringValue(), "AIN not as expected"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -61,7 +61,7 @@ public class AINTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"00000000000", "0000000000000", "000000000000000"})
-  public void ainLength(final String ain)
+  /* default */ void testAinLength(final String ain)
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
@@ -78,7 +78,7 @@ public class AINTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"00000000000g", "000000000000-g", "000000000000+0"})
-  public void ainWrong(final String ain)
+  /* default */ void testAinWrong(final String ain)
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
@@ -89,10 +89,10 @@ public class AINTests
 
 
   /**
-   * Test get ain.
+   * Test stringValue.
    */
   @Test
-  public void getAin()
+  /* default */ void testStringValue()
    {
     final AIN ain = AIN.of(AINTests.AIN0);
     assertEquals(AINTests.AIN0, ain.stringValue(), "AIN not as expected"); //$NON-NLS-1$
@@ -103,7 +103,7 @@ public class AINTests
    * Test hash code.
    */
   @Test
-  public void testHashCode()
+  /* default */ void testHashCode()
    {
     final AIN ain1 = new AIN(AINTests.AIN0);
     final AIN ain2 = new AIN(AINTests.AIN0);
@@ -119,7 +119,8 @@ public class AINTests
    * Test equals.
    */
   @Test
-  public void testEquals()
+  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
+  /* default */ void testEquals()
    {
     final AIN ain1 = new AIN(AINTests.AIN0);
     final AIN ain2 = new AIN(AINTests.AIN0);
@@ -142,7 +143,7 @@ public class AINTests
    * Test toString.
    */
   @Test
-  public void testToString()
+  /* default */ void testToString()
    {
     final AIN ain = new AIN(AINTests.AIN0);
     assertEquals("AIN[ain=000000000000]", ain.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -153,7 +154,8 @@ public class AINTests
    * Test compareTo.
    */
   @Test
-  public void testCompareTo()
+  @SuppressWarnings("java:S5785")
+  /* default */ void testCompareTo()
    {
     final AIN ain1 = new AIN(AINTests.AIN0);
     final AIN ain2 = new AIN(AINTests.AIN0);

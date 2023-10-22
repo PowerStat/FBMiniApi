@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -23,12 +23,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Power tests.
  */
 @SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO", "EC_NULL_ARG", "SPP_USE_ZERO_WITH_COMPARATOR", "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"})
-public class PowerTests
+final class PowerTests
  {
   /**
    * Default constructor.
    */
-  public PowerTests()
+  /* default */ PowerTests()
    {
     super();
    }
@@ -41,7 +41,7 @@ public class PowerTests
    */
   @ParameterizedTest
   @ValueSource(longs = {0, 1, 10150})
-  public void isPowerValue(final long power)
+  /* default */ void testIsPowerValue(final long power)
    {
     assertEquals(power, Power.of(power).longValue(), "Not a power value!"); //$NON-NLS-1$
    }
@@ -54,7 +54,7 @@ public class PowerTests
    */
   @ParameterizedTest
   @ValueSource(longs = {-1})
-  public void isNotAPowerValue(final long power)
+  /* default */ void testIsNotAPowerValue(final long power)
    {
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
@@ -68,7 +68,7 @@ public class PowerTests
    * Is a power string value.
    */
   @Test
-  public void isPowerString()
+  /* default */ void testIsPowerString()
    {
     assertEquals(10, Power.of("10150").getPowerWatt(), "Not a power value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -78,7 +78,7 @@ public class PowerTests
    * Test hash code.
    */
   @Test
-  public void testHashCode()
+  /* default */ void testHashCode()
    {
     final Power power1 = new Power(1);
     final Power power2 = new Power(1);
@@ -94,7 +94,8 @@ public class PowerTests
    * Test equals.
    */
   @Test
-  public void testEquals()
+  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
+  /* default */ void testEquals()
    {
     final Power power1 = new Power(1);
     final Power power2 = new Power(1);
@@ -117,7 +118,7 @@ public class PowerTests
    * Test toString.
    */
   @Test
-  public void testToString()
+  /* default */ void testToString()
    {
     final Power power = new Power(1);
     assertEquals("Power[power=1]", power.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -128,7 +129,8 @@ public class PowerTests
    * Test compareTo.
    */
   @Test
-  public void testCompareTo()
+  @SuppressWarnings("java:S5785")
+  /* default */ void testCompareTo()
    {
     final Power power1 = new Power(1);
     final Power power2 = new Power(1);

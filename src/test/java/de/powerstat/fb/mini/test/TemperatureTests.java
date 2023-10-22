@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
+
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,12 +23,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Temperature tests.
  */
 @SuppressFBWarnings({"EC_NULL_ARG", "RV_NEGATING_RESULT_OF_COMPARETO", "SPP_USE_ZERO_WITH_COMPARATOR", "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"})
-public class TemperatureTests
+final class TemperatureTests
  {
   /**
    * Default constructor.
    */
-  public TemperatureTests()
+  /* default */ TemperatureTests()
    {
     super();
    }
@@ -40,7 +41,7 @@ public class TemperatureTests
    */
   @ParameterizedTest
   @ValueSource(longs = {-2732, 0, 200})
-  public void isTemperatureValue(final long temperature)
+  /* default */ void testIsTemperatureValue(final long temperature)
    {
     assertEquals(temperature, Temperature.of(temperature).longValue(), "Not a temperature value!"); //$NON-NLS-1$
    }
@@ -53,7 +54,7 @@ public class TemperatureTests
    */
   @ParameterizedTest
   @ValueSource(longs = {-2733})
-  public void isNotATemperatureValue(final long temperature)
+  /* default */ void testIsNotATemperatureValue(final long temperature)
    {
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
@@ -67,7 +68,7 @@ public class TemperatureTests
    * Is a temperature string value.
    */
   @Test
-  public void isTemperatureString()
+  /* default */ void testIsTemperatureString()
    {
     assertEquals(20, Temperature.of("200").getTemperatureCelsius(), "Not a temperature value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -77,7 +78,7 @@ public class TemperatureTests
    * Test hash code.
    */
   @Test
-  public void testHashCode()
+  /* default */ void testHashCode()
    {
     final Temperature temperature1 = new Temperature(1);
     final Temperature temperature2 = new Temperature(1);
@@ -93,7 +94,8 @@ public class TemperatureTests
    * Test equals.
    */
   @Test
-  public void testEquals()
+  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
+  /* default */ void testEquals()
    {
     final Temperature temperature1 = new Temperature(1);
     final Temperature temperature2 = new Temperature(1);
@@ -116,7 +118,7 @@ public class TemperatureTests
    * Test toString.
    */
   @Test
-  public void testToString()
+  /* default */ void testToString()
    {
     final Temperature temperature = new Temperature(200);
     assertEquals("Temperature[temperature=200]", temperature.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -127,7 +129,8 @@ public class TemperatureTests
    * Test compareTo.
    */
   @Test
-  public void testCompareTo()
+  @SuppressWarnings("java:S5785")
+  /* default */ void testCompareTo()
    {
     final Temperature temperature1 = new Temperature(1);
     final Temperature temperature2 = new Temperature(1);

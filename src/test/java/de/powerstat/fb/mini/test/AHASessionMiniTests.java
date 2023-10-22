@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -71,7 +71,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * AHASessionMini tests.
  */
 @SuppressFBWarnings({"EC_NULL_ARG", "NAB_NEEDLESS_BOOLEAN_CONSTANT_CONVERSION", "RV_NEGATING_RESULT_OF_COMPARETO", "SPP_USE_ZERO_WITH_COMPARATOR"})
-public class AHASessionMiniTests
+final class AHASessionMiniTests
  {
   /**
    * Logger.
@@ -158,11 +158,16 @@ public class AHASessionMiniTests
    */
   private static final String SID4711 = "&sid=0000000000004711";
 
+  /**
+   * Illegal argument exception expected.
+   */
+  private static final String ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED = "Illegal argument exception expected"; //$NON-NLS-1$
+
 
   /**
    * Default constructor.
    */
-  public AHASessionMiniTests()
+  /* default */ AHASessionMiniTests()
    {
     super();
    }
@@ -282,9 +287,9 @@ public class AHASessionMiniTests
    * @throws ParserConfigurationException ParserConfigurationException
    */
   @Test
-  public void newInstance1() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  /* default */ void testNewInstance1() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    final AHASessionMini ahasession = AHASessionMini.newInstance(AHASessionMiniTests.FBPASSWORD);
+    final var ahasession = AHASessionMini.newInstance(AHASessionMiniTests.FBPASSWORD);
     assertNotNull(ahasession, "newInstance failed!"); //$NON-NLS-1$
    }
 
@@ -298,11 +303,11 @@ public class AHASessionMiniTests
    * @throws ParserConfigurationException ParserConfigurationException
    */
   @Test
-  public void newInstance2() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  /* default */ void testNewInstance2() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, mockDocBuilder, AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    final var ahasession = AHASessionMini.newInstance(mockHttpclient, mockDocBuilder, AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     assertNotNull(ahasession, "newInstance failed!"); //$NON-NLS-1$
    }
 
@@ -316,11 +321,11 @@ public class AHASessionMiniTests
    * @throws ParserConfigurationException Parser configuration exception
    */
   @Test
-  public void testToString() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  /* default */ void testToString() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final DocumentBuilder mockDocBuilder = mock(DocumentBuilder.class);
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, mockDocBuilder, AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    final var ahasession = AHASessionMini.newInstance(mockHttpclient, mockDocBuilder, AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final String representation = ahasession.toString();
     assertEquals("AHASessionMini[hostname=" + AHASessionMiniTests.FRITZ_BOX + ", username=, sid=0000000000000000]", representation, "toString with unexpected result"); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -337,8 +342,9 @@ public class AHASessionMiniTests
    * @throws SAXException SAX exception
    * @throws InvalidKeyException Invalid key exception
    */
-  // @Test
-  public void logonLogoff() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, InvalidKeyException
+  @Test
+  @Disabled("TODO")
+  /* default */ void testLogonLogoff() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -370,7 +376,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void logonFailure() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, InvalidKeyException
+  /* default */ void testLogonFailure() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -387,6 +393,9 @@ public class AHASessionMiniTests
    }
 
 
+  // TODO testLogon 2$ challenge
+
+
   /**
    * Logoff failure test.
    *
@@ -399,7 +408,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void logoffFailure() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, InvalidKeyException
+  /* default */ void testLogoffFailure() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -427,7 +436,7 @@ public class AHASessionMiniTests
    *
    */
   @Test
-  public void hasValidSessionFalse() throws ParserConfigurationException
+  /* default */ void testHasValidSessionFalse() throws ParserConfigurationException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
 
@@ -447,7 +456,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void hasValidSessionTrue() throws ParserConfigurationException, NoSuchAlgorithmException, IOException, InvalidKeyException, SAXException
+  /* default */ void testHasValidSessionTrue() throws ParserConfigurationException, NoSuchAlgorithmException, IOException, InvalidKeyException, SAXException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -474,7 +483,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getSwitchList1() throws IOException, NoSuchAlgorithmException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchList1() throws IOException, NoSuchAlgorithmException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -526,7 +535,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getSwitchList2() throws IOException, NoSuchAlgorithmException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchList2() throws IOException, NoSuchAlgorithmException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -576,7 +585,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getSwitchListEmpty() throws IOException, NoSuchAlgorithmException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchListEmpty() throws IOException, NoSuchAlgorithmException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -626,7 +635,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setSwitchOn() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSwitchOn() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -674,7 +683,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setSwitchOnFailure1() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSwitchOnFailure1() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -724,7 +733,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setSwitchOnFailure2() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSwitchOnFailure2() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -772,7 +781,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setSwitchOff() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSwitchOff() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -820,7 +829,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setSwitchOffFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSwitchOffFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -868,7 +877,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setSwitchToggle() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSwitchToggle() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -939,7 +948,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setSwitchToggleFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSwitchToggleFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1010,7 +1019,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getSwitchState() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchState() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1082,7 +1091,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"inval\n", "inval"})
-  public void getSwitchStateFailure1(final String inval) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchStateFailure1(final String inval) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1128,9 +1137,10 @@ public class AHASessionMiniTests
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     /* final boolean resultOff = */ ahasession.setSwitchOff(AIN.of(AHASessionMiniTests.AIN1));
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(ProviderNotFoundException.class, () ->
      {
-      /* final boolean resultState = */ ahasession.getSwitchState(AIN.of(AHASessionMiniTests.AIN1));
+      /* final boolean resultState = */ ahasession.getSwitchState(ain);
      }, "Provider not found exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1150,7 +1160,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getSwitchStateFailure2() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchStateFailure2() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1220,7 +1230,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void isSwitchPresent() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testIsSwitchPresent() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1272,7 +1282,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void isSwitchPresentFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testIsSwitchPresentFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1326,7 +1336,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"10150\n", "1"})
-  public void getSwitchPower(final String powerValue) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchPower(final String powerValue) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1378,7 +1388,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getSwitchPowerFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchPowerFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1407,9 +1417,10 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(ProviderNotFoundException.class, () ->
      {
-      /* final Power power = */ ahasession.getSwitchPower(AIN.of(AHASessionMiniTests.AIN1));
+      /* final Power power = */ ahasession.getSwitchPower(ain);
      }, "Provider not found exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1431,7 +1442,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"75519\n", "1"})
-  public void getSwitchEnergy(final String energyValue) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchEnergy(final String energyValue) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1483,7 +1494,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getSwitchEnergyFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchEnergyFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1512,9 +1523,10 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(ProviderNotFoundException.class, () ->
      {
-      /* final Energy energy = */ ahasession.getSwitchEnergy(AIN.of(AHASessionMiniTests.AIN1));
+      /* final Energy energy = */ ahasession.getSwitchEnergy(ain);
      }, "Provider not found exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1536,7 +1548,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"01 office\n", "\n", ""})
-  public void getSwitchName(final String name) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetSwitchName(final String name) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1588,7 +1600,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getDeviceListInfos() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetDeviceListInfos() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1640,7 +1652,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getDeviceListInfosFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetDeviceListInfosFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1696,7 +1708,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"182\n"})
-  public void getTemperature(final String temperatureValue) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetTemperature(final String temperatureValue) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1750,7 +1762,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"\n", ""})
-  public void getTemperatureFailure(final String temperatureValue) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetTemperatureFailure(final String temperatureValue) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1779,9 +1791,10 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(NumberFormatException.class, () ->
      {
-      /* final Temperature temperature = */ ahasession.getTemperature(AIN.of(AHASessionMiniTests.AIN1));
+      /* final Temperature temperature = */ ahasession.getTemperature(ain);
      }, "Number format exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1803,7 +1816,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"40\n", "253\n", "254\n"})
-  public void getHkrtSoll(final String soll) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetHkrtSoll(final String soll) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1868,7 +1881,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"\n", ""})
-  public void getHkrtSollFailure(final String soll) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetHkrtSollFailure(final String soll) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1895,11 +1908,12 @@ public class AHASessionMiniTests
 
     // ----------
 
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
+    final var ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(NumberFormatException.class, () ->
      {
-      /* final Temperature temperature = */ ahasession.getHkrtSoll(AIN.of(AHASessionMiniTests.AIN1));
+      /* final Temperature temperature = */ ahasession.getHkrtSoll(ain);
      }, "Number format exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -1921,7 +1935,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"40\n"})
-  public void getHkrKomfort(final String komfort) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetHkrKomfort(final String komfort) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -1975,7 +1989,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"34\n"})
-  public void getHkrAbsenk(final String absenk) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetHkrAbsenk(final String absenk) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2029,7 +2043,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(longs = {0, 300, 80, 280})
-  public void setHkrtSoll(final long temperature) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetHkrtSoll(final long temperature) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2082,7 +2096,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"75", "285"})
-  public void setHkrtSollFailure(final String temperature) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetHkrtSollFailure(final String temperature) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2111,9 +2125,11 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
+    final var temp = Temperature.of(temperature);
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
-      ahasession.setHkrtSoll(AIN.of(AHASessionMiniTests.AIN1), Temperature.of(temperature));
+      ahasession.setHkrtSoll(ain, temp);
      }, "Index out of bounds exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2133,7 +2149,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getBasicDeviceStats() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetBasicDeviceStats() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2185,7 +2201,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getTemplateListInfos() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetTemplateListInfos() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2237,7 +2253,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void applyTemplate() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testApplyTemplate() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2290,7 +2306,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(ints = {0, 1, 2})
-  public void setSimpleOnOff(final int onoff) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSimpleOnOff(final int onoff) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2339,7 +2355,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(ints = {-1, 3})
-  public void setSimpleOnOffFailure(final int onoff) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSimpleOnOffFailure(final int onoff) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2364,10 +2380,11 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setSimpleOnOff(AIN.of(AHASessionMiniTests.AIN1), onoff);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      ahasession.setSimpleOnOff(ain, onoff);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2386,7 +2403,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setSimpleOnOffUnsupported() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetSimpleOnOffUnsupported() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2414,9 +2431,10 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(UnsupportedOperationException.class, () ->
      {
-      ahasession.setSimpleOnOff(AIN.of(AHASessionMiniTests.AIN1), 0);
+      ahasession.setSimpleOnOff(ain, 0);
      }, "Unsupported operation exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2438,7 +2456,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(ints = {0, 255})
-  public void setLevel(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetLevel(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2487,7 +2505,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(ints = {-1, 256})
-  public void setLevelFailure(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetLevelFailure(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2512,10 +2530,11 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setLevel(AIN.of(AHASessionMiniTests.AIN1), level);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      ahasession.setLevel(ain, level);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2536,7 +2555,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(ints = {0, 100})
-  public void setLevelPercentage(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetLevelPercentage(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2585,7 +2604,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(ints = {-1, 101})
-  public void setLevelPercentageFailure(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetLevelPercentageFailure(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2610,10 +2629,11 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setLevelPercentage(AIN.of(AHASessionMiniTests.AIN1), level);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      ahasession.setLevelPercentage(ain, level);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2636,7 +2656,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @CsvSource({"0, 0, 0", "359, 255, 10"})
-  public void setColor(final int hue, final int saturation, final int duration) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetColor(final int hue, final int saturation, final int duration) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2687,7 +2707,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @CsvSource({"-1, 0, 0", "360, 0, 0", "0, -1, 0", "0, 256, 0", "0, 0, -1"})
-  public void setColorFailure(final int hue, final int saturation, final int duration) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetColorFailure(final int hue, final int saturation, final int duration) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2712,10 +2732,11 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setColor(AIN.of(AHASessionMiniTests.AIN1), hue, saturation, duration);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      ahasession.setColor(ain, hue, saturation, duration);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2737,7 +2758,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @CsvSource({"2700, 0", "6500, 10"})
-  public void setColorTemperature(final int temperature, final int duration) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetColorTemperature(final int temperature, final int duration) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2787,7 +2808,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @CsvSource({"2699, 0", "6501, 0", "2700, -1"})
-  public void setColorTemperatureFailure(final int temperature, final int duration) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetColorTemperatureFailure(final int temperature, final int duration) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2812,10 +2833,11 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(IllegalArgumentException.class, () ->
      {
-      ahasession.setColorTemperature(AIN.of(AHASessionMiniTests.AIN1), temperature, duration);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      ahasession.setColorTemperature(ain, temperature, duration);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -2834,7 +2856,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getColorDefaults() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetColorDefaults() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2886,7 +2908,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void getColorDefaultsUnsupported() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testGetColorDefaultsUnsupported() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2940,7 +2962,7 @@ public class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @Test
-  public void setHkrBoost0() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetHkrBoost0() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2994,7 +3016,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(longs = {0, 3600, 86400})
-  public void setHkrBoostNowPlusSeconds(final long seconds) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetHkrBoostNowPlusSeconds(final long seconds) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3050,7 +3072,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(longs = {-1, 87000})
-  public void setHkrBoostNowPlusSecondsFailure(final long seconds) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetHkrBoostNowPlusSecondsFailure(final long seconds) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3081,10 +3103,11 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final long endtime = */ ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), boostend);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      /* final long endtime = */ ahasession.setHkrBoost(ain, boostend);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -3105,7 +3128,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(longs = {0, 3600, 86400})
-  public void setHkrWindowOpenNowPlusSeconds(final long seconds) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetHkrWindowOpenNowPlusSeconds(final long seconds) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3161,7 +3184,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @ValueSource(longs = {-1, 87000})
-  public void setHkrWindowOpenNowPlusSecondsFailure(final long seconds) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetHkrWindowOpenNowPlusSecondsFailure(final long seconds) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3192,10 +3215,11 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
+    final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final long endtime = */ ahasession.setHkrWindowOpen(AIN.of(AHASessionMiniTests.AIN1), openend);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      /* final long endtime = */ ahasession.setHkrWindowOpen(ain, openend);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -3216,7 +3240,7 @@ public class AHASessionMiniTests
    */
   @ParameterizedTest
   @EnumSource(HandleBlind.class)
-  public void setBlind(final HandleBlind target) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  /* default */ void testSetBlind(final HandleBlind target) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3265,7 +3289,7 @@ public class AHASessionMiniTests
    * @throws SAXException SAX exception
    */
   @Test
-  public void setName() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
+  /* default */ void testSetName() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3314,7 +3338,7 @@ public class AHASessionMiniTests
    * @throws SAXException SAX exception
    */
   @Test
-  public void startUleSubscription() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
+  /* default */ void testStartUleSubscription() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3363,7 +3387,7 @@ public class AHASessionMiniTests
    * @throws SAXException SAX exception
    */
   @Test
-  public void getSubscriptionState() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
+  /* default */ void testGetSubscriptionState() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3392,7 +3416,7 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Document result = ahasession.getSubscriptionState();
+    /* final Document result = */ ahasession.getSubscriptionState();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -3412,7 +3436,7 @@ public class AHASessionMiniTests
    * @throws SAXException SAX exception
    */
   @Test
-  public void getDeviceInfo() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
+  /* default */ void testGetDeviceInfo() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -3441,7 +3465,7 @@ public class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Document result = ahasession.getDeviceInfo(AIN.of("000000000001"));
+    /* final Document result = */ ahasession.getDeviceInfo(AIN.of("000000000001"));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -3465,7 +3489,7 @@ public class AHASessionMiniTests
    */
   @Test
   @Disabled("Logon depends on user")
-  public void real() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, TransformerException, InvalidKeyException
+  /* default */ void testReal() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, TransformerException, InvalidKeyException
    {
     AHASessionMiniTests.LOGGER.debug("---------- real start ----------"); //$NON-NLS-1$
     final AHASessionMini ahasession = AHASessionMini.newInstance(""); //$NON-NLS-1$
@@ -3489,7 +3513,7 @@ public class AHASessionMiniTests
    */
   @Test
   @Disabled("TODO")
-  public void security() throws ParserConfigurationException, SAXException, IOException, TransformerException
+  /* default */ void testSecurity() throws ParserConfigurationException, SAXException, IOException, TransformerException
    {
     // final String string = "<test>&lt;script&gt;alert();&lt;/script&gt;</test>";
     // final String string = "<test>%3Cscript%3Ealert()%3C/script%3E</test>";
@@ -3535,7 +3559,7 @@ public class AHASessionMiniTests
    * @throws KeyManagementException  Key management exception
    */
   @Test
-  public void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  /* default */ void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final AHASessionMini session1 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
     final AHASessionMini session2 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
@@ -3556,7 +3580,8 @@ public class AHASessionMiniTests
    * @throws KeyManagementException  Key management exception
    */
   @Test
-  public void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
+  /* default */ void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final AHASessionMini session1 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
     final AHASessionMini session2 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
@@ -3584,7 +3609,8 @@ public class AHASessionMiniTests
    * @throws KeyManagementException  Key management exception
    */
   @Test
-  public void testCompareTo() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  @SuppressWarnings("java:S5785")
+  /* default */ void testCompareTo() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
     final AHASessionMini session1 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
     final AHASessionMini session2 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
@@ -3624,7 +3650,7 @@ public class AHASessionMiniTests
      *
      * @param path URI path to match
      */
-    public HttpGetMatcher(final String path)
+    /* default */ HttpGetMatcher(final String path)
      {
       super();
       Objects.requireNonNull(path, "path"); //$NON-NLS-1$

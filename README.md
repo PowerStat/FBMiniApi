@@ -17,10 +17,17 @@ For example when using Apache Maven you could add the following dependency to yo
     <dependency>
       <groupId>de.powerstat.fb</groupId>
       <artifactId>miniapi</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
 
 Other build tools like gradle will work analogous.
+
+Java platform module system:
+
+    module com.example.java.app
+     {
+      requires de.powerstat.fb.mini;
+     }
 
 To compile this project yourself you could use:
 
@@ -70,7 +77,7 @@ To run toolchain:
     
 If you use a sonar server:
 
-    mvn sonar:sonar -Dsonar.login=<username> -Dsonar.password=<password>
+    mvn sonar:sonar -Dsonar.token=<token>
 
 If you use [infer][https://fbinfer.com/]:
 

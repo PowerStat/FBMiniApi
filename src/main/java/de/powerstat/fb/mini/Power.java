@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -59,19 +59,6 @@ public final class Power implements Comparable<Power>
   public static Power of(final String power)
    {
     return new Power(Long.parseLong(power));
-   }
-
-
-  /**
-   * Get power in milli watt.
-   *
-   * @return Power in mW
-   * @deprecated Use longValue() instead
-   */
-  @Deprecated
-  public long getPowerMilliWatt()
-   {
-    return this.powerMW;
    }
 
 
@@ -146,7 +133,7 @@ public final class Power implements Comparable<Power>
   @Override
   public String toString()
    {
-    final StringBuilder builder = new StringBuilder();
+    final var builder = new StringBuilder();
     builder.append("Power[power=").append(this.powerMW).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

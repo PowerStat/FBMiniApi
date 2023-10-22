@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -23,12 +23,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Energy tests.
  */
 @SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO", "EC_NULL_ARG", "SPP_USE_ZERO_WITH_COMPARATOR", "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"})
-public class EnergyTests
+final class EnergyTests
  {
   /**
    * Default constructor.
    */
-  public EnergyTests()
+  /* default */ EnergyTests()
    {
     super();
    }
@@ -41,7 +41,7 @@ public class EnergyTests
    */
   @ParameterizedTest
   @ValueSource(longs = {0, 1, 75519})
-  public void isEnergyValue(final long energy)
+  /* default */ void testIsEnergyValue(final long energy)
    {
     assertEquals(energy, Energy.of(energy).longValue(), "Not an energy value!"); //$NON-NLS-1$
    }
@@ -54,7 +54,7 @@ public class EnergyTests
    */
   @ParameterizedTest
   @ValueSource(longs = {-1})
-  public void isNotAnEnergyValue(final long energy)
+  /* default */ void testIsNotAnEnergyValue(final long energy)
    {
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
@@ -68,7 +68,7 @@ public class EnergyTests
    * Is an energy string value.
    */
   @Test
-  public void isEnergyString()
+  /* default */ void testIsEnergyString()
    {
     assertEquals(75, Energy.of("75519").getEnergyKiloWattHours(), "Not an energy value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -78,7 +78,7 @@ public class EnergyTests
    * Test hash code.
    */
   @Test
-  public void testHashCode()
+  /* default */ void testHashCode()
    {
     final Energy energy1 = new Energy(1);
     final Energy energy2 = new Energy(1);
@@ -94,7 +94,8 @@ public class EnergyTests
    * Test equals.
    */
   @Test
-  public void testEquals()
+  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
+  /* default */ void testEquals()
    {
     final Energy energy1 = new Energy(1);
     final Energy energy2 = new Energy(1);
@@ -117,7 +118,7 @@ public class EnergyTests
    * Test toString.
    */
   @Test
-  public void testToString()
+  /* default */ void testToString()
    {
     final Energy energy = new Energy(1);
     assertEquals("Energy[energy=1]", energy.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -128,7 +129,8 @@ public class EnergyTests
    * Test compareTo.
    */
   @Test
-  public void testCompareTo()
+  @SuppressWarnings("java:S5785")
+  /* default */ void testCompareTo()
    {
     final Energy energy1 = new Energy(1);
     final Energy energy2 = new Energy(1);

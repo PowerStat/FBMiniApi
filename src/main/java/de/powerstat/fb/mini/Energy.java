@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -59,19 +59,6 @@ public final class Energy implements Comparable<Energy>
   public static Energy of(final String energy)
    {
     return new Energy(Long.parseLong(energy));
-   }
-
-
-  /**
-   * Get energy in watt hours.
-   *
-   * @return Energy in Wh
-   * @deprecated Use longValue() instead
-   */
-  @Deprecated
-  public long getEnergyWattHours()
-   {
-    return this.energyWh;
    }
 
 
@@ -146,7 +133,7 @@ public final class Energy implements Comparable<Energy>
   @Override
   public String toString()
    {
-    final StringBuilder builder = new StringBuilder();
+    final var builder = new StringBuilder();
     builder.append("Energy[energy=").append(this.energyWh).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

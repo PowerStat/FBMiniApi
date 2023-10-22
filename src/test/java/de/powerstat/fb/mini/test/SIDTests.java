@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2022-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -20,13 +20,28 @@ import de.powerstat.fb.mini.SID;
 /**
  * SID tests.
  */
-public class SIDTests
+final class SIDTests
  {
+  /**
+   * SID 1.
+   */
+  private static final String SID_ONE = "0000000000000001";
+
+
+  /**
+   * Default constructor.
+   */
+  /* default */ SIDTests()
+   {
+    super();
+   }
+
+
   /**
    * Construtor test.
    */
   @Test
-  public void constructor1()
+  /* default */ void testConstructor1()
    {
     assertThrows(NullPointerException.class, () ->
      {
@@ -40,7 +55,7 @@ public class SIDTests
    * Construtor test.
    */
   @Test
-  public void constructor2()
+  /* default */ void testConstructor2()
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
@@ -54,7 +69,7 @@ public class SIDTests
    * Construtor test.
    */
   @Test
-  public void constructor3()
+  /* default */ void testConstructor3()
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
@@ -68,7 +83,7 @@ public class SIDTests
    * Construtor test.
    */
   @Test
-  public void constructor4()
+  /* default */ void testConstructor4()
    {
     assertNotNull(new SID("0123456789abcdef"), "Could not create SID."); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -78,7 +93,7 @@ public class SIDTests
    * Factory test.
    */
   @Test
-  public void of1()
+  /* default */ void testOf1()
    {
     assertNotNull(SID.of("0123456789abcdef"), "Could not create SID."); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -88,7 +103,7 @@ public class SIDTests
    * Factory invalid and getSID test.
    */
   @Test
-  public void ofInvalid()
+  /* default */ void testOfInvalid()
    {
     assertEquals("0000000000000000", SID.ofInvalid().stringValue(), "Not INVALID."); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -98,7 +113,7 @@ public class SIDTests
    * Is valid session test.
    */
   @Test
-  public void isValidSessionFalse()
+  /* default */ void testIsValidSessionFalse()
    {
     assertFalse(SID.ofInvalid().isValidSession(), "Session not as expected."); //$NON-NLS-1$
    }
@@ -108,9 +123,9 @@ public class SIDTests
    * Is valid session test.
    */
   @Test
-  public void isValidSessionTrue()
+  /* default */ void testIsValidSessionTrue()
    {
-    assertTrue(SID.of("0000000000000001").isValidSession(), "Session not as expected."); //$NON-NLS-1$ //$NON-NLS-2$
+    assertTrue(SID.of(SID_ONE).isValidSession(), "Session not as expected."); //$NON-NLS-1$
    }
 
 
@@ -118,10 +133,10 @@ public class SIDTests
    * Test hash code.
    */
   @Test
-  public void testHashCode()
+  /* default */ void testHashCode()
    {
-    final SID sid1 = new SID("0000000000000001"); //$NON-NLS-1$
-    final SID sid2 = new SID("0000000000000001"); //$NON-NLS-1$
+    final SID sid1 = new SID(SID_ONE);
+    final SID sid2 = new SID(SID_ONE);
     final SID sid3 = new SID("0000000000000002"); //$NON-NLS-1$
     assertAll("testHashCode", //$NON-NLS-1$
       () -> assertEquals(sid1.hashCode(), sid2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
@@ -134,12 +149,14 @@ public class SIDTests
    * Test equals.
    */
   @Test
-  public void testEquals()
+  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
+  // @SuppressFBWarnings("EC_NULL_ARG")
+  /* default */ void testEquals()
    {
-    final SID sid1 = new SID("0000000000000001"); //$NON-NLS-1$
-    final SID sid2 = new SID("0000000000000001"); //$NON-NLS-1$
+    final SID sid1 = new SID(SID_ONE);
+    final SID sid2 = new SID(SID_ONE);
     final SID sid3 = new SID("0000000000000002"); //$NON-NLS-1$
-    final SID sid4 = new SID("0000000000000001"); //$NON-NLS-1$
+    final SID sid4 = new SID(SID_ONE);
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(sid1.equals(sid1), "sid11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(sid1.equals(sid2), "sid12 are not equal"), //$NON-NLS-1$
@@ -157,9 +174,9 @@ public class SIDTests
    * Test toString.
    */
   @Test
-  public void testToString()
+  /* default */ void testToString()
    {
-    final SID sid = new SID("0000000000000001"); //$NON-NLS-1$
+    final SID sid = new SID(SID_ONE);
     assertEquals("SID[sid=0000000000000001]", sid.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -168,13 +185,14 @@ public class SIDTests
    * Test compareTo.
    */
   @Test
-  public void testCompareTo()
+  @SuppressWarnings("java:S5785")
+  /* default */ void testCompareTo()
    {
-    final SID sid1 = new SID("0000000000000001"); //$NON-NLS-1$
-    final SID sid2 = new SID("0000000000000001"); //$NON-NLS-1$
+    final SID sid1 = new SID(SID_ONE);
+    final SID sid2 = new SID(SID_ONE);
     final SID sid3 = new SID("0000000000000002"); //$NON-NLS-1$
     final SID sid4 = new SID("0000000000000003"); //$NON-NLS-1$
-    final SID sid5 = new SID("0000000000000001"); //$NON-NLS-1$
+    final SID sid5 = new SID(SID_ONE);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(sid1.compareTo(sid2) == -sid2.compareTo(sid1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(sid1.compareTo(sid3) == -sid3.compareTo(sid1), "reflexive2"), //$NON-NLS-1$

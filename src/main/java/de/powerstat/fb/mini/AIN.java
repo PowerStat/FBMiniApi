@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -16,12 +16,12 @@ public final class AIN implements Comparable<AIN>
   /**
    * AIN regexp.
    */
-  private static final Pattern AIN_REGEXP = Pattern.compile("^[0-9]{12}(-[0-9])?$"); //$NON-NLS-1$
+  private static final Pattern AIN_REGEXP = Pattern.compile("^\\d{12}(-\\d)?$"); //$NON-NLS-1$
 
   /**
    * Space regexp.
    */
-  private static final Pattern SPACE_REGEXP = Pattern.compile("\\s"); //$NON-NLS-1$
+  private static final Pattern SPACE_REGEXP = Pattern.compile("\\s", Pattern.UNICODE_CHARACTER_CLASS); //$NON-NLS-1$
 
   /**
    * Aktor Identifikationsnummer.
@@ -46,7 +46,7 @@ public final class AIN implements Comparable<AIN>
      {
       throw new IllegalArgumentException("AIN with wrong length"); //$NON-NLS-1$
      }
-    final String intAIN = AIN.SPACE_REGEXP.matcher(ain).replaceAll(""); //$NON-NLS-1$
+    final var intAIN = AIN.SPACE_REGEXP.matcher(ain).replaceAll(""); //$NON-NLS-1$
     if (!AIN.AIN_REGEXP.matcher(intAIN).matches())
      {
       throw new IllegalArgumentException("AIN with wrong format"); //$NON-NLS-1$
@@ -64,19 +64,6 @@ public final class AIN implements Comparable<AIN>
   public static AIN of(final String ain)
    {
     return new AIN(ain);
-   }
-
-
-  /**
-   * Get ain string.
-   *
-   * @return AIN string
-   * @deprecated Use stringValue() instead
-   */
-  @Deprecated
-  public String getAIN()
-   {
-    return this.aiNr;
    }
 
 
@@ -140,7 +127,7 @@ public final class AIN implements Comparable<AIN>
   @Override
   public String toString()
    {
-    final StringBuilder builder = new StringBuilder();
+    final var builder = new StringBuilder();
     builder.append("AIN[ain=").append(this.aiNr).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

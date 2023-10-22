@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -59,19 +59,6 @@ public final class Temperature implements Comparable<Temperature>
   public static Temperature of(final String temperature)
    {
     return new Temperature(Long.parseLong(temperature));
-   }
-
-
-  /**
-   * Get temperature in deci celsius.
-   *
-   * @return Temperature in deci celsius
-   * @deprecated Use longValue() instead
-   */
-  @Deprecated
-  public long getTemperatureDeciCelsius()
-   {
-    return this.temperatureCelsius;
    }
 
 
@@ -146,7 +133,7 @@ public final class Temperature implements Comparable<Temperature>
   @Override
   public String toString()
    {
-    final StringBuilder builder = new StringBuilder(25);
+    final var builder = new StringBuilder(25);
     builder.append("Temperature[temperature=").append(this.temperatureCelsius).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

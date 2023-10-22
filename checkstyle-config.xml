@@ -93,7 +93,7 @@
     <module name="OneTopLevelClass">
     </module>
     <module name="ThrowsCount">
-      <property name="max" value="6"/>
+      <property name="max" value="8"/>
       <property name="ignorePrivateMethods" value="true"/>
     </module>
     <module name="VisibilityModifier">
@@ -312,7 +312,7 @@
       <property name="allowStaticMemberImports" value="false"/>
     </module>
     <module name="AvoidStaticImport">
-      <property name="excludes" value="org.junit.jupiter.api.Assertions.*"/>
+      <property name="excludes" value="org.junit.jupiter.api.Assertions.*,org.mockito.Mockito.*,org.mockito.ArgumentMatchers.*"/>
     </module>
     <!--
     <module name="CustomImportOrder">
