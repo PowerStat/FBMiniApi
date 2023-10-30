@@ -544,12 +544,12 @@ HAN-FUN Interfaces
       final var string = EntityUtils.toString(entity);
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("string: {}" , string); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("string: {}", string); //$NON-NLS-1$
        }
       final byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("bytes: {}",  new String(bytes, StandardCharsets.UTF_8)); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("bytes: {}", new String(bytes, StandardCharsets.UTF_8)); //$NON-NLS-1$
        }
       final var byteStream = new ByteArrayInputStream(bytes);
       final var stream = new InputSource(byteStream);
@@ -747,7 +747,7 @@ HAN-FUN Interfaces
       AHASessionMini.LOGGER.debug("blocktime: {}", blocktime); //$NON-NLS-1$
      }
     // Users?
-    // Rigths ?
+    // Rigths?
 
     // login
     if (!this.sid.isValidSession())
@@ -937,7 +937,7 @@ HAN-FUN Interfaces
     final var state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setswitchtoggle"); //$NON-NLS-1$
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("setSwitchToggle()->{}<",state); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("setSwitchToggle()->{}<", state); //$NON-NLS-1$
      }
     return "1".equals((state.length() == 0) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
