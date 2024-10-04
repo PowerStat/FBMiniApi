@@ -80,9 +80,9 @@ final class EnergyTests
   @Test
   /* default */ void testHashCode()
    {
-    final Energy energy1 = new Energy(1);
-    final Energy energy2 = new Energy(1);
-    final Energy energy3 = new Energy(2);
+    final Energy energy1 = Energy.of(1);
+    final Energy energy2 = Energy.of(1);
+    final Energy energy3 = Energy.of(2);
     assertAll("testHashCode", //$NON-NLS-1$
       () -> assertEquals(energy1.hashCode(), energy2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
       () -> assertNotEquals(energy1.hashCode(), energy3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
@@ -97,10 +97,10 @@ final class EnergyTests
   @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
   /* default */ void testEquals()
    {
-    final Energy energy1 = new Energy(1);
-    final Energy energy2 = new Energy(1);
-    final Energy energy3 = new Energy(2);
-    final Energy energy4 = new Energy(1);
+    final Energy energy1 = Energy.of(1);
+    final Energy energy2 = Energy.of(1);
+    final Energy energy3 = Energy.of(2);
+    final Energy energy4 = Energy.of(1);
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(energy1.equals(energy1), "energy11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(energy1.equals(energy2), "energy12 are not equal"), //$NON-NLS-1$
@@ -120,7 +120,7 @@ final class EnergyTests
   @Test
   /* default */ void testToString()
    {
-    final Energy energy = new Energy(1);
+    final Energy energy = Energy.of(1);
     assertEquals("Energy[energy=1]", energy.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -132,11 +132,11 @@ final class EnergyTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final Energy energy1 = new Energy(1);
-    final Energy energy2 = new Energy(1);
-    final Energy energy3 = new Energy(2);
-    final Energy energy4 = new Energy(3);
-    final Energy energy5 = new Energy(1);
+    final Energy energy1 = Energy.of(1);
+    final Energy energy2 = Energy.of(1);
+    final Energy energy3 = Energy.of(2);
+    final Energy energy4 = Energy.of(3);
+    final Energy energy5 = Energy.of(1);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(energy1.compareTo(energy2) == -energy2.compareTo(energy1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(energy1.compareTo(energy3) == -energy3.compareTo(energy1), "reflexive2"), //$NON-NLS-1$

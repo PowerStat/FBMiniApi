@@ -7,11 +7,13 @@ package de.powerstat.fb.mini;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import de.powerstat.validation.interfaces.IValueObject;
+
 
 /**
  * Session identifier.
  */
-public final class SID implements Comparable<SID>
+public final class SID implements Comparable<SID>, IValueObject
  {
   /**
    * SID regexp.
@@ -35,7 +37,7 @@ public final class SID implements Comparable<SID>
    *
    * @param sid Session identifier
    */
-  public SID(final String sid)
+  private SID(final String sid)
    {
     super();
     Objects.requireNonNull(sid, "sessionid"); //$NON-NLS-1$
@@ -79,6 +81,7 @@ public final class SID implements Comparable<SID>
    *
    * @return The numeric value represented by this object after conversion to type string.
    */
+  @Override
   public String stringValue()
    {
     return this.sessionId;

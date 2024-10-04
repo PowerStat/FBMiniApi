@@ -80,9 +80,9 @@ final class PowerTests
   @Test
   /* default */ void testHashCode()
    {
-    final Power power1 = new Power(1);
-    final Power power2 = new Power(1);
-    final Power power3 = new Power(2);
+    final Power power1 = Power.of(1);
+    final Power power2 = Power.of(1);
+    final Power power3 = Power.of(2);
     assertAll("testHashCode", //$NON-NLS-1$
       () -> assertEquals(power1.hashCode(), power2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
       () -> assertNotEquals(power1.hashCode(), power3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
@@ -97,10 +97,10 @@ final class PowerTests
   @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
   /* default */ void testEquals()
    {
-    final Power power1 = new Power(1);
-    final Power power2 = new Power(1);
-    final Power power3 = new Power(2);
-    final Power power4 = new Power(1);
+    final Power power1 = Power.of(1);
+    final Power power2 = Power.of(1);
+    final Power power3 = Power.of(2);
+    final Power power4 = Power.of(1);
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(power1.equals(power1), "power11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(power1.equals(power2), "power12 are not equal"), //$NON-NLS-1$
@@ -120,7 +120,7 @@ final class PowerTests
   @Test
   /* default */ void testToString()
    {
-    final Power power = new Power(1);
+    final Power power = Power.of(1);
     assertEquals("Power[power=1]", power.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -132,11 +132,11 @@ final class PowerTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final Power power1 = new Power(1);
-    final Power power2 = new Power(1);
-    final Power power3 = new Power(2);
-    final Power power4 = new Power(3);
-    final Power power5 = new Power(1);
+    final Power power1 = Power.of(1);
+    final Power power2 = Power.of(1);
+    final Power power3 = Power.of(2);
+    final Power power4 = Power.of(3);
+    final Power power5 = Power.of(1);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(power1.compareTo(power2) == -power2.compareTo(power1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(power1.compareTo(power3) == -power3.compareTo(power1), "reflexive2"), //$NON-NLS-1$

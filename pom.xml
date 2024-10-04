@@ -5,7 +5,7 @@
   <parent>
     <groupId>de.powerstat.toolbaseline</groupId>
     <artifactId>tbl-java-parent</artifactId>
-    <version>11.2.0</version>
+    <version>17.2.0</version>
   </parent>
 
   <groupId>de.powerstat.fb</groupId>
@@ -44,7 +44,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.2</version>
         <configuration>
           <archive>
             <manifestEntries>
@@ -62,7 +62,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <id>enforce</id>
@@ -73,6 +73,11 @@
         </executions>
         <configuration>
           <skip>true</skip>
+          <rules>
+            <requireMavenVersion>
+              <version>3.8.5</version>
+            </requireMavenVersion>
+          </rules>
         </configuration>
       </plugin>
 
@@ -111,7 +116,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.12</version>
         <executions>
           <execution>
             <id>jacoco-initialize</id>
@@ -137,7 +142,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.12</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -162,7 +167,7 @@
     <dependency>
       <groupId>de.powerstat.validation</groupId>
       <artifactId>validation</artifactId>
-      <version>3.0.0-SNAPSHOT</version>
+      <version>3.1.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -188,19 +193,7 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.16.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.12.2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>1.16.1</version>
     </dependency>
 
   </dependencies>

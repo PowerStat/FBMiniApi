@@ -46,7 +46,7 @@ final class AINTests
    * @param ain AIN
    */
   @ParameterizedTest
-  @ValueSource(strings = {AINTests.AIN0, "00000 0000000", "00000 0000000-0", "000000000000-0"})
+  @ValueSource(strings = {AINTests.AIN0, "00000 0000000", "00000 0000000-0", "000000000000-0", "Z0000000000000000", "Z000000000000000000", "tmp000000-0000", "tmp000000-00000", "tmp000000-000000", "tmp000000-0000000", "tmp000000-00000000", "tmp000000-000000000"})
   /* default */ void testAinCorrect(final String ain)
    {
     final AIN cleanAin = AIN.of(ain);
@@ -100,14 +100,82 @@ final class AINTests
 
 
   /**
+   * Test isTemplate.
+   */
+  @Test
+  /* default */ void testIsTemplate()
+   {
+    final AIN ain = AIN.of("tmp000000-0000");
+    assertTrue(ain.isTemplate(), "AIN is not a template"); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Test isTemplate.
+   */
+  @Test
+  /* default */ void testIsNoTemplate()
+   {
+    final AIN ain = AIN.of("000000000000-0");
+    assertFalse(ain.isTemplate(), "AIN is a template"); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Test isZigbee.
+   */
+  @Test
+  /* default */ void testIsZigbee()
+   {
+    final AIN ain = AIN.of("Z0000000000000000");
+    assertTrue(ain.isZigbee(), "AIN is not a zigbee"); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Test isZigbee.
+   */
+  @Test
+  /* default */ void testIsNoZigbee()
+   {
+    final AIN ain = AIN.of("000000000000-0");
+    assertFalse(ain.isZigbee(), "AIN is a zigbee"); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Test isUnit.
+   */
+  @ParameterizedTest
+  @ValueSource(strings = {"000000000000-0", "Z000000000000000000"})
+  /* default */ void testIsUnit(final String ain)
+   {
+    final AIN cleanAin = AIN.of(ain);
+    assertTrue(cleanAin.isUnit(), "AIN is not a unit"); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Test isUnit.
+   */
+  @ParameterizedTest
+  @ValueSource(strings = {"000000000000", "Z0000000000000000"})
+  /* default */ void testIsNoUnit(final String ain)
+   {
+    final AIN cleanAin = AIN.of(ain);
+    assertFalse(cleanAin.isUnit(), "AIN is a unit"); //$NON-NLS-1$
+   }
+
+
+  /**
    * Test hash code.
    */
   @Test
   /* default */ void testHashCode()
    {
-    final AIN ain1 = new AIN(AINTests.AIN0);
-    final AIN ain2 = new AIN(AINTests.AIN0);
-    final AIN ain3 = new AIN("000000000001"); //$NON-NLS-1$
+    final AIN ain1 = AIN.of(AINTests.AIN0);
+    final AIN ain2 = AIN.of(AINTests.AIN0);
+    final AIN ain3 = AIN.of("000000000001"); //$NON-NLS-1$
     assertAll("testHashCode", //$NON-NLS-1$
       () -> assertEquals(ain1.hashCode(), ain2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
       () -> assertNotEquals(ain1.hashCode(), ain3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
@@ -122,10 +190,10 @@ final class AINTests
   @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
   /* default */ void testEquals()
    {
-    final AIN ain1 = new AIN(AINTests.AIN0);
-    final AIN ain2 = new AIN(AINTests.AIN0);
-    final AIN ain3 = new AIN("000000000001"); //$NON-NLS-1$
-    final AIN ain4 = new AIN(AINTests.AIN0);
+    final AIN ain1 = AIN.of(AINTests.AIN0);
+    final AIN ain2 = AIN.of(AINTests.AIN0);
+    final AIN ain3 = AIN.of("000000000001"); //$NON-NLS-1$
+    final AIN ain4 = AIN.of(AINTests.AIN0);
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(ain1.equals(ain1), "ain11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(ain1.equals(ain2), "ain12 are not equal"), //$NON-NLS-1$
@@ -145,7 +213,7 @@ final class AINTests
   @Test
   /* default */ void testToString()
    {
-    final AIN ain = new AIN(AINTests.AIN0);
+    final AIN ain = AIN.of(AINTests.AIN0);
     assertEquals("AIN[ain=000000000000]", ain.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -157,11 +225,11 @@ final class AINTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final AIN ain1 = new AIN(AINTests.AIN0);
-    final AIN ain2 = new AIN(AINTests.AIN0);
-    final AIN ain3 = new AIN("000000000001"); //$NON-NLS-1$
-    final AIN ain4 = new AIN("000000000002"); //$NON-NLS-1$
-    final AIN ain5 = new AIN(AINTests.AIN0);
+    final AIN ain1 = AIN.of(AINTests.AIN0);
+    final AIN ain2 = AIN.of(AINTests.AIN0);
+    final AIN ain3 = AIN.of("000000000001"); //$NON-NLS-1$
+    final AIN ain4 = AIN.of("000000000002"); //$NON-NLS-1$
+    final AIN ain5 = AIN.of(AINTests.AIN0);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(ain1.compareTo(ain2) == -ain2.compareTo(ain1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(ain1.compareTo(ain3) == -ain3.compareTo(ain1), "reflexive2"), //$NON-NLS-1$

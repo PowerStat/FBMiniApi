@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2015-2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -50,6 +50,7 @@ import de.powerstat.validation.ValidationUtils;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Milliseconds;
 import de.powerstat.validation.values.Password;
+import de.powerstat.validation.values.Percent;
 import de.powerstat.validation.values.Port;
 import de.powerstat.validation.values.Username;
 import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy;
@@ -57,18 +58,19 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
 
 
 /**
- * FB AHA session.
+ * FB AHA session 1.35.
  *
  * This class is not serializable because of session management!
  *
  * @author Kai Hofmann
  * @see <a href="https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/AHA-HTTP-Interface.pdf">AHA-HTTP-Interface</a>
  *
- * TODO Template identifier value object tmp653A18-38AE7FDE
  * TODO group identifer 5:3A:18-900
  * TODO urlPath, urlParameters value objects
  * TODO Version number handling? (ask fritzbox for it's version)
  * TODO Rigths handling
+ * TODO 1.35 -> 1.61
+ * TODO XML results -> value objects
  */
 @SuppressWarnings("java:S1160")
 public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
@@ -219,43 +221,117 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      *
      * "close|open|stop"
      *
-     * @return String representation of this enum (open, close, stop).
+     * @return String representation of this enum (close, open, stop).
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString()
      {
-      switch (this.action)
+      return switch (this.action)
        {
-        case 0: return "close"; //$NON-NLS-1$
-        case 1: return "open"; //$NON-NLS-1$
-        case 2: return "stop"; //$NON-NLS-1$
-        default: return "close"; //$NON-NLS-1$
-       }
+       case 0 -> "close"; //$NON-NLS-1$
+       case 1 -> "open"; //$NON-NLS-1$
+       case 2 -> "stop"; //$NON-NLS-1$
+       default -> "close"; //$NON-NLS-1$
+       };
      }
 
+   }
+
+
+  /**
+   * Enum for handling of onoff.
+   */
+  public enum HandleOnOff
+   {
+    /**
+     * Turn off.
+     */
+    OFF(0),
+
+    /**
+     * Turn non.
+     */
+    ON(1),
+
+    /**
+     * Toggle.
+     */
+    TOGGLE(2);
+
+
+    /**
+     * Action number.
+     */
+    private final int action;
+
+
+    /**
+     * Ordinal constructor.
+     *
+     * @param action Action number
+     */
+    HandleOnOff(final int action)
+     {
+      this.action = action;
+     }
+
+
+    /**
+     * Get action number.
+     *
+     * @return Action number
+     */
+    public int getAction()
+     {
+      return this.action;
+     }
+
+
+    /**
+     * Returns the string representation of this enum.
+     *
+     * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
+     *
+     * "off|on|toggle"
+     *
+     * @return String representation of this enum (off, on, toggle).
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+     {
+      return switch (this.action)
+       {
+       case 0 -> "off"; //$NON-NLS-1$
+       case 1 -> "on"; //$NON-NLS-1$
+       case 2 -> "toggle"; //$NON-NLS-1$
+       default -> "off"; //$NON-NLS-1$
+       };
+     }
 
    }
 
 
 /*
-functionbitmask: Bitmaske der Geräte-Funktionsklassen, beginnen mit Bit 0, es können mehrere
-Bits gesetzt sein
+functionbitmask: Bitmaske der Geräte-Funktionsklassen, beginnen mit Bit 0, es können mehrere Bits gesetzt sein
 Bit 0: HAN-FUN Gerät
 Bit 2: Licht/Lampe
 Bit 4: Alarm-Sensor
-Bit 5: AVM-Button
-Bit 6: Heizkörperregler
-Bit 7: Energie Messgerät
+Bit 5: AVM Button
+Bit 6: AVM Heizkörperregler
+Bit 7: AVM Energie Messgerät
 Bit 8: Temperatursensor
-Bit 9: Schaltsteckdose
+Bit 9: AVM Schaltsteckdose
 Bit 10: AVM DECT Repeater
-Bit 11: Mikrofon
+Bit 11: AVM Mikrofon
 Bit 13: HAN-FUN-Unit
 Bit 15: an-/ausschaltbares Gerät/Steckdose/Lampe/Aktor
 Bit 16: Gerät mit einstellbarem Dimm-, Höhen- bzw. Niveau-Level
 Bit 17: Lampe mit einstellbarer Farbe/Farbtemperatur
 Bit 18: Rollladen(Blind) - hoch, runter, stop und level 0% bis 100 %
+Bit 20: Luftfeuchtigkeitssensor
+Die Bits 5,6,7,9,10 und 11 werden nur von FRITZ!-Geräten verwendet und nicht von HANFUN- oder Zigbee-Geräten.
 
 HAN-FUN Unit Typ
 273 = SIMPLE_BUTTON
@@ -1075,6 +1151,8 @@ HAN-FUN Interfaces
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws IOException IO exception
    * @throws SAXException SAX exception
+   *
+   * TODO Change Document result to value object
    */
   public final Document getDeviceListInfos() throws IOException, SAXException
    {
@@ -1227,6 +1305,8 @@ HAN-FUN Interfaces
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 6.98
+   *
+   * TODO Change Document result to value object
    */
   public final Document getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
@@ -1242,6 +1322,8 @@ HAN-FUN Interfaces
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 6.98
+   *
+   * TODO Change Document result to value object
    */
   public final Document getTemplateListInfos() throws IOException, SAXException
    {
@@ -1252,15 +1334,13 @@ HAN-FUN Interfaces
   /**
    * Apply template.
    *
-   * @param templateIdentifier Template identifier
+   * @param templateAIN Template AIN
    * @throws IOException IO exception
    * @since 6.98
-   *
-   * TODO Template identifier value object
    */
-  public final void applyTemplate(final String templateIdentifier) throws IOException
+  public final void applyTemplate(final AIN templateAIN) throws IOException
    {
-    /* final String id = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + templateIdentifier + "&switchcmd=applytemplate"); //$NON-NLS-1$
+    /* final String id = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + templateAIN.stringValue() + "&switchcmd=applytemplate"); //$NON-NLS-1$
    }
 
 
@@ -1268,21 +1348,17 @@ HAN-FUN Interfaces
    * Set simple on off.
    *
    * @param ain AIN
-   * @param onoff 0: off; 1: on; 2: toggle
+   * @param onoff OFF, ON, TOGGLE
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if onoff is not 0, 1 or 2
    * @since 7.15
    */
-  public final void setSimpleOnOff(final AIN ain, final int onoff) throws IOException
+  public final void setSimpleOnOff(final AIN ain, final HandleOnOff onoff) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    if ((onoff < 0) || (onoff > 2))
-     {
-      throw new IllegalArgumentException("onoff must be 0, 1 or 2"); //$NON-NLS-1$
-     }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setsimpleonoff&onoff=" + onoff); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setsimpleonoff&onoff=" + onoff.getAction()); //$NON-NLS-1$
    }
 
 
@@ -1290,21 +1366,17 @@ HAN-FUN Interfaces
    * Set level.
    *
    * @param ain AIN
-   * @param level 0-255 (0%-100%)
+   * @param level Level 0-255 (0%-100%)
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if level is not 0-255
    * @since 7.15
    */
-  public final void setLevel(final AIN ain, final int level) throws IOException
+  public final void setLevel(final AIN ain, final Level level) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    if ((level < 0) || (level > 255))
-     {
-      throw new IllegalArgumentException("level must be 0-255"); //$NON-NLS-1$
-     }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setlevel&level=" + level); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setlevel&level=" + level.intValue()); //$NON-NLS-1$
    }
 
 
@@ -1319,14 +1391,10 @@ HAN-FUN Interfaces
    * @throws IllegalArgumentException if level is not 0-100
    * @since 7.15
    */
-  public final void setLevelPercentage(final AIN ain, final int level) throws IOException
+  public final void setLevelPercentage(final AIN ain, final Percent level) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    if ((level < 0) || (level > 100))
-     {
-      throw new IllegalArgumentException("level must be 0-100"); //$NON-NLS-1$
-     }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setlevelpercentage&level=" + level); //$NON-NLS-1$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setlevelpercentage&level=" + level.intValue()); //$NON-NLS-1$
    }
 
 
@@ -1334,31 +1402,19 @@ HAN-FUN Interfaces
    * Set color.
    *
    * @param ain AIN
-   * @param hue 0-359 degrees
-   * @param saturation 0-255 (0% - 100%)
-   * @param duration Duration of change in 100ms, 0 means immediately
+   * @param hue Hue 0-359 degrees
+   * @param saturation Saturation 0-255 (0% - 100%)
+   * @param duration Duration of change in 100ms, 0 means immediately (not supported yet)
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if level is not 0-255
    * @since 7.15
    */
-  public final void setColor(final AIN ain, final int hue, final int saturation, final int duration) throws IOException
+  public final void setColor(final AIN ain, final Hue hue, final Saturation saturation, final DurationMS100 duration) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    if ((hue < 0) || (hue > 359))
-     {
-      throw new IllegalArgumentException("hue must be 0-359 degrees"); //$NON-NLS-1$
-     }
-    if ((saturation < 0) || (saturation > 255))
-     {
-      throw new IllegalArgumentException("saturation must be 0-255"); //$NON-NLS-1$
-     }
-    if (duration < 0)
-     {
-      throw new IllegalArgumentException("duration must be >= 0"); //$NON-NLS-1$
-     }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + "&duration=" + duration); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setcolor&hue=" + hue.intValue() + "&saturation=" + saturation.intValue() + "&duration=" + duration.intValue()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
    }
 
 
@@ -1366,26 +1422,18 @@ HAN-FUN Interfaces
    * Set color temperature.
    *
    * @param ain AIN
-   * @param temperatureKelvin In kelvin 2700 - 6500
-   * @param duration Duration of change in 100ms, 0 means immediately
+   * @param temperatureKelvin Temperature in kelvin 2700-6500
+   * @param duration Duration of change in 100ms, 0 means immediately (not supported yet)
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    * @throws IllegalArgumentException if level is not 0-255
    * @since 7.15
    */
-  public final void setColorTemperature(final AIN ain, final int temperatureKelvin, final int duration) throws IOException
+  public final void setColorTemperature(final AIN ain, final TemperatureKelvin temperatureKelvin, final DurationMS100 duration) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    if ((temperatureKelvin < 2700) || (temperatureKelvin > 6500))
-     {
-      throw new IllegalArgumentException("temperatureKelvin must be 2700-6500 kelvin"); //$NON-NLS-1$
-     }
-    if (duration < 0)
-     {
-      throw new IllegalArgumentException("duration must be >= 0"); //$NON-NLS-1$
-     }
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setcolortemperature&temperature=" + temperatureKelvin + "&duration=" + duration); //$NON-NLS-1$ //$NON-NLS-2$
+    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setcolortemperature&temperature=" + temperatureKelvin.intValue() + "&duration=" + duration.intValue()); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1398,6 +1446,8 @@ HAN-FUN Interfaces
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 7.15
+   *
+   * TODO Change Document result to value object
    */
   public final Document getColorDefaults() throws IOException, SAXException
    {
@@ -1417,14 +1467,10 @@ HAN-FUN Interfaces
    * @throws NullPointerException If ain or temperature is null
    * @since 7.15
    */
-  public final long setHkrBoost(final AIN ain, final long endtimestamp) throws IOException
+  public final long setHkrBoost(final AIN ain, final EndTimestamp endtimestamp) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    if ((endtimestamp != 0) && ((endtimestamp < (System.currentTimeMillis() / 1000L)) || (endtimestamp > ((System.currentTimeMillis() / 1000L) + 86400))))
-     {
-      throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
-     }
-    final var result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrboost&endtimestamp=" + endtimestamp); //$NON-NLS-1$
+    final var result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrboost&endtimestamp=" + endtimestamp.longValue()); //$NON-NLS-1$
     return Long.parseLong(result.substring(0, result.length() - 1));
    }
 
@@ -1441,14 +1487,10 @@ HAN-FUN Interfaces
    * @throws NullPointerException If ain or temperature is null
    * @since 7.15
    */
-  public final long setHkrWindowOpen(final AIN ain, final long endtimestamp) throws IOException
+  public final long setHkrWindowOpen(final AIN ain, final EndTimestamp endtimestamp) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    if ((endtimestamp != 0) && ((endtimestamp < (System.currentTimeMillis() / 1000L)) || (endtimestamp > ((System.currentTimeMillis() / 1000L) + 86400))))
-     {
-      throw new IllegalArgumentException("endtimestamp must be 0 or between now and in 24 hours"); //$NON-NLS-1$
-     }
-    final var result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrwindowopen&endtimestamp=" + endtimestamp); //$NON-NLS-1$
+    final var result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrwindowopen&endtimestamp=" + endtimestamp.longValue()); //$NON-NLS-1$
     return Long.parseLong(result.substring(0, result.length() - 1));
    }
 
@@ -1485,7 +1527,7 @@ HAN-FUN Interfaces
    * @throws NullPointerException If ain or temperature is null
    * @since 7.24
    *
-   * TODO Name validation, encoding?
+   * TODO Name -> value object, encoding?
    */
   public final void setName(final AIN ain, final String name) throws IOException
    {
@@ -1525,6 +1567,8 @@ HAN-FUN Interfaces
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 7.24
+   *
+   * TODO Change Document result to value object
    */
   public final Document getSubscriptionState() throws IOException, SAXException
    {
@@ -1533,20 +1577,163 @@ HAN-FUN Interfaces
 
 
   /**
-   * Get basic device info.
+   * Set HueSaturation color.
+   *
+   * The HSV color space is supported with the HueSaturation mode. The brightness value can be configured via setlevel/setlevelpercentage; the hue and saturation values ​​can be configured here.
    *
    * @param ain AIN
-   * @return Device info in XML format see getdevicelistinfos
+   * @param hue 0-359 degrees
+   * @param saturation 0-255 (0% - 100%)
+   * @param duration Duration of change in 100ms, 0 means immediately (not supported yet)
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain is null
+   * @throws IllegalArgumentException if level is not 0-255
+   * @since 7.24
+   */
+  public final void setUnmappedColor(final AIN ain, final Hue hue, final Saturation saturation, final DurationMS100 duration) throws IOException
+   {
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setunmappedcolor&hue=" + hue.intValue() + "&saturation=" + saturation.intValue() + "&duration=" + duration.intValue()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+   }
+
+
+  /**
+   * Change/set json metadata of the template.
+   *
+   * @param ain AIN
+   * @param metadata json-metadaten of the template or empty string, maximum 200 byte
+   *                 2 defined json-keys:
+   *                 "icon" - Integer, Icon id of the icon-font
+   *                 "type" - Type of szenario, if defined. A string of "coming", "leaving" or "generic".
+   *                 One of these key has to be set, no other keys are allowed
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain or metadata is null
+   * @throws IllegalArgumentException if metadata has more than 200 bytes
+   * @since 7.39
+   *
+   * TODO metadata -> value object
+   */
+  public final void setMetaData(final AIN ain, final String metadata) throws IOException
+   {
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    Objects.requireNonNull(metadata, "metadata");
+    if (metadata.getBytes().length > 200)
+     {
+      throw new IllegalArgumentException("metatdata should not have more than 200 bytes"); //$NON-NLS-1$
+     }
+    // TODO Check ain for template
+    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setmetadata&metadata=" + metadata); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Provides the basic information all routines/triggers.
+   *
+   * @return Information on all routines/triggers in XML format
+   * @throws ClientProtocolException Client protocol exception
+   * @throws UnsupportedEncodingException Unsupported encoding exception
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   * @since 7.39
+   *
+   * TODO Change Document result to value object
+   */
+  public final Document getTriggerListInfos() throws IOException, SAXException
+   {
+    return getDoc(AHASessionMini.HOMEAUTOSWITCH + "&switchcmd=gettriggerlistinfos&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Activate or deactivate trigger.
+   *
+   * @param ain AIN
+   * @param active true: activate trigger; false: deactivate trigger
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain is null
+   * @since 7.39
+   */
+  public final void setTriggerActive(final AIN ain, final boolean active) throws IOException
+   {
+    Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
+    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=settriggeractive&active=" + (active ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+   }
+
+
+  /**
+   * Creates a color template for lamps.
+   *
+   * Name, levelPercentage, ains and hue+saturation or temperature must be passed.
+   *
+   * @param name Template name
+   * @param levelPercentage Level 0-100
+   * @param hue 0-359 degrees or null if not used
+   * @param saturation 0-255 (0% - 100%) or null if not used
+   * @param temperatureKelvin Temperature in kelvin 2700-6500 or null if not used
+   * @param colorpreset true: use Colordefaults; false: do not use defaults (default)
+   * @param ains AINs (maximum: 9)
+   * @throws IOException IO exception
+   * @throws ClientProtocolException Client protocol exception
+   * @throws NullPointerException If ain or metadata is null
+   * @throws IllegalArgumentException if metadata has more than 200 bytes
+   * @since 7.39
+   */
+  public final void addColorLevelTemplate(final String name, final Percent levelPercentage, final OptionalOf<Hue> hue, final OptionalOf<Saturation> saturation, final OptionalOf<TemperatureKelvin> temperatureKelvin, final boolean colorpreset, final AIN ... ains) throws IOException
+   {
+    Objects.requireNonNull(name, "name");
+    Objects.requireNonNull(hue, "hue");
+    Objects.requireNonNull(saturation, "saturation");
+    Objects.requireNonNull(temperatureKelvin, "temperatureKelvin");
+    // TODO name regexp
+    if (((hue.intValue() == -1) || (saturation.intValue() == -1)) && (temperatureKelvin.intValue() == -1))
+     {
+      throw new IllegalArgumentException("hue/saturation or temperatureKelvin must be set"); //$NON-NLS-1$
+     }
+    if (ains.length > 9) // TODO Maximum?
+     {
+      throw new IllegalArgumentException("More than 9 ains are not allowed"); //$NON-NLS-1$
+     }
+
+    final StringBuilder cmd = new StringBuilder();
+    cmd.append(AHASessionMini.HOMEAUTOSWITCH).append("&switchcmd=addcolorleveltemplate&name=").append(name).append("&levelPercentage=").append(levelPercentage.intValue()).append("&colorpreset=").append(colorpreset);
+    if ((hue.intValue() != -1) && (saturation.intValue() != -1))
+     {
+      cmd.append("&hue=").append(hue.intValue()).append("&saturation=").append(saturation.intValue());
+     }
+    else if (temperatureKelvin.intValue() != -1)
+     {
+      cmd.append("&temperature=").append(temperatureKelvin.intValue());
+     }
+    int n = 1;
+    for (final AIN ain : ains)
+     {
+      cmd.append("&child_").append(n).append("=").append(ain.stringValue());
+      ++n;
+     }
+    /* final var result = */ getString(cmd.toString());
+   }
+
+
+  /**
+   * Provides the basic information of the SmartHome device.
+   *
+   * @param ain AIN
+   * @return Device infos in XML format see getdevicelistinfos
    * @throws ClientProtocolException Client protocol exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 7.24
+   *
+   * TODO Change Document result to value object
    */
-  public final Document getDeviceInfo(final AIN ain) throws IOException, SAXException
+  public final Document getDeviceInfos(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getdeviceinfo&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getdeviceinfos&sid=" + this.sid.stringValue()); //$NON-NLS-1$
    }
 
 
@@ -1628,3 +1815,63 @@ HAN-FUN Interfaces
    }
 
  }
+
+/* TODO
+1.36: HANFUN IF OPEN_CLOSE, OPEN_CLOSE_CONFIG
+      Vorlagen Applymask erweitert(level, color, dialhelper)
+      <humidity> für FD440, getbasicdevicestats mit <humidity> Statistik
+      Switchcmd getdeviceinfos hinzugefügt
+      Info zu Berechtigungen hinzugefügt
+
+1.39: Vorlage mit autocreate-Flag und metadata-String,
+      <sub_templates>-Info für zugeordnete Unter-Vorlagen
+      Statistik mit datatime-Unix-Timestamp Attribute
+
+1.42: Vorlage applymask aktualisiert(timer_control, switch_master, http_request, tam_control, guest_wifi, main_wifi, sub_templates, sun_simulation)
+
+1.43: Vorlagen Beispiel mit sub_templates erweitert
+
+1.44: Neuer Vorlagen Typ: custom_notification
+
+1.45: Colorcontrol: fullcolorsupport, mapped, unmapped_hue und unmapped_saturation hinzugefügt
+      ausserdem: rel_humidity, blind mit mode und endpositionsset
+
+1.46: windowopenactiveendtime bei externem Fenstersensor: -1
+
+1.47: adaptiveHeatingActive und adaptiveHeatingActive Info
+
+1.49: Metadata-Info erweitert
+
+1.51: windowopenactiveendtime Zusatzinfo
+      Vorlagen und Szenarien Info
+
+1.52: Setname cmd unterstützt Vorlagen und Szenarien
+
+1.53: HKR <tist> und <tsoll> können leer sein, wenn die Temperatur unbekannt ist
+
+1.54: setname cmd unterstützt nicht vordefinierte Szenarien und Routinen
+      Info zu <windowopenactiv> und <windowopenactiveendtime> erweitert
+
+1.55: Hinweis auf proprietäre 0xf7.. HAN-FUN Interfaces, Name mit Länge 40 Bytes
+
+1.59: functionbitmask für AVM bits konkretisiert
+
+1.60: level und levelpercentage für Rollo konkretisiert
+
+*/
+/*
+https://fritz.box/webservices/homeautoswitch.lua?ain=<ain>&switchcmd=<cmd>&sid=<sid>
+
+Der HTTPS-Port ist auf der FRITZ!Box konfigurierbar. Er kann über den X_AVM-DE_RemoteAccess TR-064-Service und der
+dazugehörigen GetInfo-Action mit der "NewPort"-Variable abgefragt werden. Siehe TR064-Specifikation in [1].
+
+
+Die AVM Home Automation Session benötigt immer die Smart-Home-Berechtigung. Ausserdem wird für einige
+Kommandos die "Eingeschränkte FRITZ!Box Einstellungen für Apps"-Berechtigung benötigt.
+Zu Berechtigungen siehe "Actions and User Rights" in der TR064-Specifikation in [1].
+
+Die HTTP Response enthält den zum Kommando zugehörigen Status als Text. Der Content-Type ist "text/plain;
+charset=utf-8".
+Ausnahme bei getdevicelistinfos, getsubscriptionstate und getbasicdevicestats: Die HTTP Response enthält den Inhalt als
+XML. Der Content-Type ist "text/xml; charset=utf-8".
+*/

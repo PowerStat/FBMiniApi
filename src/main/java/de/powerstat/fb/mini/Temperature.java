@@ -6,11 +6,13 @@ package de.powerstat.fb.mini;
 
 import java.util.Objects;
 
+import de.powerstat.validation.interfaces.IValueObject;
+
 
 /**
  * Temperature in deci celsius.
  */
-public final class Temperature implements Comparable<Temperature>
+public final class Temperature implements Comparable<Temperature>, IValueObject
  {
   /**
    * Temperature in deci celsius.
@@ -24,7 +26,7 @@ public final class Temperature implements Comparable<Temperature>
    * @param temperature Temperature in deci celsius (20 degrees will be 200 deci degrees)
    * @throws IndexOutOfBoundsException If temperature is &lt; -2732
    */
-  public Temperature(final long temperature)
+  private Temperature(final long temperature)
    {
     super();
     if (temperature < -2732)
@@ -70,6 +72,18 @@ public final class Temperature implements Comparable<Temperature>
   public long longValue()
    {
     return this.temperatureCelsius;
+   }
+
+
+  /**
+   * Returns the value of this Energy as a String in deci celsius.
+   *
+   * @return The numeric value represented by this object after conversion to type String in deci celsius
+   */
+  @Override
+  public String stringValue()
+   {
+    return String.valueOf(this.temperatureCelsius);
    }
 
 

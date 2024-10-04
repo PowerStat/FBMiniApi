@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2019-2020 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 
 
 /**
  * FB mini module.
  */
-module de.powerstat.fb.mini
+open module de.powerstat.fb.mini
  {
   exports de.powerstat.fb.mini;
 
@@ -18,6 +18,12 @@ module de.powerstat.fb.mini
   requires transitive org.apache.httpcomponents.httpclient;
   requires org.apache.httpcomponents.httpcore;
   requires org.apache.commons.codec;
+
   requires com.github.spotbugs.annotations;
+  requires org.junit.jupiter.api;
+  requires org.junit.jupiter.params;
+  requires org.junit.platform.launcher;
+  requires org.junit.platform.suite.api;
+  // requires nl.jqno.equalsverifier;
 
  }

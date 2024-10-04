@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,20 +16,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import de.powerstat.fb.mini.Temperature;
+import de.powerstat.fb.mini.TemperatureKelvin;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 /**
- * Temperature tests.
+ * TemperatureKelvin tests.
  */
-@SuppressFBWarnings({"EC_NULL_ARG", "RV_NEGATING_RESULT_OF_COMPARETO", "SPP_USE_ZERO_WITH_COMPARATOR", "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"})
-final class TemperatureTests
+@SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO", "EC_NULL_ARG", "SPP_USE_ZERO_WITH_COMPARATOR", "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"})
+final class TemperatureKelvinTests
  {
   /**
    * Default constructor.
    */
-  /* default */ TemperatureTests()
+  /* default */ TemperatureKelvinTests()
    {
     super();
    }
@@ -37,28 +38,28 @@ final class TemperatureTests
   /**
    * Is a temperature value.
    *
-   * @param temperature Temperature in deci celsius
+   * @param temperature TemperatureKelvin
    */
   @ParameterizedTest
-  @ValueSource(longs = {-2732, 0, 200})
-  /* default */ void testIsTemperatureValue(final long temperature)
+  @ValueSource(ints = {2700, 6500})
+  /* default */ void testIsTemperatureKelvinValue(final int temperature)
    {
-    assertEquals(temperature, Temperature.of(temperature).longValue(), "Not a temperature value!"); //$NON-NLS-1$
+    assertEquals(temperature, TemperatureKelvin.of(temperature).intValue(), "Not a temperature value!"); //$NON-NLS-1$
    }
 
 
   /**
    * Is not a temperature value.
    *
-   * @param temperature Temperature in deci celsius
+   * @param temperature TemperatureKelvin (2700-6500)
    */
   @ParameterizedTest
-  @ValueSource(longs = {-2733})
-  /* default */ void testIsNotATemperatureValue(final long temperature)
+  @ValueSource(ints = {2699, 6501})
+  /* default */ void testIsNotAtemperatureValue(final int temperature)
    {
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
-      /* final Temperature temperature = */ Temperature.of(temperature);
+      /* final TemperatureKelvin temperature = */ TemperatureKelvin.of(temperature);
      }, "Index out of bounds exception expected" //$NON-NLS-1$
     );
    }
@@ -68,9 +69,9 @@ final class TemperatureTests
    * Is a temperature string value.
    */
   @Test
-  /* default */ void testIsTemperatureString()
+  /* default */ void testIsTemperatureKelvinString()
    {
-    assertEquals(20, Temperature.of("200").getTemperatureCelsius(), "Not a temperature value!"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(3000, TemperatureKelvin.of("3000").intValue(), "Not a temperature value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -80,9 +81,9 @@ final class TemperatureTests
   @Test
   /* default */ void testHashCode()
    {
-    final Temperature temperature1 = Temperature.of(1);
-    final Temperature temperature2 = Temperature.of(1);
-    final Temperature temperature3 = Temperature.of(2);
+    final TemperatureKelvin temperature1 = TemperatureKelvin.of(2700);
+    final TemperatureKelvin temperature2 = TemperatureKelvin.of(2700);
+    final TemperatureKelvin temperature3 = TemperatureKelvin.of(3000);
     assertAll("testHashCode", //$NON-NLS-1$
       () -> assertEquals(temperature1.hashCode(), temperature2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
       () -> assertNotEquals(temperature1.hashCode(), temperature3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
@@ -97,10 +98,10 @@ final class TemperatureTests
   @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
   /* default */ void testEquals()
    {
-    final Temperature temperature1 = Temperature.of(1);
-    final Temperature temperature2 = Temperature.of(1);
-    final Temperature temperature3 = Temperature.of(2);
-    final Temperature temperature4 = Temperature.of(1);
+    final TemperatureKelvin temperature1 = TemperatureKelvin.of(2700);
+    final TemperatureKelvin temperature2 = TemperatureKelvin.of(2700);
+    final TemperatureKelvin temperature3 = TemperatureKelvin.of(3000);
+    final TemperatureKelvin temperature4 = TemperatureKelvin.of(2700);
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(temperature1.equals(temperature1), "temperature11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(temperature1.equals(temperature2), "temperature12 are not equal"), //$NON-NLS-1$
@@ -120,8 +121,8 @@ final class TemperatureTests
   @Test
   /* default */ void testToString()
    {
-    final Temperature temperature = Temperature.of(200);
-    assertEquals("Temperature[temperature=200]", temperature.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    final TemperatureKelvin temperature = TemperatureKelvin.of(2700);
+    assertEquals("TemperatureKelvin[temperature=2700]", temperature.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -132,11 +133,11 @@ final class TemperatureTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final Temperature temperature1 = Temperature.of(1);
-    final Temperature temperature2 = Temperature.of(1);
-    final Temperature temperature3 = Temperature.of(2);
-    final Temperature temperature4 = Temperature.of(3);
-    final Temperature temperature5 = Temperature.of(1);
+    final TemperatureKelvin temperature1 = TemperatureKelvin.of(2700);
+    final TemperatureKelvin temperature2 = TemperatureKelvin.of(2700);
+    final TemperatureKelvin temperature3 = TemperatureKelvin.of(3000);
+    final TemperatureKelvin temperature4 = TemperatureKelvin.of(4000);
+    final TemperatureKelvin temperature5 = TemperatureKelvin.of(2700);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(temperature1.compareTo(temperature2) == -temperature2.compareTo(temperature1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(temperature1.compareTo(temperature3) == -temperature3.compareTo(temperature1), "reflexive2"), //$NON-NLS-1$

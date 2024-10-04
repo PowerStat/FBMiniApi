@@ -6,11 +6,13 @@ package de.powerstat.fb.mini;
 
 import java.util.Objects;
 
+import de.powerstat.validation.interfaces.IValueObject;
+
 
 /**
  * Energy in Wh.
  */
-public final class Energy implements Comparable<Energy>
+public final class Energy implements Comparable<Energy>, IValueObject
  {
   /**
    * Energy in Wh.
@@ -24,7 +26,7 @@ public final class Energy implements Comparable<Energy>
    * @param energy Energy in Wh. (must be &gt;= 0)
    * @throws IndexOutOfBoundsException If energy is less than zero
    */
-  public Energy(final long energy)
+  private Energy(final long energy)
    {
     super();
     if (energy < 0)
@@ -70,6 +72,18 @@ public final class Energy implements Comparable<Energy>
   public long longValue()
    {
     return this.energyWh;
+   }
+
+
+  /**
+   * Returns the value of this Energy as a String in watt hours.
+   *
+   * @return The numeric value represented by this object after conversion to type String in Wh.
+   */
+  @Override
+  public String stringValue()
+   {
+    return String.valueOf(this.energyWh);
    }
 
 

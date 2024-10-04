@@ -45,7 +45,7 @@ final class SIDTests
    {
     assertThrows(NullPointerException.class, () ->
      {
-      /* final SID test = */ new SID(null);
+      /* final SID test = */ SID.of(null);
      }, "Null pointer exception expected" //$NON-NLS-1$
     );
    }
@@ -59,7 +59,7 @@ final class SIDTests
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final SID test = */ new SID(""); //$NON-NLS-1$
+      /* final SID test = */ SID.of(""); //$NON-NLS-1$
      }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
@@ -73,7 +73,7 @@ final class SIDTests
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final SID test = */ new SID("0123456789abcdeg"); //$NON-NLS-1$
+      /* final SID test = */ SID.of("0123456789abcdeg"); //$NON-NLS-1$
      }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
@@ -85,7 +85,7 @@ final class SIDTests
   @Test
   /* default */ void testConstructor4()
    {
-    assertNotNull(new SID("0123456789abcdef"), "Could not create SID."); //$NON-NLS-1$ //$NON-NLS-2$
+    assertNotNull(SID.of("0123456789abcdef"), "Could not create SID."); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -135,9 +135,9 @@ final class SIDTests
   @Test
   /* default */ void testHashCode()
    {
-    final SID sid1 = new SID(SID_ONE);
-    final SID sid2 = new SID(SID_ONE);
-    final SID sid3 = new SID("0000000000000002"); //$NON-NLS-1$
+    final SID sid1 = SID.of(SID_ONE);
+    final SID sid2 = SID.of(SID_ONE);
+    final SID sid3 = SID.of("0000000000000002"); //$NON-NLS-1$
     assertAll("testHashCode", //$NON-NLS-1$
       () -> assertEquals(sid1.hashCode(), sid2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
       () -> assertNotEquals(sid1.hashCode(), sid3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
@@ -153,10 +153,10 @@ final class SIDTests
   // @SuppressFBWarnings("EC_NULL_ARG")
   /* default */ void testEquals()
    {
-    final SID sid1 = new SID(SID_ONE);
-    final SID sid2 = new SID(SID_ONE);
-    final SID sid3 = new SID("0000000000000002"); //$NON-NLS-1$
-    final SID sid4 = new SID(SID_ONE);
+    final SID sid1 = SID.of(SID_ONE);
+    final SID sid2 = SID.of(SID_ONE);
+    final SID sid3 = SID.of("0000000000000002"); //$NON-NLS-1$
+    final SID sid4 = SID.of(SID_ONE);
     assertAll("testEquals", //$NON-NLS-1$
       () -> assertTrue(sid1.equals(sid1), "sid11 is not equal"), //$NON-NLS-1$
       () -> assertTrue(sid1.equals(sid2), "sid12 are not equal"), //$NON-NLS-1$
@@ -176,7 +176,7 @@ final class SIDTests
   @Test
   /* default */ void testToString()
    {
-    final SID sid = new SID(SID_ONE);
+    final SID sid = SID.of(SID_ONE);
     assertEquals("SID[sid=0000000000000001]", sid.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -188,11 +188,11 @@ final class SIDTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final SID sid1 = new SID(SID_ONE);
-    final SID sid2 = new SID(SID_ONE);
-    final SID sid3 = new SID("0000000000000002"); //$NON-NLS-1$
-    final SID sid4 = new SID("0000000000000003"); //$NON-NLS-1$
-    final SID sid5 = new SID(SID_ONE);
+    final SID sid1 = SID.of(SID_ONE);
+    final SID sid2 = SID.of(SID_ONE);
+    final SID sid3 = SID.of("0000000000000002"); //$NON-NLS-1$
+    final SID sid4 = SID.of("0000000000000003"); //$NON-NLS-1$
+    final SID sid5 = SID.of(SID_ONE);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(sid1.compareTo(sid2) == -sid2.compareTo(sid1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(sid1.compareTo(sid3) == -sid3.compareTo(sid1), "reflexive2"), //$NON-NLS-1$

@@ -6,11 +6,13 @@ package de.powerstat.fb.mini;
 
 import java.util.Objects;
 
+import de.powerstat.validation.interfaces.IValueObject;
+
 
 /**
  * Power in mW.
  */
-public final class Power implements Comparable<Power>
+public final class Power implements Comparable<Power>, IValueObject
  {
   /**
    * Power in mW.
@@ -24,7 +26,7 @@ public final class Power implements Comparable<Power>
    * @param power Power in mW. (must be &gt;= 0)
    * @throws IndexOutOfBoundsException If power is less than zero
    */
-  public Power(final long power)
+  private Power(final long power)
    {
     super();
     if (power < 0)
@@ -70,6 +72,18 @@ public final class Power implements Comparable<Power>
   public long longValue()
    {
     return this.powerMW;
+   }
+
+
+  /**
+   * Returns the value of this Power as a String in milli watt.
+   *
+   * @return The numeric value represented by this object after conversion to type String in mW
+   */
+  @Override
+  public String stringValue()
+   {
+    return String.valueOf(this.powerMW);
    }
 
 

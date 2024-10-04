@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -51,6 +52,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatcher;
 import org.w3c.dom.Document;
@@ -59,11 +61,20 @@ import org.xml.sax.SAXException;
 
 import de.powerstat.fb.mini.AHASessionMini;
 import de.powerstat.fb.mini.AHASessionMini.HandleBlind;
+import de.powerstat.fb.mini.AHASessionMini.HandleOnOff;
 import de.powerstat.fb.mini.AIN;
+import de.powerstat.fb.mini.DurationMS100;
+import de.powerstat.fb.mini.EndTimestamp;
 import de.powerstat.fb.mini.Energy;
+import de.powerstat.fb.mini.Hue;
+import de.powerstat.fb.mini.Level;
 import de.powerstat.fb.mini.Power;
+import de.powerstat.fb.mini.Saturation;
 import de.powerstat.fb.mini.TR64SessionMini;
 import de.powerstat.fb.mini.Temperature;
+import de.powerstat.fb.mini.TemperatureKelvin;
+import de.powerstat.validation.values.Percent;
+import de.powerstat.validation.values.Seconds;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -170,6 +181,28 @@ final class AHASessionMiniTests
   /* default */ AHASessionMiniTests()
    {
     super();
+   }
+
+
+  /**
+   * Level provider.
+   *
+   * @return Stream of Level objects
+   */
+  private static Stream<Level> levelProvider()
+   {
+    return Stream.of(Level.of(0), Level.of(127), Level.of(255));
+   }
+
+
+  /**
+   * Percent provider.
+   *
+   * @return Stream of Percent objects
+   */
+  private static Stream<Percent> percentProvider()
+   {
+    return Stream.of(Percent.of(0), Percent.of(50), Percent.of(100));
    }
 
 
@@ -2282,7 +2315,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.applyTemplate("tmp000000-000000000"); //$NON-NLS-1$
+    ahasession.applyTemplate(AIN.of("tmp000000-000000000")); //$NON-NLS-1$
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -2305,8 +2338,8 @@ final class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @ParameterizedTest
-  @ValueSource(ints = {0, 1, 2})
-  /* default */ void testSetSimpleOnOff(final int onoff) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  @EnumSource(HandleOnOff.class)
+  /* default */ void testSetSimpleOnOff(final HandleOnOff onoff) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2327,7 +2360,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff.ordinal() + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2337,56 +2370,6 @@ final class AHASessionMiniTests
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
-   }
-
-
-  /**
-   * Test set simple on off with failure.
-   *
-   * @param onoff 0: off; 1: on; 2: toggle
-   * @throws IOException IO exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws ClientProtocolException Client protocol exception
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException Key store exception
-   * @throws KeyManagementException Key management exception
-   * @throws SAXException SAX exception
-   * @throws InvalidKeyException Invalid key exception
-   */
-  @ParameterizedTest
-  @ValueSource(ints = {-1, 3})
-  /* default */ void testSetSimpleOnOffFailure(final int onoff) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
-   {
-    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
-    final StatusLine mockStatusLineOk = mock(StatusLine.class);
-    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
-    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
-    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
-
-    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
-    when(mockHttpEntity5.isStreaming()).thenReturn(false);
-
-    final String testDoc5 = "\n"; //$NON-NLS-1$
-    when(mockHttpEntity5.getContentType()).thenReturn(null);
-    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
-    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
-
-    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
-    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
-    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
-
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
-
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
-    /* final boolean successLogon = */ ahasession.logon();
-    final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    assertThrows(IllegalArgumentException.class, () ->
-     {
-      ahasession.setSimpleOnOff(ain, onoff);
-     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
-    );
-    /* final boolean successLogoff = */ ahasession.logoff();
    }
 
 
@@ -2434,7 +2417,7 @@ final class AHASessionMiniTests
     final var ain = AIN.of(AHASessionMiniTests.AIN1);
     assertThrows(UnsupportedOperationException.class, () ->
      {
-      ahasession.setSimpleOnOff(ain, 0);
+      ahasession.setSimpleOnOff(ain, HandleOnOff.OFF);
      }, "Unsupported operation exception expected" //$NON-NLS-1$
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2455,8 +2438,8 @@ final class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @ParameterizedTest
-  @ValueSource(ints = {0, 255})
-  /* default */ void testSetLevel(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  @MethodSource("levelProvider")
+  /* default */ void testSetLevel(final Level level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2477,7 +2460,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level.intValue() + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2487,56 +2470,6 @@ final class AHASessionMiniTests
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
-   }
-
-
-  /**
-   * Test set level with failure.
-   *
-   * @param level 0-255
-   * @throws IOException IO exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws ClientProtocolException Client protocol exception
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException Key store exception
-   * @throws KeyManagementException Key management exception
-   * @throws SAXException SAX exception
-   * @throws InvalidKeyException Invalid key exception
-   */
-  @ParameterizedTest
-  @ValueSource(ints = {-1, 256})
-  /* default */ void testSetLevelFailure(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
-   {
-    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
-    final StatusLine mockStatusLineOk = mock(StatusLine.class);
-    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
-    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
-    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
-
-    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
-    when(mockHttpEntity5.isStreaming()).thenReturn(false);
-
-    final String testDoc5 = "\n"; //$NON-NLS-1$
-    when(mockHttpEntity5.getContentType()).thenReturn(null);
-    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
-    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
-
-    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
-    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
-    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
-
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
-
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
-    /* final boolean successLogon = */ ahasession.logon();
-    final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    assertThrows(IllegalArgumentException.class, () ->
-     {
-      ahasession.setLevel(ain, level);
-     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
-    );
-    /* final boolean successLogoff = */ ahasession.logoff();
    }
 
 
@@ -2554,8 +2487,8 @@ final class AHASessionMiniTests
    * @throws InvalidKeyException Invalid key exception
    */
   @ParameterizedTest
-  @ValueSource(ints = {0, 100})
-  /* default */ void testSetLevelPercentage(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
+  @MethodSource("percentProvider")
+  /* default */ void testSetLevelPercentage(final Percent level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
    {
     final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
     final StatusLine mockStatusLineOk = mock(StatusLine.class);
@@ -2576,7 +2509,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level.intValue() + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2586,56 +2519,6 @@ final class AHASessionMiniTests
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
-   }
-
-
-  /**
-   * Test set level percentage with failure.
-   *
-   * @param level 0-100
-   * @throws IOException IO exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws ClientProtocolException Client protocol exception
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException Key store exception
-   * @throws KeyManagementException Key management exception
-   * @throws SAXException SAX exception
-   * @throws InvalidKeyException Invalid key exception
-   */
-  @ParameterizedTest
-  @ValueSource(ints = {-1, 101})
-  /* default */ void testSetLevelPercentageFailure(final int level) throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
-   {
-    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
-    final StatusLine mockStatusLineOk = mock(StatusLine.class);
-    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
-    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
-    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
-
-    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
-    when(mockHttpEntity5.isStreaming()).thenReturn(false);
-
-    final String testDoc5 = "\n"; //$NON-NLS-1$
-    when(mockHttpEntity5.getContentType()).thenReturn(null);
-    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
-    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
-
-    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
-    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
-    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
-
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
-
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
-    /* final boolean successLogon = */ ahasession.logon();
-    final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    assertThrows(IllegalArgumentException.class, () ->
-     {
-      ahasession.setLevelPercentage(ain, level);
-     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
-    );
-    /* final boolean successLogoff = */ ahasession.logoff();
    }
 
 
@@ -2681,7 +2564,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setColor(AIN.of(AHASessionMiniTests.AIN1), hue, saturation, duration);
+    ahasession.setColor(AIN.of(AHASessionMiniTests.AIN1), Hue.of(hue), Saturation.of(saturation), DurationMS100.of(duration));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -2733,9 +2616,9 @@ final class AHASessionMiniTests
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    assertThrows(IllegalArgumentException.class, () ->
+    assertThrows(RuntimeException.class, () -> // IllegalArgumentException, IndexOutOfBoundsException
      {
-      ahasession.setColor(ain, hue, saturation, duration);
+      ahasession.setColor(ain, Hue.of(hue), Saturation.of(saturation), DurationMS100.of(duration));
      }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2783,7 +2666,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setColorTemperature(AIN.of(AHASessionMiniTests.AIN1), temperature, duration);
+    ahasession.setColorTemperature(AIN.of(AHASessionMiniTests.AIN1), TemperatureKelvin.of(temperature), DurationMS100.of(duration));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -2834,9 +2717,9 @@ final class AHASessionMiniTests
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    assertThrows(IllegalArgumentException.class, () ->
+    assertThrows(RuntimeException.class, () -> // IllegalArgumentException IndexOutOfBoundsException
      {
-      ahasession.setColorTemperature(ain, temperature, duration);
+      ahasession.setColorTemperature(ain, TemperatureKelvin.of(temperature), DurationMS100.of(duration));
      }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
     /* final boolean successLogoff = */ ahasession.logoff();
@@ -2991,7 +2874,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final long endtime = ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), 0);
+    final long endtime = ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), EndTimestamp.of(Seconds.of(0)));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -3047,7 +2930,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final long endtime = ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), boostend);
+    final long endtime = ahasession.setHkrBoost(AIN.of(AHASessionMiniTests.AIN1), EndTimestamp.of(Seconds.of(boostend)));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -3104,10 +2987,10 @@ final class AHASessionMiniTests
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    assertThrows(IllegalArgumentException.class, () ->
+    assertThrows(IndexOutOfBoundsException.class, () ->
      {
-      /* final long endtime = */ ahasession.setHkrBoost(ain, boostend);
-     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
+      /* final long endtime = */ ahasession.setHkrBoost(ain, EndTimestamp.of(Seconds.of(boostend)));
+     }, "Index out of bounds exception expected"
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -3159,7 +3042,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final long endtime = ahasession.setHkrWindowOpen(AIN.of(AHASessionMiniTests.AIN1), openend);
+    final long endtime = ahasession.setHkrWindowOpen(AIN.of(AHASessionMiniTests.AIN1), EndTimestamp.of(Seconds.of(openend)));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -3216,10 +3099,10 @@ final class AHASessionMiniTests
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    assertThrows(IllegalArgumentException.class, () ->
+    assertThrows(IndexOutOfBoundsException.class, () ->
      {
-      /* final long endtime = */ ahasession.setHkrWindowOpen(ain, openend);
-     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
+      /* final long endtime = */ ahasession.setHkrWindowOpen(ain, EndTimestamp.of(Seconds.of(openend)));
+     }, "Index out of bounds exception expected"
     );
     /* final boolean successLogoff = */ ahasession.logoff();
    }
@@ -3426,128 +3309,12 @@ final class AHASessionMiniTests
    }
 
 
-  /**
-   * Get device info test .
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws InvalidKeyException Invalid key exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws IOException IO exception
-   * @throws SAXException SAX exception
-   */
-  @Test
-  /* default */ void testGetDeviceInfo() throws ParserConfigurationException, InvalidKeyException, NoSuchAlgorithmException, IOException, SAXException
-   {
-    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
-    final StatusLine mockStatusLineOk = mock(StatusLine.class);
-    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
-    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
-    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
-
-    // ----------
-
-    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
-    when(mockHttpEntity7.isStreaming()).thenReturn(false);
-
-    final String testDoc7 = "<devicelist version=\"1\"></devicelist>\n\n"; //$NON-NLS-1$
-    when(mockHttpEntity7.getContentType()).thenReturn(null);
-    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
-    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
-
-    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
-    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
-    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
-
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=getdeviceinfo" + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
-
-    // ----------
-
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
-    final boolean successLogon = ahasession.logon();
-    /* final Document result = */ ahasession.getDeviceInfo(AIN.of("000000000001"));
-    final boolean successLogoff = ahasession.logoff();
-    assertAll(
-      () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      // TODO
-      () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
-    );
-   }
-
-
-  /**
-   * Test against real fritz box.
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException Key store exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws KeyManagementException Key management exception
-   * @throws SAXException SAX exception
-   * @throws IOException IO exception
-   * @throws TransformerException Transformer exception
-   * @throws InvalidKeyException Invalid key exception
-   */
-  @Test
-  @Disabled("Logon depends on user")
-  /* default */ void testReal() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, TransformerException, InvalidKeyException
-   {
-    AHASessionMiniTests.LOGGER.debug("---------- real start ----------"); //$NON-NLS-1$
-    final AHASessionMini ahasession = AHASessionMini.newInstance(""); //$NON-NLS-1$
-    /* final boolean successLogon = */ ahasession.logon();
-    // final Document result = ahasession.getTemplateListInfos();
-    // LOGGER.debug("Stats: " + TR64SessionMini.docToString(result));
-    ahasession.setSimpleOnOff(AIN.of(""), 1); //$NON-NLS-1$
-    /* final boolean successLogoff = */ ahasession.logoff();
-    assertNotNull(ahasession, "Dummy");
-    AHASessionMiniTests.LOGGER.debug("---------- real end ----------"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Security test.
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws IOException IO exception
-   * @throws SAXException SAX exception
-   * @throws TransformerException Transformer exception
-   */
-  @Test
-  @Disabled("TODO")
-  /* default */ void testSecurity() throws ParserConfigurationException, SAXException, IOException, TransformerException
-   {
-    // final String string = "<test>&lt;script&gt;alert();&lt;/script&gt;</test>";
-    // final String string = "<test>%3Cscript%3Ealert()%3C/script%3E</test>";
-    // final String string = "<element>\n<![CDATA[<script>alert();</script>]]>\n</element>";
-
-    // final String string = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"file:///etc/passwd\"> ]>\n<updateProfile>\n<lastname>&file;</lastname>\n</updateProfile>\n";
-    // final String string = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE lolz[\n<!ENTITY lol \"lol\"><!ENTITY lol1 \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">\n<!ENTITY lol2 \"&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;\">\n<!ENTITY lol3 \"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\">\n<!ENTITY lol4 \"&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;\">\n<!ENTITY lol5 \"&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;\">\n<!ENTITY lol6 \"&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;\">\n<!ENTITY lol7 \"&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;\">\n<!ENTITY lol8 \"&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;\">\n<!ENTITY lol9 \"&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;\">]>\n<lolz>&lol9;</lolz>";
-    // final String string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE root [\n<!ENTITY % xxe SYSTEM \"https://tei-c.org/Vault/P4/Lite/DTD/teilite.dtd\">\n%xxe;\n]>";
-    final String string = ""; //$NON-NLS-1$
-
-    final byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
-    final ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
-    final InputSource stream = new InputSource(byteStream);
-
-    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_DTD, false);
-    // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", true); //$NON-NLS-1$
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, false);
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, false);
-    // factory.setFeature("http://xml.org/sax/features/external-general-entities", true); //$NON-NLS-1$
-    // factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true); //$NON-NLS-1$
-    // factory.setXIncludeAware(false);
-    // factory.setExpandEntityReferences(false);
-    // factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    final DocumentBuilder docBuilder = factory.newDocumentBuilder();
-    final Document doc = docBuilder.parse(stream);
-    if (AHASessionMiniTests.LOGGER.isDebugEnabled())
-     {
-      AHASessionMiniTests.LOGGER.debug("XMLString: " + TR64SessionMini.docToString(doc)); //$NON-NLS-1$
-     }
-    assertNotNull(doc, "Dummy");
-   }
+  // TODO void setUnmappedColor(final AIN ain, final int hue, final int saturation, final int duration)
+  // TODO void setMetaData(final AIN ain, final String metadata)
+  // TODO Document getTriggerListInfos()
+  // TODO setTriggerActive(final AIN ain, final boolean active)
+  // TODO void addColorLevelTemplate(final String name, final int levelPercentage, final int hue, final int saturation, final int temperatureKelvin, final boolean colorpreset, final AIN ... ains)
+  // TODO Document getDeviceInfos(final AIN ain)
 
 
   /**
@@ -3626,6 +3393,89 @@ final class AHASessionMiniTests
       () -> assertTrue((session1.compareTo(session2) == 0) && session1.equals(session2), "equals"), //$NON-NLS-1$
       () -> assertTrue((session1.compareTo(session6) < 0), "not as expected") //$NON-NLS-1$
     );
+   }
+
+
+  /**
+   * Test against real fritz box.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws KeyStoreException Key store exception
+   * @throws NoSuchAlgorithmException No such algorithm exception
+   * @throws KeyManagementException Key management exception
+   * @throws SAXException SAX exception
+   * @throws IOException IO exception
+   * @throws TransformerException Transformer exception
+   * @throws InvalidKeyException Invalid key exception
+   */
+  @Test
+  // @Disabled("Logon depends on user")
+  /* default */ void testReal() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, TransformerException, InvalidKeyException
+   {
+    AHASessionMiniTests.LOGGER.debug("---------- real start ----------"); //$NON-NLS-1$
+    final AHASessionMini ahasession = AHASessionMini.newInstance("fritz8499", "heis3200"); //$NON-NLS-1$
+    /* final boolean successLogon = */ ahasession.logon();
+
+    // final Document result = ahasession.getDeviceListInfos();
+    // final Document result = ahasession.getBasicDeviceStats(AIN.of("08761 0019162"));
+    // final Document result = ahasession.getTemplateListInfos();
+    // final Document result = ahasession.getColorDefaults();
+    // final Document result = ahasession.getSubscriptionState();
+    // 400: final Document result = ahasession.getDeviceInfo(AIN.of("08761 0019162"));
+    // final Document result = ahasession.getTriggerListInfos();
+    // final Document result = ahasession.getDeviceInfos(AIN.of("08761 0019162"));
+    // LOGGER.debug("XML: " + TR64SessionMini.docToString(result));
+
+    /* final boolean successLogoff = */ ahasession.logoff();
+    assertNotNull(ahasession, "Dummy");
+    AHASessionMiniTests.LOGGER.debug("---------- real end ----------"); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Security test.
+   *
+   * @throws ParserConfigurationException Parser configuration exception
+   * @throws IOException IO exception
+   * @throws SAXException SAX exception
+   * @throws TransformerException Transformer exception
+   */
+  @Test
+  @Disabled("TODO")
+  /* default */ void testSecurity() throws ParserConfigurationException, SAXException, IOException, TransformerException
+   {
+    // final String string = "<test>&lt;script&gt;alert();&lt;/script&gt;</test>";
+    // final String string = "<test>%3Cscript%3Ealert()%3C/script%3E</test>";
+    // final String string = "<element>\n<![CDATA[<script>alert();</script>]]>\n</element>";
+
+    // final String string = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"file:///etc/passwd\"> ]>\n<updateProfile>\n<lastname>&file;</lastname>\n</updateProfile>\n";
+    // final String string = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE lolz[\n<!ENTITY lol \"lol\"><!ENTITY lol1 \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">\n<!ENTITY lol2 \"&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;\">\n<!ENTITY lol3 \"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\">\n<!ENTITY lol4 \"&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;\">\n<!ENTITY lol5 \"&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;\">\n<!ENTITY lol6 \"&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;\">\n<!ENTITY lol7 \"&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;\">\n<!ENTITY lol8 \"&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;\">\n<!ENTITY lol9 \"&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;\">]>\n<lolz>&lol9;</lolz>";
+    // final String string = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE root [\n<!ENTITY % xxe SYSTEM \"https://tei-c.org/Vault/P4/Lite/DTD/teilite.dtd\">\n%xxe;\n]>";
+    final String string = ""; //$NON-NLS-1$
+
+    final byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
+    final ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
+    final InputSource stream = new InputSource(byteStream);
+
+    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_DTD, false);
+    // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", true); //$NON-NLS-1$
+    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, false);
+    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, false);
+    // factory.setFeature("http://xml.org/sax/features/external-general-entities", true); //$NON-NLS-1$
+    // factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true); //$NON-NLS-1$
+    // factory.setXIncludeAware(false);
+    // factory.setExpandEntityReferences(false);
+    // factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+    final DocumentBuilder docBuilder = factory.newDocumentBuilder();
+    final Document doc = docBuilder.parse(stream);
+    if (AHASessionMiniTests.LOGGER.isDebugEnabled())
+     {
+      AHASessionMiniTests.LOGGER.debug("XMLString: " + TR64SessionMini.docToString(doc)); //$NON-NLS-1$
+     }
+    assertNotNull(doc, "Dummy");
    }
 
 

@@ -7,16 +7,24 @@ package de.powerstat.fb.mini;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import de.powerstat.validation.interfaces.IValueObject;
+
 
 /**
- * Aktor Identifikationsnummer (AIN).
+ * Actor Identificationsnumber (AIN).
+ *
+ * Identification of the actors or template, or MAC address of network device.
  */
-public final class AIN implements Comparable<AIN>
+public final class AIN implements Comparable<AIN>, IValueObject
  {
   /**
    * AIN regexp.
+   *
+   * HANFUN: Gerät: 13077 0000258; Unit : 13077 0000258-1
+   * Zigbee: Gerät: Z0017880108AFB58C; Unit: Z0017880108AFB58C0B
+   * Template: tmp653A18-38AE7FDE9, tmpD0EF2E-3CE52B246, tmpD0EF2E-4711
    */
-  private static final Pattern AIN_REGEXP = Pattern.compile("^\\d{12}(-\\d)?$"); //$NON-NLS-1$
+  private static final Pattern AIN_REGEXP = Pattern.compile("^\\d{12}(-\\d)?|Z[0-9A-F]{16,18}|tmp[0-9A-F]{6}-[0-9A-F]{4,9}$"); //$NON-NLS-1$
 
   /**
    * Space regexp.
@@ -24,7 +32,7 @@ public final class AIN implements Comparable<AIN>
   private static final Pattern SPACE_REGEXP = Pattern.compile("\\s", Pattern.UNICODE_CHARACTER_CLASS); //$NON-NLS-1$
 
   /**
-   * Aktor Identifikationsnummer.
+   * Actor identificationsnumber.
    */
   private final String aiNr;
 
@@ -38,15 +46,19 @@ public final class AIN implements Comparable<AIN>
    *
    * TODO MAC
    */
-  public AIN(final String ain)
+  private AIN(final String ain)
    {
     super();
     Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
-    if ((ain.length() < 12) || (ain.length() > 15))
+    if ((ain.length() < 12) || (ain.length() > 19))
      {
-      throw new IllegalArgumentException("AIN with wrong length"); //$NON-NLS-1$
+      throw new IllegalArgumentException("AIN with wrong length: " + ain.length()); //$NON-NLS-1$
      }
     final var intAIN = AIN.SPACE_REGEXP.matcher(ain).replaceAll(""); //$NON-NLS-1$
+    if ((intAIN.length() != 12) && (intAIN.length() != 14) && (intAIN.length() != 17) && (intAIN.length() != 19) && (!intAIN.startsWith("tmp")))
+     {
+      throw new IllegalArgumentException("AIN with wrong length: " + ain.length()); //$NON-NLS-1$
+     }
     if (!AIN.AIN_REGEXP.matcher(intAIN).matches())
      {
       throw new IllegalArgumentException("AIN with wrong format"); //$NON-NLS-1$
@@ -72,9 +84,43 @@ public final class AIN implements Comparable<AIN>
    *
    * @return The numeric value represented by this object after conversion to type string.
    */
+  @Override
   public String stringValue()
    {
     return this.aiNr;
+   }
+
+
+  /**
+   * Is template or device/unit.
+   *
+   * @return true: template; false: device/unit
+   */
+  public boolean isTemplate()
+   {
+    return (this.aiNr.startsWith("tmp"));
+   }
+
+
+  /**
+   * Is Zigbee or HANFUN device.
+   *
+   * @return true: Zigbee; false: HANFUN|template
+   */
+  public boolean isZigbee()
+   {
+    return (this.aiNr.charAt(0) == 'Z');
+   }
+
+
+  /**
+   * Is unit or device.
+   *
+   * @return true: unit; false: device/template
+   */
+  public boolean isUnit()
+   {
+    return (this.aiNr.length() == (isZigbee() ? 19 : 14));
    }
 
 
