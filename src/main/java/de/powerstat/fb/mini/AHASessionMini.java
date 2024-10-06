@@ -465,18 +465,18 @@ HAN-FUN Interfaces
     final CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(new SSLContextBuilder().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build())).build();
 
     final var factory = DocumentBuilderFactory.newInstance();
-    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_DTD, false);
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, false);
-    // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, false);
-    // factory.setFeature("http://xml.org/sax/features/external-general-entities", true); //$NON-NLS-1$
-    // factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true); //$NON-NLS-1$
-    // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", true); //$NON-NLS-1$
-    // factory.setXIncludeAware(false);
-    // factory.setExpandEntityReferences(false);
     try
      {
+      factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+      // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_DTD, false);
+      // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, false);
+      // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, false);
+      // factory.setFeature("http://xml.org/sax/features/external-general-entities", true); //$NON-NLS-1$
+      // factory.setFeature("http://xml.org/sax/features/external-parameter-entities", true); //$NON-NLS-1$
+      // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", true); //$NON-NLS-1$
+      // factory.setXIncludeAware(false);
+      // factory.setExpandEntityReferences(false);
       final var docBuilder = factory.newDocumentBuilder();
       return newInstance(httpclient, docBuilder, hostName, portNr, userName, passWord);
      }
@@ -489,7 +489,7 @@ HAN-FUN Interfaces
       catch (IOException e1)
        {
         // ignore
-       } 
+       }
       throw e;
      }
    }
