@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.ProviderNotFoundException;
 import java.security.InvalidKeyException;
@@ -474,9 +475,23 @@ HAN-FUN Interfaces
     // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", true); //$NON-NLS-1$
     // factory.setXIncludeAware(false);
     // factory.setExpandEntityReferences(false);
-    final var docBuilder = factory.newDocumentBuilder();
-
-    return newInstance(httpclient, docBuilder, hostName, portNr, userName, passWord);
+    try
+     {
+      final var docBuilder = factory.newDocumentBuilder();
+      return newInstance(httpclient, docBuilder, hostName, portNr, userName, passWord);
+     }
+    catch (ParserConfigurationException e)
+     {
+      try
+       {
+        httpclient.close();
+       }
+      catch (IOException e1)
+       {
+        // ignore
+       } 
+      throw e;
+     }
    }
 
 
@@ -1619,7 +1634,7 @@ HAN-FUN Interfaces
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     Objects.requireNonNull(metadata, "metadata");
-    if (metadata.getBytes().length > 200)
+    if (metadata.getBytes(Charset.forName("UTF-8")).length > 200)
      {
       throw new IllegalArgumentException("metatdata should not have more than 200 bytes"); //$NON-NLS-1$
      }

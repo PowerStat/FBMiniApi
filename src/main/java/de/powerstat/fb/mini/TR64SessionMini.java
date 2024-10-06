@@ -172,9 +172,23 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     final var factory = DocumentBuilderFactory.newInstance();
     factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
     factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
-    final var docBuilder = factory.newDocumentBuilder();
-
-    return newInstance(httpclient, docBuilder, hostname, port);
+    try
+     {
+      final var docBuilder = factory.newDocumentBuilder();
+      return newInstance(httpclient, docBuilder, hostname, port);
+     }
+    catch (ParserConfigurationException e)
+     {
+      try
+       {
+        httpclient.close();
+       }
+      catch (IOException e1)
+       {
+        // ignore
+       } 
+      throw e;
+     }
    }
 
 
