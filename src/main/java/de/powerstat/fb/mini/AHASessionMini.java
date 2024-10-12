@@ -47,7 +47,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import de.powerstat.validation.ValidationUtils;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Milliseconds;
 import de.powerstat.validation.values.Password;
@@ -67,7 +66,6 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
  * @see <a href="https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/AHA-HTTP-Interface.pdf">AHA-HTTP-Interface</a>
  *
  * TODO group identifer 5:3A:18-900
- * TODO urlPath, urlParameters value objects
  * TODO Version number handling? (ask fritzbox for it's version)
  * TODO Rigths handling
  * TODO 1.35 -> 1.61
@@ -480,13 +478,13 @@ HAN-FUN Interfaces
       final var docBuilder = factory.newDocumentBuilder();
       return newInstance(httpclient, docBuilder, hostName, portNr, userName, passWord);
      }
-    catch (ParserConfigurationException e)
+    catch (final ParserConfigurationException e)
      {
       try
        {
         httpclient.close();
        }
-      catch (IOException e1)
+      catch (final IOException e1)
        {
         // ignore
        }
@@ -577,23 +575,22 @@ HAN-FUN Interfaces
    * Get XML document.
    *
    * @param urlPath URL path
+   * @param urlQuery URL query
    * @return Document
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws SAXException SAX exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws UnsupportedOperationException When a bad request appears, could happen when using commands from a newer api version
-   *
-   * TODO urlPath value object
    */
-  private Document getDoc(final String urlPath) throws IOException, SAXException
+  private Document getDoc(final URIPath urlPath, final URIQuery<URIQueryParameter> urlQuery) throws IOException, SAXException
    {
-    assert urlPath != null;
+    assert (urlPath != null) && (urlQuery != null);
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
-      AHASessionMini.LOGGER.debug("url: https://{}:{}{}", this.hostname.stringValue(), this.port.intValue(), ValidationUtils.sanitizeUrlPath(urlPath)); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("url: https://{}:{}{}{}", this.hostname.stringValue(), this.port.intValue(), urlPath.stringValue(), urlQuery.stringValue()); //$NON-NLS-1$
      }
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
+    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + urlPath.stringValue() + urlQuery.stringValue()))) //$NON-NLS-1$ //$NON-NLS-2$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
@@ -620,7 +617,7 @@ HAN-FUN Interfaces
            {
             throw new IOException("Can't logon for reconnect!", e); //$NON-NLS-1$
            }
-          return getDoc(urlPath); // TODO fix endless loop
+          return getDoc(urlPath, urlQuery); // TODO fix endless loop
          }
         if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST)
          {
@@ -655,17 +652,16 @@ HAN-FUN Interfaces
    * Get string.
    *
    * @param urlPath URL path
+   * @param urlQuery URL query
    * @return String
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws UnsupportedOperationException When a bad request appears, could happen when using commands from a newer api version
-   *
-   * TODO urlPath value object
    */
-  private String getString(final String urlPath) throws IOException
+  private String getString(final URIPath urlPath, final URIQuery<URIQueryParameter> urlQuery) throws IOException
    {
-    assert urlPath != null;
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + ValidationUtils.sanitizeUrlPath(urlPath) + "&sid=" + this.sid.stringValue())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    assert (urlPath != null) && (urlQuery != null);
+    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + urlPath.stringValue() + urlQuery.stringValue() + "&sid=" + this.sid.stringValue())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
@@ -692,7 +688,7 @@ HAN-FUN Interfaces
            {
             throw new IOException("Can't logon for reconnect!", e); //$NON-NLS-1$
            }
-          return getString(urlPath); // TODO fix endless loop
+          return getString(urlPath, urlQuery); // TODO fix endless loop
          }
         if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST)
          {
@@ -826,7 +822,10 @@ HAN-FUN Interfaces
        }
     */
     // get first challenge
-    Document doc = getDoc("/login_sid.lua?version=2"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/login_sid.lua");
+    final URIQuery<URIQueryParameter> query1 = new URIQuery<>();
+    query1.addEntry(URIQueryParameter.of("version", "2"));
+    Document doc = getDoc(path, query1);
     this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
@@ -870,7 +869,11 @@ HAN-FUN Interfaces
         // Dies betrifft also alle Zeichen, die nicht in ISO-8859-1 dargestellt werden können, z.B. das Euro-Zeichen
         response = challenge + '-' + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + '-' + this.password.stringValue()).getBytes(StandardCharsets.UTF_16LE)))); //$NON-NLS-1$
        }
-      doc = getDoc("/login_sid.lua?version=2&username=" + this.username.stringValue() + "&response=" + response); //$NON-NLS-1$ //$NON-NLS-2$
+      final URIQuery<URIQueryParameter> query2 = new URIQuery<>();
+      query2.addEntry(URIQueryParameter.of("version", "2"));
+      query2.addEntry(URIQueryParameter.of("username", this.username.stringValue()));
+      query2.addEntry(URIQueryParameter.of("response", response));
+      doc = getDoc(path, query2);
       this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
@@ -890,7 +893,10 @@ HAN-FUN Interfaces
      }
 
     // check sid validity
-    doc = getDoc("/login_sid.lua?version=2&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIQuery<URIQueryParameter> query3 = new URIQuery<>();
+    query3.addEntry(URIQueryParameter.of("version", "2"));
+    query3.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    doc = getDoc(path, query3);
     this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (!this.sid.isValidSession())
      {
@@ -929,7 +935,12 @@ HAN-FUN Interfaces
         return true;
        }
     */
-    final Document doc = getDoc("/login_sid.lua?version=2&logout=1&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/login_sid.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("version", "2"));
+    query.addEntry(URIQueryParameter.of("logout", "1"));
+    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    final Document doc = getDoc(path, query);
     this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (!this.sid.isValidSession())
      {
@@ -956,7 +967,10 @@ HAN-FUN Interfaces
    */
   public final List<AIN> getSwitchList() throws IOException
    {
-    final var list = getString("/webservices/homeautoswitch.lua?switchcmd=getswitchlist"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchlist"));
+    final var list = getString(path, query);
     if (list.length() < 13)
      {
       return Collections.emptyList();
@@ -983,7 +997,11 @@ HAN-FUN Interfaces
   public final boolean setSwitchOn(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setswitchon"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setswitchon"));
+    final var result = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("setSwitchOn()->{}<", result); //$NON-NLS-1$
@@ -1004,7 +1022,11 @@ HAN-FUN Interfaces
   public final boolean setSwitchOff(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setswitchoff"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setswitchoff"));
+    final var result = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("setSwitchOff()->{}<", result); //$NON-NLS-1$
@@ -1025,7 +1047,11 @@ HAN-FUN Interfaces
   public final boolean setSwitchToggle(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setswitchtoggle"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setswitchtoggle"));
+    final var state = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("setSwitchToggle()->{}<", state); //$NON-NLS-1$
@@ -1047,7 +1073,11 @@ HAN-FUN Interfaces
   public final boolean getSwitchState(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var state = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchstate"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain",ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchstate"));
+    final var state = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("getSwitchState()->{}<", state); //$NON-NLS-1$
@@ -1072,7 +1102,11 @@ HAN-FUN Interfaces
   public final boolean isSwitchPresent(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var present = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchpresent"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchpresent"));
+    final var present = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("getSwitchPresent()->{}<", present); //$NON-NLS-1$
@@ -1094,7 +1128,11 @@ HAN-FUN Interfaces
   public final Power getSwitchPower(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    var power = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchpower"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchpower"));
+    var power = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("getSwitchPower()->{}<", power); //$NON-NLS-1$
@@ -1124,7 +1162,11 @@ HAN-FUN Interfaces
   public final Energy getSwitchEnergy(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    var energy = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchenergy"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchenergy"));
+    var energy = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("getSwitchEnergy()->{}<", energy); //$NON-NLS-1$
@@ -1153,7 +1195,11 @@ HAN-FUN Interfaces
   public final String getSwitchName(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var name = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getswitchname"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchname"));
+    final var name = getString(path, query);
     return (name.length() > 0) ? name.substring(0, name.length() - 1) : ""; //$NON-NLS-1$
    }
 
@@ -1171,7 +1217,11 @@ HAN-FUN Interfaces
    */
   public final Document getDeviceListInfos() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getdevicelistinfos&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("switchcmd", "getdevicelistinfos"));
+    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    return getDoc(path, query);
    }
 
 
@@ -1188,7 +1238,11 @@ HAN-FUN Interfaces
   public final Temperature getTemperature(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var temperature = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=gettemperature"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "gettemperature"));
+    final var temperature = getString(path, query);
     return Temperature.of((temperature.length() > 0) ? temperature.substring(0, temperature.length() - 1) : ""); //$NON-NLS-1$
    }
 
@@ -1235,7 +1289,11 @@ HAN-FUN Interfaces
   public final Temperature getHkrtSoll(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=gethkrtsoll"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "gethkrtsoll"));
+    final var resultStr = getString(path, query);
     return temperatureConversion(resultStr);
    }
 
@@ -1253,7 +1311,11 @@ HAN-FUN Interfaces
   public final Temperature getHkrKomfort(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=gethkrkomfort"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "gethkrkomfort"));
+    final var resultStr = getString(path, query);
     return temperatureConversion(resultStr);
    }
 
@@ -1271,7 +1333,11 @@ HAN-FUN Interfaces
   public final Temperature getHkrAbsenk(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var resultStr = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=gethkrabsenk"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "gethkrabsenk"));
+    final var resultStr = getString(path, query);
     return temperatureConversion(resultStr);
    }
 
@@ -1308,7 +1374,12 @@ HAN-FUN Interfaces
      {
       fbTemperature = (temperature.longValue() * 2) / 10;
      }
-    /* String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrtsoll&param=" + fbTemperature); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "sethkrtsoll"));
+    query.addEntry(URIQueryParameter.of("param", String.valueOf(fbTemperature)));
+    /* String result = */ getString(path, query);
    }
 
 
@@ -1326,7 +1397,12 @@ HAN-FUN Interfaces
   public final Document getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getbasicdevicestats&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "getbasicdevicestats"));
+    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    return getDoc(path, query);
    }
 
 
@@ -1342,7 +1418,11 @@ HAN-FUN Interfaces
    */
   public final Document getTemplateListInfos() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=gettemplatelistinfos&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("switchcmd", "gettemplatelistinfos"));
+    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    return getDoc(path, query);
    }
 
 
@@ -1355,7 +1435,11 @@ HAN-FUN Interfaces
    */
   public final void applyTemplate(final AIN templateAIN) throws IOException
    {
-    /* final String id = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + templateAIN.stringValue() + "&switchcmd=applytemplate"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", templateAIN.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "applytemplate"));
+    /* final String id = */ getString(path, query);
    }
 
 
@@ -1373,7 +1457,12 @@ HAN-FUN Interfaces
   public final void setSimpleOnOff(final AIN ain, final HandleOnOff onoff) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setsimpleonoff&onoff=" + onoff.getAction()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setsimpleonoff"));
+    query.addEntry(URIQueryParameter.of("onoff", String.valueOf(onoff.getAction())));
+    /* final String result = */ getString(path, query);
    }
 
 
@@ -1391,7 +1480,12 @@ HAN-FUN Interfaces
   public final void setLevel(final AIN ain, final Level level) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setlevel&level=" + level.intValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setlevel"));
+    query.addEntry(URIQueryParameter.of("level", level.stringValue()));
+    /* final String result = */ getString(path, query);
    }
 
 
@@ -1409,7 +1503,12 @@ HAN-FUN Interfaces
   public final void setLevelPercentage(final AIN ain, final Percent level) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setlevelpercentage&level=" + level.intValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setlevelpercentage"));
+    query.addEntry(URIQueryParameter.of("level", level.stringValue()));
+    /* final String result = */ getString(path, query);
    }
 
 
@@ -1429,7 +1528,14 @@ HAN-FUN Interfaces
   public final void setColor(final AIN ain, final Hue hue, final Saturation saturation, final DurationMS100 duration) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setcolor&hue=" + hue.intValue() + "&saturation=" + saturation.intValue() + "&duration=" + duration.intValue()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setcolor"));
+    query.addEntry(URIQueryParameter.of("hue", hue.stringValue()));
+    query.addEntry(URIQueryParameter.of("saturation", saturation.stringValue()));
+    query.addEntry(URIQueryParameter.of("duration", duration.stringValue()));
+    /* final String result = */ getString(path, query);
    }
 
 
@@ -1448,7 +1554,13 @@ HAN-FUN Interfaces
   public final void setColorTemperature(final AIN ain, final TemperatureKelvin temperatureKelvin, final DurationMS100 duration) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final String result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setcolortemperature&temperature=" + temperatureKelvin.intValue() + "&duration=" + duration.intValue()); //$NON-NLS-1$ //$NON-NLS-2$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setcolortemperature"));
+    query.addEntry(URIQueryParameter.of("temperature", temperatureKelvin.stringValue()));
+    query.addEntry(URIQueryParameter.of("duration", duration.stringValue()));
+    /* final String result = */ getString(path, query);
    }
 
 
@@ -1466,7 +1578,11 @@ HAN-FUN Interfaces
    */
   public final Document getColorDefaults() throws IOException, SAXException
    {
-    return getDoc("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("switchcmd", "getcolordefaults"));
+    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    return getDoc(path, query);
    }
 
 
@@ -1485,7 +1601,12 @@ HAN-FUN Interfaces
   public final long setHkrBoost(final AIN ain, final EndTimestamp endtimestamp) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrboost&endtimestamp=" + endtimestamp.longValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "sethkrboost"));
+    query.addEntry(URIQueryParameter.of("endtimestamp", endtimestamp.stringValue()));
+    final var result = getString(path, query);
     return Long.parseLong(result.substring(0, result.length() - 1));
    }
 
@@ -1505,7 +1626,12 @@ HAN-FUN Interfaces
   public final long setHkrWindowOpen(final AIN ain, final EndTimestamp endtimestamp) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final var result = getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=sethkrwindowopen&endtimestamp=" + endtimestamp.longValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "sethkrwindowopen"));
+    query.addEntry(URIQueryParameter.of("endtimestamp", endtimestamp.stringValue()));
+    final var result = getString(path, query);
     return Long.parseLong(result.substring(0, result.length() - 1));
    }
 
@@ -1524,7 +1650,12 @@ HAN-FUN Interfaces
   public final void setBlind(final AIN ain, final HandleBlind target) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault())); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setblind"));
+    query.addEntry(URIQueryParameter.of("target", target.name().toLowerCase(Locale.getDefault())));
+    /* final var result = */ getString(path, query);
    }
 
 
@@ -1552,7 +1683,12 @@ HAN-FUN Interfaces
      {
       throw new IllegalArgumentException("Name longer than 40 characters!"); //$NON-NLS-1$
      }
-    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setname&name=" + name); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setname"));
+    query.addEntry(URIQueryParameter.of("name", name));
+    /* final var result = */ getString(path, query);
    }
 
 
@@ -1569,7 +1705,10 @@ HAN-FUN Interfaces
    */
   public final void startUleSubscription() throws IOException
    {
-    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH + "switchcmd=startulesubscription"); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("switchcmd", "startulesubscription"));
+    /* final var result = */ getString(path, query);
    }
 
 
@@ -1587,7 +1726,11 @@ HAN-FUN Interfaces
    */
   public final Document getSubscriptionState() throws IOException, SAXException
    {
-    return getDoc(AHASessionMini.HOMEAUTOSWITCH + "switchcmd=getsubscriptionstate&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("switchcmd", "getsubscriptionstate"));
+    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    return getDoc(path, query);
    }
 
 
@@ -1609,7 +1752,14 @@ HAN-FUN Interfaces
   public final void setUnmappedColor(final AIN ain, final Hue hue, final Saturation saturation, final DurationMS100 duration) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setunmappedcolor&hue=" + hue.intValue() + "&saturation=" + saturation.intValue() + "&duration=" + duration.intValue()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setunmappedcolor"));
+    query.addEntry(URIQueryParameter.of("hue", hue.stringValue()));
+    query.addEntry(URIQueryParameter.of("saturation", saturation.stringValue()));
+    query.addEntry(URIQueryParameter.of("duration", duration.stringValue()));
+    /* final var result = */ getString(path, query);
    }
 
 
@@ -1639,7 +1789,12 @@ HAN-FUN Interfaces
       throw new IllegalArgumentException("metatdata should not have more than 200 bytes"); //$NON-NLS-1$
      }
     // TODO Check ain for template
-    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=setmetadata&metadata=" + metadata); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "setmetadata"));
+    query.addEntry(URIQueryParameter.of("level", metadata));
+    /* final var result = */ getString(path, query);
    }
 
 
@@ -1657,7 +1812,11 @@ HAN-FUN Interfaces
    */
   public final Document getTriggerListInfos() throws IOException, SAXException
    {
-    return getDoc(AHASessionMini.HOMEAUTOSWITCH + "&switchcmd=gettriggerlistinfos&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("switchcmd", "gettriggerlistinfos"));
+    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    return getDoc(path, query);
    }
 
 
@@ -1674,7 +1833,12 @@ HAN-FUN Interfaces
   public final void setTriggerActive(final AIN ain, final boolean active) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    /* final var result = */ getString(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=settriggeractive&active=" + (active ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "settriggeractive"));
+    query.addEntry(URIQueryParameter.of("active", (active ? "1" : "0")));
+    /* final var result = */ getString(path, query);
    }
 
 
@@ -1712,23 +1876,29 @@ HAN-FUN Interfaces
       throw new IllegalArgumentException("More than 9 ains are not allowed"); //$NON-NLS-1$
      }
 
-    final StringBuilder cmd = new StringBuilder();
-    cmd.append(AHASessionMini.HOMEAUTOSWITCH).append("&switchcmd=addcolorleveltemplate&name=").append(name).append("&levelPercentage=").append(levelPercentage.intValue()).append("&colorpreset=").append(colorpreset);
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("switchcmd", "addcolorleveltemplate"));
+    query.addEntry(URIQueryParameter.of("name", name));
+    query.addEntry(URIQueryParameter.of("levelPercentage", levelPercentage.stringValue()));
+    query.addEntry(URIQueryParameter.of("colorpreset", String.valueOf(colorpreset)));
+
     if ((hue.intValue() != -1) && (saturation.intValue() != -1))
      {
-      cmd.append("&hue=").append(hue.intValue()).append("&saturation=").append(saturation.intValue());
+      query.addEntry(URIQueryParameter.of("hue", hue.stringValue()));
+      query.addEntry(URIQueryParameter.of("saturation", saturation.stringValue()));
      }
     else if (temperatureKelvin.intValue() != -1)
      {
-      cmd.append("&temperature=").append(temperatureKelvin.intValue());
+      query.addEntry(URIQueryParameter.of("temperature", temperatureKelvin.stringValue()));
      }
     int n = 1;
     for (final AIN ain : ains)
      {
-      cmd.append("&child_").append(n).append("=").append(ain.stringValue());
+      query.addEntry(URIQueryParameter.of("child_" + n, ain.stringValue()));
       ++n;
      }
-    /* final var result = */ getString(cmd.toString());
+    /* final var result = */ getString(path, query);
    }
 
 
@@ -1748,7 +1918,12 @@ HAN-FUN Interfaces
   public final Document getDeviceInfos(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    return getDoc(AHASessionMini.HOMEAUTOSWITCH_WITH_AIN + ain.stringValue() + "&switchcmd=getdeviceinfos&sid=" + this.sid.stringValue()); //$NON-NLS-1$
+    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIQuery<URIQueryParameter> query = new URIQuery<>();
+    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
+    query.addEntry(URIQueryParameter.of("switchcmd", "getdeviceinfos"));
+    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    return getDoc(path, query);
    }
 
 

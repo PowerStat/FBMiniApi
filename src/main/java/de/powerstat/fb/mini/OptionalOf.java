@@ -36,6 +36,17 @@ public class OptionalOf<T extends IValueObject> // extends Hue & Saturation & Te
 
 
   /**
+   * Returns the value of the value object as an String.
+   *
+   * @return The string value represented by this object or "".
+   */
+  public String stringValue()
+   {
+    return (this.value == null) ? "" : this.value.stringValue();
+   }
+
+
+  /**
    * Returns the value of the value object as an int.
    *
    * @return The numeric value represented by this object after conversion to type int or -1.

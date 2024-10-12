@@ -36,6 +36,27 @@ public class OptionalOfTests
 
 
   /**
+   * Test stringValue().
+   */
+  @Test
+  /* default */ void testStringValue1()
+   {
+    final OptionalOf<Level> level = new OptionalOf<>(Level.of(1));
+    assertEquals("OptionalOf<>[value=Level[level=1]]", level.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+   }
+
+
+  /**
+   * Test stringValue().
+   */
+  @Test
+  /* default */ void testStringValue2()
+   {
+    assertEquals("", new OptionalOf<>((IValueObject)null).stringValue(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+   }
+
+
+  /**
    * Is an optional value.
    */
   @Test

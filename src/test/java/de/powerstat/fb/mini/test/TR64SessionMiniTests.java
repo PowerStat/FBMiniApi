@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,6 +45,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import de.powerstat.fb.mini.TR64SessionMini;
+import de.powerstat.fb.mini.URIPath;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Port;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -185,7 +187,8 @@ final class TR64SessionMiniTests
 
     // verify();
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
-    final Document doc = tr64session.getDoc("/tr64desc.xml"); //$NON-NLS-1$
+    final URIPath urlPath = URIPath.of("/tr64desc.xml");
+    final Document doc = tr64session.getDoc(urlPath);
     final String xml = TR64SessionMini.docToString(doc);
     if (LOGGER.isInfoEnabled())
      {

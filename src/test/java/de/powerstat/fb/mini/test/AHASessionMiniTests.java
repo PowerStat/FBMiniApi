@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -165,11 +165,6 @@ final class AHASessionMiniTests
   private static final String TEMPERATURE_NOT_AS_EXPECTED = "temperature not as expected";
 
   /**
-   * SID 0000000000004711.
-   */
-  private static final String SID4711 = "&sid=0000000000004711";
-
-  /**
    * Illegal argument exception expected.
    */
   private static final String ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED = "Illegal argument exception expected"; //$NON-NLS-1$
@@ -260,7 +255,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse2.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse2.getEntity()).thenReturn(mockHttpEntity2);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?version=2&username=&response=deadbeef-" + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest(("deadbeef-" + AHASessionMiniTests.FBPASSWORD).getBytes(Charset.forName("utf-16le"))))))))).thenReturn(mockCloseableHttpResponse2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?response=deadbeef-" + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest(("deadbeef-" + AHASessionMiniTests.FBPASSWORD).getBytes(Charset.forName("utf-16le"))))) + "&username=&version=2")))).thenReturn(mockCloseableHttpResponse2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     // ----------
 
@@ -282,7 +277,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse3.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse3.getEntity()).thenReturn(mockHttpEntity3);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?version=2&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse3); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?sid=0000000000004711&version=2")))).thenReturn(mockCloseableHttpResponse3); //$NON-NLS-1$
    }
 
 
@@ -307,7 +302,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse4.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse4.getEntity()).thenReturn(mockHttpEntity4);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?version=2&logout=1&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse4); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?logout=1&sid=0000000000004711&version=2")))).thenReturn(mockCloseableHttpResponse4); //$NON-NLS-1$
    }
 
 
@@ -1656,7 +1651,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getdevicelistinfos&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?sid=0000000000004711&switchcmd=getdevicelistinfos")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -1669,60 +1664,6 @@ final class AHASessionMiniTests
       () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<devicelist version=\"1\"/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
-   }
-
-
-  /**
-   * Test get device ist infos with failure.
-   *
-   * @throws IOException IO exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws ClientProtocolException Client protocol exception
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException Key store exception
-   * @throws KeyManagementException Key management exception
-   * @throws SAXException SAX exception
-   * @throws InvalidKeyException Invalid key exception
-   */
-  @Test
-  /* default */ void testGetDeviceListInfosFailure() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
-   {
-    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
-    final StatusLine mockStatusLineOk = mock(StatusLine.class);
-    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
-    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
-    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
-
-    // ----------
-
-    final StatusLine mockStatusLineForbidden = mock(StatusLine.class);
-    when(mockStatusLineForbidden.getStatusCode()).thenReturn(HttpURLConnection.HTTP_FORBIDDEN);
-
-    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
-    when(mockHttpEntity7.isStreaming()).thenReturn(false);
-
-    final String testDoc7 = "<devicelist version=\"1\"></devicelist>\n"; //$NON-NLS-1$
-    when(mockHttpEntity7.getContentType()).thenReturn(null);
-    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
-    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
-
-    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
-    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineForbidden);
-    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
-
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getdevicelistinfos&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
-
-    // ----------
-
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
-    /* final boolean successLogon = */ ahasession.logon();
-    assertThrows(IOException.class, () ->
-     {
-      /* final Document doc = */ ahasession.getDeviceListInfos();
-     }, "IO exception expected" //$NON-NLS-1$
-    );
-    /* final boolean successLogoff = */ ahasession.logoff();
    }
 
 
@@ -2099,7 +2040,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrtsoll&param=" + ((temperature == 0) ? "253" : (temperature == 300 ? "254" : ((temperature * 2) / 10))) + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$ //$NON-NLS-2$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&param=" + ((temperature == 0) ? "253" : (temperature == 300 ? "254" : ((temperature * 2) / 10))) + "&switchcmd=sethkrtsoll&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$ //$NON-NLS-2$
 
     // ----------
 
@@ -2152,7 +2093,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrtsoll&param=" + temperature + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrtsoll&param=" + temperature + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -2205,7 +2146,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=getbasicdevicestats&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&sid=0000000000004711&switchcmd=getbasicdevicestats")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -2257,7 +2198,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=gettemplatelistinfos&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?sid=0000000000004711&switchcmd=gettemplatelistinfos")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -2360,7 +2301,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=" + onoff.ordinal() + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&onoff=" + onoff.ordinal() + "&switchcmd=setsimpleonoff&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2370,57 +2311,6 @@ final class AHASessionMiniTests
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
-   }
-
-
-  /**
-   * Test set simple on off unsupported.
-   *
-   * @throws IOException IO exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws ClientProtocolException Client protocol exception
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException Key store exception
-   * @throws KeyManagementException Key management exception
-   * @throws SAXException SAX exception
-   * @throws InvalidKeyException Invalid key exception
-   */
-  @Test
-  /* default */ void testSetSimpleOnOffUnsupported() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
-   {
-    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
-    final StatusLine mockStatusLineOk = mock(StatusLine.class);
-    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
-    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
-    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
-
-    final HttpEntity mockHttpEntity5 = mock(HttpEntity.class);
-    when(mockHttpEntity5.isStreaming()).thenReturn(false);
-
-    final String testDoc5 = "\n"; //$NON-NLS-1$
-    when(mockHttpEntity5.getContentType()).thenReturn(null);
-    when(mockHttpEntity5.getContent()).thenReturn(new ByteArrayInputStream(testDoc5.getBytes(StandardCharsets.UTF_8)));
-    when(mockHttpEntity5.getContentLength()).thenReturn((long)testDoc5.length());
-
-    final StatusLine mockStatusLineBadRequest = mock(StatusLine.class);
-    when(mockStatusLineBadRequest.getStatusCode()).thenReturn(HttpURLConnection.HTTP_BAD_REQUEST);
-
-    final CloseableHttpResponse mockCloseableHttpResponse5 = mock(CloseableHttpResponse.class);
-    when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineBadRequest);
-    when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
-
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setsimpleonoff&onoff=0&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
-
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
-    /* final boolean successLogon = */ ahasession.logon();
-    final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    assertThrows(UnsupportedOperationException.class, () ->
-     {
-      ahasession.setSimpleOnOff(ain, HandleOnOff.OFF);
-     }, "Unsupported operation exception expected" //$NON-NLS-1$
-    );
-    /* final boolean successLogoff = */ ahasession.logoff();
    }
 
 
@@ -2460,7 +2350,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevel&level=" + level.intValue() + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&level=" + level.intValue() + "&switchcmd=setlevel&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2509,7 +2399,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setlevelpercentage&level=" + level.intValue() + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&level=" + level.intValue() + "&switchcmd=setlevelpercentage&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2560,7 +2450,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + AHASessionMiniTests.DURATION + duration + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001" + AHASessionMiniTests.DURATION + duration + "&hue=" + hue + "&saturation=" + saturation + "&switchcmd=setcolor&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2611,7 +2501,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + AHASessionMiniTests.DURATION + duration + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolor&hue=" + hue + "&saturation=" + saturation + AHASessionMiniTests.DURATION + duration + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
@@ -2662,7 +2552,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + AHASessionMiniTests.DURATION + duration + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001" + AHASessionMiniTests.DURATION + duration + "&switchcmd=setcolortemperature&temperature=" + temperature + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2712,7 +2602,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + AHASessionMiniTests.DURATION + duration + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setcolortemperature&temperature=" + temperature + AHASessionMiniTests.DURATION + duration + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
@@ -2762,7 +2652,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?sid=0000000000004711&switchcmd=getcolordefaults")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -2775,60 +2665,6 @@ final class AHASessionMiniTests
       () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<colordefaults/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
-   }
-
-
-  /**
-   * Test get color defaults unsupported.
-   *
-   * @throws IOException IO exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws ClientProtocolException Client protocol exception
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException Key store exception
-   * @throws KeyManagementException Key management exception
-   * @throws SAXException SAX exception
-   * @throws InvalidKeyException Invalid key exception
-   */
-  @Test
-  /* default */ void testGetColorDefaultsUnsupported() throws NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, ParserConfigurationException, SAXException, InvalidKeyException
-   {
-    final CloseableHttpClient mockHttpclient = mock(CloseableHttpClient.class);
-    final StatusLine mockStatusLineOk = mock(StatusLine.class);
-    when(mockStatusLineOk.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
-    final String testDoc1 = AHASessionMiniTests.MIN_SESSION;
-    createLogonMocks(mockHttpclient, mockStatusLineOk, testDoc1, true);
-    createLogoffMocks(mockHttpclient, mockStatusLineOk, testDoc1);
-
-    // ----------
-
-    final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
-    when(mockHttpEntity7.isStreaming()).thenReturn(false);
-
-    final String testDoc7 = "<colordefaults></colordefaults>\n"; //$NON-NLS-1$
-    when(mockHttpEntity7.getContentType()).thenReturn(null);
-    when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
-    when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
-
-    final StatusLine mockStatusLineBadRequest = mock(StatusLine.class);
-    when(mockStatusLineBadRequest.getStatusCode()).thenReturn(HttpURLConnection.HTTP_BAD_REQUEST);
-
-    final CloseableHttpResponse mockCloseableHttpResponse7 = mock(CloseableHttpResponse.class);
-    when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineBadRequest);
-    when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
-
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getcolordefaults&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
-
-    // ----------
-
-    final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
-    /* final boolean successLogon = */ ahasession.logon();
-    assertThrows(UnsupportedOperationException.class, () ->
-     {
-      /* final Document doc = */ ahasession.getColorDefaults();
-     }, "Unsupported operation exception expected" //$NON-NLS-1$
-    );
-    /* final boolean successLogoff = */ ahasession.logoff();
    }
 
 
@@ -2868,7 +2704,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=0&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&endtimestamp=0&switchcmd=sethkrboost&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -2924,7 +2760,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&endtimestamp=" + boostend + "&switchcmd=sethkrboost&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -2980,7 +2816,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrboost&endtimestamp=" + boostend + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -3036,7 +2872,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&endtimestamp=" + openend + "&switchcmd=sethkrwindowopen&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -3092,7 +2928,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=sethkrwindowopen&endtimestamp=" + openend + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -3146,7 +2982,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault()) + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setblind&target=" + target.name().toLowerCase(Locale.getDefault()) + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -3195,7 +3031,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&switchcmd=setname&name=" + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&name=" + "&switchcmd=setname&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -3244,7 +3080,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=startulesubscription" + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=startulesubscription" + "&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -3293,7 +3129,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse7.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse7.getEntity()).thenReturn(mockHttpEntity7);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?switchcmd=getsubscriptionstate" + AHASessionMiniTests.SID4711)))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?sid=0000000000004711&switchcmd=getsubscriptionstate")))).thenReturn(mockCloseableHttpResponse7); //$NON-NLS-1$
 
     // ----------
 
@@ -3393,42 +3229,6 @@ final class AHASessionMiniTests
       () -> assertTrue((session1.compareTo(session2) == 0) && session1.equals(session2), "equals"), //$NON-NLS-1$
       () -> assertTrue((session1.compareTo(session6) < 0), "not as expected") //$NON-NLS-1$
     );
-   }
-
-
-  /**
-   * Test against real fritz box.
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException Key store exception
-   * @throws NoSuchAlgorithmException No such algorithm exception
-   * @throws KeyManagementException Key management exception
-   * @throws SAXException SAX exception
-   * @throws IOException IO exception
-   * @throws TransformerException Transformer exception
-   * @throws InvalidKeyException Invalid key exception
-   */
-  @Test
-  // @Disabled("Logon depends on user")
-  /* default */ void testReal() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException, IOException, SAXException, TransformerException, InvalidKeyException
-   {
-    AHASessionMiniTests.LOGGER.debug("---------- real start ----------"); //$NON-NLS-1$
-    final AHASessionMini ahasession = AHASessionMini.newInstance("fritz8499", "heis3200"); //$NON-NLS-1$
-    /* final boolean successLogon = */ ahasession.logon();
-
-    // final Document result = ahasession.getDeviceListInfos();
-    // final Document result = ahasession.getBasicDeviceStats(AIN.of("08761 0019162"));
-    // final Document result = ahasession.getTemplateListInfos();
-    // final Document result = ahasession.getColorDefaults();
-    // final Document result = ahasession.getSubscriptionState();
-    // 400: final Document result = ahasession.getDeviceInfo(AIN.of("08761 0019162"));
-    // final Document result = ahasession.getTriggerListInfos();
-    // final Document result = ahasession.getDeviceInfos(AIN.of("08761 0019162"));
-    // LOGGER.debug("XML: " + TR64SessionMini.docToString(result));
-
-    /* final boolean successLogoff = */ ahasession.logoff();
-    assertNotNull(ahasession, "Dummy");
-    AHASessionMiniTests.LOGGER.debug("---------- real end ----------"); //$NON-NLS-1$
    }
 
 

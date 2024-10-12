@@ -48,7 +48,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import de.powerstat.validation.ValidationUtils;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Password;
 import de.powerstat.validation.values.Port;
@@ -177,13 +176,13 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
       final var docBuilder = factory.newDocumentBuilder();
       return newInstance(httpclient, docBuilder, hostname, port);
      }
-    catch (ParserConfigurationException e)
+    catch (final ParserConfigurationException e)
      {
       try
        {
         httpclient.close();
        }
-      catch (IOException e1)
+      catch (final IOException e1)
        {
         // ignore
        }
@@ -276,10 +275,10 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    *
    * TODO urlPath value object
    */
-  public final Document getDoc(final String urlPath) throws IOException, SAXException
+  public final Document getDoc(final URIPath urlPath) throws IOException, SAXException
    {
     Objects.requireNonNull(urlPath, "urlPath"); //$NON-NLS-1$
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + ValidationUtils.sanitizeUrlPath(urlPath)))) //$NON-NLS-1$ //$NON-NLS-2$
+    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + urlPath.stringValue()))) //$NON-NLS-1$ //$NON-NLS-2$
      {
       if (LOGGER.isDebugEnabled())
        {
