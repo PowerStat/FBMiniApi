@@ -272,8 +272,6 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    * @throws SAXException SAX exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws NullPointerException If urlPath is null
-   *
-   * TODO urlPath value object
    */
   public final Document getDoc(final URIPath urlPath) throws IOException, SAXException
    {
@@ -311,11 +309,9 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    * @throws ParseException Parse exception
    * @throws NullPointerException If controlUrl, serviceType or action is null
    *
-   * TODO controlURL value object
-   * TODO serviceType value object
    * TODO action value object
    */
-  public final Document doSOAPRequest(final String controlURL, final String serviceType, final String action, final Map<String, String> parameters) throws IOException, SAXException
+  public final Document doSOAPRequest(final URIPath controlURL, final ServiceType serviceType, final Action action, final Map<String, String> parameters) throws IOException, SAXException
    {
     Objects.requireNonNull(controlURL, "controlURL"); //$NON-NLS-1$
     Objects.requireNonNull(serviceType, "serviceType"); //$NON-NLS-1$
@@ -329,11 +325,11 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
         requestBuffer.append("    <" + parameter.getKey() + ">" + parameter.getValue() + "</" + parameter.getKey() + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
        }
      }
-    requestBuffer.append("    </u:" + action + ">  </s:Body></s:Envelope>"); //$NON-NLS-1$ //$NON-NLS-2$
+    requestBuffer.append("    </u:" + action.stringValue() + ">  </s:Body></s:Envelope>"); //$NON-NLS-1$ //$NON-NLS-2$
     // LOGGER.info(sb.toString());
 
-    final var httpPost = new HttpPost("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + controlURL); //$NON-NLS-1$ //$NON-NLS-2$
-    httpPost.setHeader("SoapAction", "\"" + serviceType + "#" + action + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    final var httpPost = new HttpPost("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + controlURL.stringValue()); //$NON-NLS-1$ //$NON-NLS-2$
+    httpPost.setHeader("SoapAction", "\"" + serviceType.stringValue() + "#" + action.stringValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     httpPost.setHeader("USER-AGENT", "PowerStats FB TR64 mini client"); //$NON-NLS-1$ //$NON-NLS-2$
     httpPost.setHeader("Content-Type", "text/xml; charset=utf-8"); //$NON-NLS-1$ //$NON-NLS-2$
 

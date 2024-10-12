@@ -42,7 +42,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
    *
    * @param ain AIN or MAC
    * @throws NullPointerException if ain is null
-   * @throws IllegalArgumentException if ain is not a correct ain
+   * @throws IllegalArgumentException if ain is not an correct ain
    *
    * TODO MAC
    */
@@ -151,11 +151,10 @@ public final class AIN implements Comparable<AIN>, IValueObject
      {
       return true;
      }
-    if (!(obj instanceof AIN))
+    if (!(obj instanceof final AIN other))
      {
       return false;
      }
-    final AIN other = (AIN)obj;
     return this.aiNr.equals(other.aiNr);
    }
 

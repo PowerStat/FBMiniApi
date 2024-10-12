@@ -45,6 +45,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import de.powerstat.fb.mini.TR64SessionMini;
+import de.powerstat.fb.mini.Action;
+import de.powerstat.fb.mini.ServiceType;
 import de.powerstat.fb.mini.URIPath;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Port;
@@ -239,7 +241,7 @@ final class TR64SessionMiniTests
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
     final Map<String, String> parameters = new ConcurrentHashMap<>();
     parameters.put("test", "value"); //$NON-NLS-1$ //$NON-NLS-2$
-    final Document doc = tr64session.doSOAPRequest("/upnp/control/deviceinfo", "urn:dslforum-org:service:DeviceInfo:1", "GetInfo", parameters); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final Document doc = tr64session.doSOAPRequest(URIPath.of("/upnp/control/deviceinfo"), ServiceType.of("urn:dslforum-org:service:DeviceInfo:1"), Action.of("GetInfo"), parameters); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     final String xml = TR64SessionMini.docToString(doc);
 
     // verify(mockHttpclient).
@@ -291,7 +293,7 @@ final class TR64SessionMiniTests
     final DocumentBuilder docBuilder = factory.newDocumentBuilder();
 
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
-    final Document doc = tr64session.doSOAPRequest("/upnp/control/deviceinfo", "urn:dslforum-org:service:DeviceInfo:1", "GetInfo", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final Document doc = tr64session.doSOAPRequest(URIPath.of("/upnp/control/deviceinfo"), ServiceType.of("urn:dslforum-org:service:DeviceInfo:1"), Action.of("GetInfo"), null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     final String xml = TR64SessionMini.docToString(doc);
 
     // verify(mockHttpclient).
