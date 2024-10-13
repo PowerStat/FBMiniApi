@@ -44,6 +44,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -1717,20 +1719,23 @@ HAN-FUN Interfaces
    *
    * Requires smarthome and restricted app rights.
    *
-   * @return XML document
+   * @return SubscriptionState
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 7.24
-   *
-   * TODO Change Document result to value object
    */
-  public final Document getSubscriptionState() throws IOException, SAXException
+  public final SubscriptionState getSubscriptionState() throws IOException, SAXException
    {
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "getsubscriptionstate"));
     query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
-    return getDoc(path, query);
+    final Document doc = getDoc(path, query);
+    final SubscriptionCode code = SubscriptionCode.of(Integer.valueOf(doc.getElementsByTagName("state").item(0).getAttributes().getNamedItem("code").getNodeValue()));
+    final String ain = doc.getElementsByTagName("latestain").item(0).getTextContent();
+    final AIN latestain = ain.isBlank() ? null : AIN.of(ain);
+    final SubscriptionState state = SubscriptionState.of(code, latestain);
+    return state;
    }
 
 
@@ -1801,22 +1806,32 @@ HAN-FUN Interfaces
   /**
    * Provides the basic information all routines/triggers.
    *
-   * @return Information on all routines/triggers in XML format
+   * @return Information on all routines/triggers
    * @throws ClientProtocolException Client protocol exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 7.39
-   *
-   * TODO Change Document result to value object
    */
-  public final Document getTriggerListInfos() throws IOException, SAXException
+  public final List<Trigger> getTriggerListInfos() throws IOException, SAXException
    {
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "gettriggerlistinfos"));
     query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
-    return getDoc(path, query);
+    final Document doc = getDoc(path, query);
+    final NodeList nodes = doc.getElementsByTagName("trigger");
+    final List<Trigger> triggers = new ArrayList<>();
+    for (int index = 0; index < nodes.getLength(); ++index)
+     {
+      final Node node = nodes.item(index);
+      final AIN ain = AIN.of(node.getAttributes().getNamedItem("identifier").getNodeValue());
+      final String name = node.getChildNodes().item(0).getTextContent();
+      final boolean active = "1".equals(node.getAttributes().getNamedItem("active").getNodeValue());
+      final Trigger trigger = Trigger.of(ain, name, active);
+      triggers.add(trigger);
+     }
+    return triggers;
    }
 
 

@@ -308,8 +308,6 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
    * @throws SAXException SAX exception
    * @throws ParseException Parse exception
    * @throws NullPointerException If controlUrl, serviceType or action is null
-   *
-   * TODO action value object
    */
   public final Document doSOAPRequest(final URIPath controlURL, final ServiceType serviceType, final Action action, final Map<String, String> parameters) throws IOException, SAXException
    {

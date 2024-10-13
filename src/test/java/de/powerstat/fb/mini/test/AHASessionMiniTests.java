@@ -70,6 +70,7 @@ import de.powerstat.fb.mini.Hue;
 import de.powerstat.fb.mini.Level;
 import de.powerstat.fb.mini.Power;
 import de.powerstat.fb.mini.Saturation;
+import de.powerstat.fb.mini.SubscriptionState;
 import de.powerstat.fb.mini.TR64SessionMini;
 import de.powerstat.fb.mini.Temperature;
 import de.powerstat.fb.mini.TemperatureKelvin;
@@ -3135,22 +3136,24 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    /* final Document result = */ ahasession.getSubscriptionState();
+    SubscriptionState state = ahasession.getSubscriptionState();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      // TODO
+      () -> assertEquals("OTHER_ERROR", state.subscriptionCodeValue().stringValue(), "SubscriptionCode not as expected"),
+      () -> assertEquals("000000000001", state.ainValue().stringValue(), "AIN not as expected"),
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
 
 
+  // TODO Document getTriggerListInfos()
+
+  // TODO Document getDeviceInfos(final AIN ain)
   // TODO void setUnmappedColor(final AIN ain, final int hue, final int saturation, final int duration)
   // TODO void setMetaData(final AIN ain, final String metadata)
-  // TODO Document getTriggerListInfos()
   // TODO setTriggerActive(final AIN ain, final boolean active)
   // TODO void addColorLevelTemplate(final String name, final int levelPercentage, final int hue, final int saturation, final int temperatureKelvin, final boolean colorpreset, final AIN ... ains)
-  // TODO Document getDeviceInfos(final AIN ain)
 
 
   /**
