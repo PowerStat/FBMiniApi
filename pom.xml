@@ -195,6 +195,13 @@
       <artifactId>commons-codec</artifactId>
       <version>1.16.1</version>
     </dependency>
+    
+    <dependency>
+        <groupId>org.javatuples</groupId>
+        <artifactId>javatuples</artifactId>
+        <version>1.2</version>
+        <scope>compile</scope>
+    </dependency>
 
   </dependencies>
 

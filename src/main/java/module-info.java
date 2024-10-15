@@ -18,5 +18,6 @@ module de.powerstat.fb.mini
   requires transitive org.apache.httpcomponents.httpclient;
   requires org.apache.httpcomponents.httpcore;
   requires org.apache.commons.codec;
+  requires transitive javatuples;
 
  }

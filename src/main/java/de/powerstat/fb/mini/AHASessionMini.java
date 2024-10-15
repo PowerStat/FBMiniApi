@@ -43,7 +43,9 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.javatuples.Pair;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -1569,22 +1571,64 @@ HAN-FUN Interfaces
   /**
    * Get color defaults.
    *
-   * @return Color defaults in XML format
+   * @return Color defaults
    * @throws ClientProtocolException Client protocol exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 7.15
-   *
-   * TODO Change Document result to value object
    */
-  public final Document getColorDefaults() throws IOException, SAXException
+  public final Pair<List<Hs>, List<TemperatureKelvin>> getColorDefaults() throws IOException, SAXException
    {
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "getcolordefaults"));
     query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
-    return getDoc(path, query);
+    final Document doc = getDoc(path, query);
+
+    final List<Hs> hsdefaults = new ArrayList<>();
+    final NodeList hsNodes = doc.getElementsByTagName("hs");
+    for (int pos = 0; pos < hsNodes.getLength(); ++pos)
+     {
+      final Node hsNode = hsNodes.item(pos);
+      final String index = hsNode.getAttributes().getNamedItem("hue_index").getNodeValue();
+      final NodeList childs = hsNode.getChildNodes();
+      String name = "";
+      int nameEnum = 0;
+      final List<Color> colors = new ArrayList<>();
+      for (int childPos = 0; childPos < childs.getLength(); ++childPos)
+       {
+        final Node child = childs.item(childPos);
+        if ("name".equals(child.getNodeName()))
+         {
+          name = child.getTextContent();
+          nameEnum = Integer.parseInt(child.getAttributes().getNamedItem("enum").getNodeValue());
+         }
+        else if ("color".equals(child.getNodeName()))
+         {
+          final NamedNodeMap attributes = child.getAttributes();
+          final int idx = Integer.parseInt(attributes.getNamedItem("sat_index").getNodeValue());
+          final Hue hue = Hue.of(attributes.getNamedItem("hue").getNodeValue());
+          final Saturation sat = Saturation.of(attributes.getNamedItem("sat").getNodeValue());
+          final Value val = Value.of(attributes.getNamedItem("val").getNodeValue());
+          final Color color = Color.of(idx, hue, sat, val);
+          colors.add(color);
+         }
+       }
+      final Hs hs = Hs.of(Integer.parseInt(index), nameEnum, name, colors);
+      hsdefaults.add(hs);
+     }
+    final List<TemperatureKelvin> temperatureDefaults = new ArrayList<>();
+    final NodeList tempNodes = doc.getElementsByTagName("temp");
+    for (int pos = 0; pos < tempNodes.getLength(); ++pos)
+     {
+      final Node tempNode = tempNodes.item(pos);
+      final String value = tempNode.getAttributes().getNamedItem("value").getNodeValue();
+      final TemperatureKelvin tk = TemperatureKelvin.of(value);
+      temperatureDefaults.add(tk);
+     }
+    final Pair<List<Hs>, List<TemperatureKelvin>> colorDefaults = Pair.with(hsdefaults, temperatureDefaults);
+    return colorDefaults;
    }
 
 
@@ -1938,7 +1982,8 @@ HAN-FUN Interfaces
     query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
     query.addEntry(URIQueryParameter.of("switchcmd", "getdeviceinfos"));
     query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
-    return getDoc(path, query);
+    final Document doc = getDoc(path, query);
+    return doc;
    }
 
 
