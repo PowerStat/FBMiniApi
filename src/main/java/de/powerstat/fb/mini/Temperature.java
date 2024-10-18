@@ -125,11 +125,10 @@ public final class Temperature implements Comparable<Temperature>, IValueObject
      {
       return true;
      }
-    if (!(obj instanceof Temperature))
+    if (!(obj instanceof final Temperature other))
      {
       return false;
      }
-    final Temperature other = (Temperature)obj;
     return this.temperatureCelsius == other.temperatureCelsius;
    }
 

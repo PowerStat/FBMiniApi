@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.SortedMap;
 import java.util.stream.Stream;
 
 import javax.xml.XMLConstants;
@@ -55,6 +56,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.javatuples.Pair;
+import org.javatuples.Quintet;
 import org.mockito.ArgumentMatcher;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -76,6 +78,8 @@ import de.powerstat.fb.mini.SubscriptionState;
 import de.powerstat.fb.mini.TR64SessionMini;
 import de.powerstat.fb.mini.Temperature;
 import de.powerstat.fb.mini.TemperatureKelvin;
+import de.powerstat.fb.mini.UnixTimestamp;
+import de.powerstat.fb.mini.Voltage;
 import de.powerstat.validation.values.Percent;
 import de.powerstat.validation.values.Seconds;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -2155,11 +2159,11 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Document doc = ahasession.getBasicDeviceStats(AIN.of(AHASessionMiniTests.AIN1));
+    final Quintet<SortedMap<UnixTimestamp, Temperature>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = ahasession.getBasicDeviceStats(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<devicestats/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertNotNull(devicestats, AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), // TODO details
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }

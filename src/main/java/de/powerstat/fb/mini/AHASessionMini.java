@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -44,6 +46,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javatuples.Pair;
+import org.javatuples.Quintet;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -56,6 +59,7 @@ import de.powerstat.validation.values.Milliseconds;
 import de.powerstat.validation.values.Password;
 import de.powerstat.validation.values.Percent;
 import de.powerstat.validation.values.Port;
+import de.powerstat.validation.values.Seconds;
 import de.powerstat.validation.values.Username;
 import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy;
 import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.HandleEMail;
@@ -1391,14 +1395,12 @@ HAN-FUN Interfaces
    * Get basic device statistics.
    *
    * @param ain AIN
-   * @return XML document
+   * @return Quintet<SortedMap<UnixTimestamp, Temperature>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>>
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 6.98
-   *
-   * TODO Change Document result to value object
    */
-  public final Document getBasicDeviceStats(final AIN ain) throws IOException, SAXException
+  public final Quintet<SortedMap<UnixTimestamp, Temperature>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
@@ -1406,7 +1408,155 @@ HAN-FUN Interfaces
     query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
     query.addEntry(URIQueryParameter.of("switchcmd", "getbasicdevicestats"));
     query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
-    return getDoc(path, query);
+    final Document doc = getDoc(path, query);
+
+    final Node temperatureNode = doc.getElementsByTagName("temperature").item(0);
+    final SortedMap<UnixTimestamp, Temperature> temperatures = new TreeMap<>();
+    // AHASessionMini.<Temperature>parseStats(temperatureNode, temperatures);
+    if (temperatureNode != null)
+     {
+      final NodeList childs = temperatureNode.getChildNodes();
+      if (childs.getLength() > 0)
+       {
+        for (int index = 0; index < childs.getLength(); ++index)
+         {
+          final Node child = childs.item(index);
+          final NamedNodeMap attributes = child.getAttributes();
+          final Node countAttr = attributes.getNamedItem("count");
+          final long count = Long.parseLong(countAttr.getNodeValue());
+          final Node gridAttr = attributes.getNamedItem("grid");
+          final long grid = Long.parseLong(gridAttr.getNodeValue());
+          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
+          final String contentStr = child.getTextContent();
+          final String[] content = contentStr.split(",");
+          for (int i = 0; i < content.length; ++i)
+           {
+            final long datetimepos = datetime - (grid * (count - (i + 1)));
+            temperatures.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Temperature.of(Long.parseLong(content[i])));
+           }
+         }
+       }
+     }
+
+    final Node humidityNode = doc.getElementsByTagName("humidity").item(0);
+    final SortedMap<UnixTimestamp, Percent> humidities = new TreeMap<>();
+    // AHASessionMini.<Percent>parseStats(humidityNode, humidities);
+    if (humidityNode != null)
+     {
+      final NodeList childs = humidityNode.getChildNodes();
+      if (childs.getLength() > 0)
+       {
+        for (int index = 0; index < childs.getLength(); ++index)
+         {
+          final Node child = childs.item(index);
+          final NamedNodeMap attributes = child.getAttributes();
+          final Node countAttr = attributes.getNamedItem("count");
+          final long count = Long.parseLong(countAttr.getNodeValue());
+          final Node gridAttr = attributes.getNamedItem("grid");
+          final long grid = Long.parseLong(gridAttr.getNodeValue());
+          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
+          final String contentStr = child.getTextContent();
+          final String[] content = contentStr.split(",");
+          for (int i = 0; i < content.length; ++i)
+           {
+            final long datetimepos = datetime - (grid * (count - (i + 1)));
+            humidities.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Percent.of(Integer.parseInt(content[i])));
+           }
+         }
+       }
+     }
+
+    final Node voltageNode = doc.getElementsByTagName("voltage").item(0);
+    final SortedMap<UnixTimestamp, Voltage> voltages = new TreeMap<>();
+    // AHASessionMini.<Voltage>parseStats(voltageNode, voltages);
+    if (voltageNode != null)
+     {
+      final NodeList childs = voltageNode.getChildNodes();
+      if (childs.getLength() > 0)
+       {
+        for (int index = 0; index < childs.getLength(); ++index)
+         {
+          final Node child = childs.item(index);
+          final NamedNodeMap attributes = child.getAttributes();
+          final Node countAttr = attributes.getNamedItem("count");
+          final long count = Long.parseLong(countAttr.getNodeValue());
+          final Node gridAttr = attributes.getNamedItem("grid");
+          final long grid = Long.parseLong(gridAttr.getNodeValue());
+          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
+          final String contentStr = child.getTextContent();
+          final String[] content = contentStr.split(",");
+          for (int i = 0; i < content.length; ++i)
+           {
+            final long datetimepos = datetime - (grid * (count - (i + 1)));
+            voltages.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Voltage.of(Long.parseLong(content[i])));
+           }
+         }
+       }
+     }
+
+    final Node powerNode = doc.getElementsByTagName("power").item(0);
+    final SortedMap<UnixTimestamp, Power> powers = new TreeMap<>();
+    // AHASessionMini.<Power>parseStats(powerNode, powers);
+    if (powerNode != null)
+     {
+      final NodeList childs = powerNode.getChildNodes();
+      if (childs.getLength() > 0)
+       {
+        for (int index = 0; index < childs.getLength(); ++index)
+         {
+          final Node child = childs.item(index);
+          final NamedNodeMap attributes = child.getAttributes();
+          final Node countAttr = attributes.getNamedItem("count");
+          final long count = Long.parseLong(countAttr.getNodeValue());
+          final Node gridAttr = attributes.getNamedItem("grid");
+          final long grid = Long.parseLong(gridAttr.getNodeValue());
+          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
+          final String contentStr = child.getTextContent();
+          final String[] content = contentStr.split(",");
+          for (int i = 0; i < content.length; ++i)
+           {
+            final long datetimepos = datetime - (grid * (count - (i + 1)));
+            powers.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Power.of(Long.parseLong(content[i])));
+           }
+         }
+       }
+     }
+
+    final Node energyNode = doc.getElementsByTagName("energy").item(0);
+    final SortedMap<UnixTimestamp, Energy> energies = new TreeMap<>();
+    // AHASessionMini.<Energy>parseStats(energyNode, energies);
+    if (energyNode != null)
+     {
+      final NodeList childs = energyNode.getChildNodes();
+      if (childs.getLength() > 0)
+       {
+        for (int index = 0; index < childs.getLength(); ++index)
+         {
+          final Node child = childs.item(index);
+          final NamedNodeMap attributes = child.getAttributes();
+          final Node countAttr = attributes.getNamedItem("count");
+          final long count = Long.parseLong(countAttr.getNodeValue());
+          final Node gridAttr = attributes.getNamedItem("grid");
+          final long grid = Long.parseLong(gridAttr.getNodeValue());
+          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
+          final String contentStr = child.getTextContent();
+          final String[] content = contentStr.split(",");
+          for (int i = 0; i < content.length; ++i)
+           {
+            final long datetimepos = datetime - (grid * (count - (i + 1)));
+            energies.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Energy.of(Long.parseLong(content[i])));
+           }
+         }
+       }
+     }
+
+    final Quintet<SortedMap<UnixTimestamp, Temperature>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = Quintet.with(temperatures, humidities, voltages, powers, energies);
+    return devicestats;
    }
 
 
