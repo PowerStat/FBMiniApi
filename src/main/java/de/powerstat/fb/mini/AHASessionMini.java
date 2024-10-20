@@ -18,6 +18,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -54,6 +55,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.gson.Gson;
+
+import de.powerstat.fb.mini.json.FBMetadata;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Milliseconds;
 import de.powerstat.validation.values.Password;
@@ -1391,11 +1395,51 @@ HAN-FUN Interfaces
    }
 
 
+  /* *
+   * Parse stats elements.
+   *
+   * @param <T> Temperature, Percent, Voltage, Power, Energy
+   * @param node XML start node: temperature, humidity, voltage, power, energy
+   * @param list List of type SortedMap<UnixTimestamp, T>
+   * @return SortedMap
+   */
+  /*
+  private static <T> void parseStats(final Node node, final SortedMap<UnixTimestamp, T> list)
+   {
+    if (node != null)
+     {
+      final NodeList childs = node.getChildNodes();
+      if (childs.getLength() > 0)
+       {
+        for (int index = 0; index < childs.getLength(); ++index)
+         {
+          final Node child = childs.item(index);
+          final NamedNodeMap attributes = child.getAttributes();
+          final Node countAttr = attributes.getNamedItem("count");
+          final long count = Long.parseLong(countAttr.getNodeValue());
+          final Node gridAttr = attributes.getNamedItem("grid");
+          final long grid = Long.parseLong(gridAttr.getNodeValue());
+          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
+          final String contentStr = child.getTextContent();
+          final String[] content = contentStr.split(",");
+          for (int i = 0; i < content.length; ++i)
+           {
+            final long datetimepos = datetime - (grid * (count - (i + 1)));
+            list.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : T.of(Long.parseLong(content[i])));
+           }
+         }
+       }
+     }
+   }
+  */
+
+
   /**
    * Get basic device statistics.
    *
    * @param ain AIN
-   * @return Quintet<SortedMap<UnixTimestamp, Temperature>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>>
+   * @return Quintet&lt;SortedMap&lt;UnixTimestamp, Temperature&gt;, SortedMap&lt;UnixTimestamp, Percent&gt;, SortedMap&lt;UnixTimestamp, Voltage&gt;, SortedMap&lt;UnixTimestamp, Power&gt;, SortedMap&lt;UnixTimestamp, Energy&gt;&gt;
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 6.98
@@ -1563,20 +1607,117 @@ HAN-FUN Interfaces
   /**
    * Get template list infos.
    *
-   * @return XML document
+   * @return List of Template
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 6.98
-   *
-   * TODO Change Document result to value object
    */
-  public final Document getTemplateListInfos() throws IOException, SAXException
+  public final List<Template> getTemplateListInfos() throws IOException, SAXException
    {
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "gettemplatelistinfos"));
     query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
-    return getDoc(path, query);
+    final Document doc = getDoc(path, query);
+    final List<Template> templates = new ArrayList<>();
+
+    final NodeList templateNodes = doc.getElementsByTagName("template");
+    for (int pos = 0; pos < templateNodes.getLength(); ++pos)
+     {
+      final Node templateNode = templateNodes.item(pos);
+      final NamedNodeMap attrs = templateNode.getAttributes();
+
+      final long fbm = Long.parseLong(attrs.getNamedItem("functionbitmask").getNodeValue());
+      final List<Functions> functionsList = new ArrayList<>();
+      for (int i = 0; i <= Functions.HUMIDITY_SENSOR.getAction(); ++i) // TODO Change HUMIDITY_SENSOR in case that Functions will be extended
+       {
+        final long mask = 0x00000001 << i;
+        if ((fbm & mask) != 0)
+         {
+          functionsList.add(Functions.of(i));
+         }
+       }
+
+      final AIN identifier = AIN.of(attrs.getNamedItem("identifier").getNodeValue());
+      final long id = Long.parseLong(attrs.getNamedItem("id").getNodeValue());
+      final EnumSet<Functions> functionbitmask = EnumSet.copyOf(functionsList);
+      final boolean autocreate = "1".equals(attrs.getNamedItem("autocreate").getNodeValue());
+      final long applymaskField = Long.parseLong(attrs.getNamedItem("applymask").getNodeValue());
+
+      String name = "";
+      Metadata metadata = null;
+      final List<AIN> devices = new ArrayList<>();
+      final List<AIN> triggers = new ArrayList<>();
+      final List<AIN> subtemplates = new ArrayList<>();
+      final List<ApplyMask> applyMaskList = new ArrayList<>();
+      final NodeList childs = templateNode.getChildNodes();
+      for (int cpos = 0; cpos < childs.getLength(); ++cpos)
+       {
+        final Node childNode = childs.item(pos);
+        switch(childNode.getNodeName())
+         {
+          case "name":
+            name = childNode.getTextContent();
+            break;
+          case "metadata":
+           {
+            final String json = childNode.getTextContent();
+            final Gson gson = new Gson();
+            final FBMetadata md = gson.fromJson(json, FBMetadata.class);
+            if (md != null)
+             {
+              metadata = Metadata.of((md.getIcon() == 0) ? -1 : md.getIcon(), ScenarioType.of(md.getType().toUpperCase(Locale.getDefault())));
+             }
+            break;
+           }
+          case "devices":
+           {
+            final NodeList deviceNodes = childNode.getChildNodes();
+            for (int devpos = 0; devpos < childs.getLength(); ++devpos)
+             {
+              final Node deviceNode = deviceNodes.item(devpos);
+              devices.add(AIN.of(deviceNode.getAttributes().getNamedItem("identifier").getNodeValue()));
+             }
+            break;
+           }
+          case "triggers":
+           {
+            final NodeList triggerNodes = childNode.getChildNodes();
+            for (int trpos = 0; trpos < triggerNodes.getLength(); ++trpos)
+             {
+              final Node triggerNode = triggerNodes.item(trpos);
+              triggers.add(AIN.of(triggerNode.getAttributes().getNamedItem("identifier").getNodeValue()));
+             }
+            break;
+           }
+          case "subtemplates":
+           {
+            final NodeList subtemplateNodes = childNode.getChildNodes();
+            for (int stpos = 0; stpos < subtemplateNodes.getLength(); ++stpos)
+             {
+              final Node subtemplateNode = subtemplateNodes.item(stpos);
+              subtemplates.add(AIN.of(subtemplateNode.getAttributes().getNamedItem("identifier").getNodeValue()));
+             }
+            break;
+           }
+          case "applymask":
+           {
+            final NodeList applymaskNodes = childNode.getChildNodes();
+            for (int ampos = 0; ampos < applymaskNodes.getLength(); ++ampos)
+             {
+              final Node applymaskNode = applymaskNodes.item(ampos);
+              final String nodeName = applymaskNode.getNodeName().toUpperCase(Locale.getDefault());
+              applyMaskList.add(ApplyMask.of(nodeName));
+             }
+            break;
+           }
+         }
+       }
+      final EnumSet<ApplyMask> applymask = EnumSet.copyOf(applyMaskList);
+      final Template template = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
+      templates.add(template);
+     }
+    return templates;
    }
 
 

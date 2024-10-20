@@ -14,18 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import de.powerstat.fb.mini.SubscriptionCode;
+import de.powerstat.fb.mini.ScenarioType;
 
 
 /**
- * SubscriptionCode tests.
+ * ScenarioType tests.
  */
-final class SubscriptionCodeTests
+final class ScenarioTypeTests
  {
   /**
    * Default constructor.
    */
-  /* default */ SubscriptionCodeTests()
+  /* default */ ScenarioTypeTests()
    {
     super();
    }
@@ -37,21 +37,21 @@ final class SubscriptionCodeTests
   @Test
   /* default */ void testFactory1()
    {
-    assertEquals(0, SubscriptionCode.of("NO_PROGRESS").getAction(), "Action not as expected");
+    assertEquals(1, ScenarioType.of("COMING").getAction(), "Action not as expected");
    }
 
 
   /**
-   * Test getAction of SubscriptionCode.
+   * Test getAction of ScenarioType.
    */
   @Test
   /* default */ void testGetAction()
    {
     assertAll("getAction", //$NON-NLS-1$
-      () -> assertEquals(0, SubscriptionCode.NO_PROGRESS.getAction(), "NO_PROGRESS action not as expected"), //$NON-NLS-1$
-      () -> assertEquals(1, SubscriptionCode.IN_PROGRESS.getAction(), "IN_PROGRESS action not as expected"), //$NON-NLS-1$
-      () -> assertEquals(2, SubscriptionCode.TIMEOUT.getAction(), "TIMEOUT action not as expected"), //$NON-NLS-1$
-      () -> assertEquals(3, SubscriptionCode.OTHER_ERROR.getAction(), "OTHER_ERROR action not as expected") //$NON-NLS-1$
+      () -> assertEquals(0, ScenarioType.UNDEFINED.getAction(), "UNDEFINED action not as expected"), //$NON-NLS-1$
+      () -> assertEquals(1, ScenarioType.COMING.getAction(), "COMING action not as expected"), //$NON-NLS-1$
+      () -> assertEquals(2, ScenarioType.LEAVING.getAction(), "LEAVING action not as expected"), //$NON-NLS-1$
+      () -> assertEquals(3, ScenarioType.GENERIC.getAction(), "GENERIC action not as expected") //$NON-NLS-1$
     );
    }
 
@@ -62,8 +62,8 @@ final class SubscriptionCodeTests
   @Test
   /* default */ void testStringValue()
    {
-    final SubscriptionCode code = SubscriptionCode.NO_PROGRESS;
-    assertEquals("NO_PROGRESS", code.stringValue(), "stringValue not as expected");
+    final ScenarioType code = ScenarioType.COMING;
+    assertEquals("COMING", code.stringValue(), "stringValue not as expected");
    }
 
  }

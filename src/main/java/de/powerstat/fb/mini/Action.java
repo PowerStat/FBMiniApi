@@ -54,7 +54,7 @@ public final class Action implements Comparable<Action>, IValueObject
   /**
    * Action factory.
    *
-   * @param type Action string
+   * @param action Action string
    * @return Action object
    */
   public static Action of(final String action)

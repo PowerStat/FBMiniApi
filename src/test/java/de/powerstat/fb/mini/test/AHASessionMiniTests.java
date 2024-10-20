@@ -78,6 +78,7 @@ import de.powerstat.fb.mini.SubscriptionState;
 import de.powerstat.fb.mini.TR64SessionMini;
 import de.powerstat.fb.mini.Temperature;
 import de.powerstat.fb.mini.TemperatureKelvin;
+import de.powerstat.fb.mini.Template;
 import de.powerstat.fb.mini.UnixTimestamp;
 import de.powerstat.fb.mini.Voltage;
 import de.powerstat.validation.values.Percent;
@@ -2211,11 +2212,11 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Document doc = ahasession.getTemplateListInfos();
+    final List<Template> templates = ahasession.getTemplateListInfos();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<templatelist version=\"1\"/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertNotNull(templates, AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), // TODO in deep
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }

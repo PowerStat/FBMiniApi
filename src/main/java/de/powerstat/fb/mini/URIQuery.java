@@ -34,7 +34,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
   /**
    * Returns the string value of this URIQuery.
    *
-   * "?key1=value1&key2=value2..."
+   * "?key1=value1&amp;key2=value2..."
    *
    * @return String representation of this URIQuery and its parameters
    */
@@ -106,7 +106,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
    *
    * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
    *
-   * "URIQuery&lt;&gt;[?key1=value1&key2=value2...]"
+   * "URIQuery&lt;&gt;[?key1=value1&amp;key2=value2...]"
    *
    * @return String representation of this URIQuery
    * @see java.lang.Object#toString()

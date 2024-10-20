@@ -71,7 +71,7 @@ public final class Color implements Comparable<Color>, IValueObject
    * @param value Value
    * @return Color object
    * @throws NullPointerException if hue, saturation or value is null
-   * @throws IndexOutOfBundsException if index is not 1-3
+   * @throws IndexOutOfBoundsException if index is not 1-3
    */
   public static Color of(final int index, final Hue hue, final Saturation saturation, final Value value)
    {

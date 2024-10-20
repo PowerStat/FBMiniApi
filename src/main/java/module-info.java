@@ -19,5 +19,6 @@ module de.powerstat.fb.mini
   requires org.apache.httpcomponents.httpcore;
   requires org.apache.commons.codec;
   requires transitive javatuples;
+  requires com.google.gson;
 
  }
