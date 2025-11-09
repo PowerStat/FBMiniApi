@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -48,6 +48,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.javatuples.Pair;
+import org.javatuples.Quintet;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,9 +57,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.javatuples.Pair;
-import org.javatuples.Quintet;
 import org.mockito.ArgumentMatcher;
+import nl.jqno.equalsverifier.*;
+
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -66,6 +68,7 @@ import de.powerstat.fb.mini.AHASessionMini;
 import de.powerstat.fb.mini.AHASessionMini.HandleBlind;
 import de.powerstat.fb.mini.AHASessionMini.HandleOnOff;
 import de.powerstat.fb.mini.AIN;
+import de.powerstat.fb.mini.Action;
 import de.powerstat.fb.mini.DurationMS100;
 import de.powerstat.fb.mini.EndTimestamp;
 import de.powerstat.fb.mini.Energy;
@@ -73,16 +76,21 @@ import de.powerstat.fb.mini.Hs;
 import de.powerstat.fb.mini.Hue;
 import de.powerstat.fb.mini.Level;
 import de.powerstat.fb.mini.Power;
+import de.powerstat.fb.mini.SID;
 import de.powerstat.fb.mini.Saturation;
 import de.powerstat.fb.mini.SubscriptionState;
 import de.powerstat.fb.mini.TR64SessionMini;
-import de.powerstat.fb.mini.Temperature;
+import de.powerstat.fb.mini.TemperatureCelsius;
 import de.powerstat.fb.mini.TemperatureKelvin;
 import de.powerstat.fb.mini.Template;
 import de.powerstat.fb.mini.UnixTimestamp;
 import de.powerstat.fb.mini.Voltage;
+import de.powerstat.validation.values.Hostname;
+import de.powerstat.validation.values.Password;
 import de.powerstat.validation.values.Percent;
+import de.powerstat.validation.values.Port;
 import de.powerstat.validation.values.Seconds;
+import de.powerstat.validation.values.Username;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -1650,7 +1658,7 @@ final class AHASessionMiniTests
     final HttpEntity mockHttpEntity7 = mock(HttpEntity.class);
     when(mockHttpEntity7.isStreaming()).thenReturn(false);
 
-    final String testDoc7 = "<devicelist version=\"1\"></devicelist>\n"; //$NON-NLS-1$
+    final String testDoc7 = "<devicelist version=\"1\" fwversion=\"8.00\"></devicelist>\n"; //$NON-NLS-1$
     when(mockHttpEntity7.getContentType()).thenReturn(null);
     when(mockHttpEntity7.getContent()).thenReturn(new ByteArrayInputStream(testDoc7.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity7.getContentLength()).thenReturn((long)testDoc7.length());
@@ -1669,7 +1677,7 @@ final class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<devicelist version=\"1\"/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<devicelist fwversion=\"8.00\" version=\"1\"/>\n", TR64SessionMini.docToString(doc).replace("\r", ""), AHASessionMiniTests.DEVICE_INFO_LIST_NOT_AS_EXPECTED), //$NON-NLS-1$ //$NON-NLS-2$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -1719,7 +1727,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Temperature temperature = ahasession.getTemperature(AIN.of(AHASessionMiniTests.AIN1));
+    final TemperatureCelsius temperature = ahasession.getTemperature(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -1827,7 +1835,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Temperature temperature = ahasession.getHkrtSoll(AIN.of(AHASessionMiniTests.AIN1));
+    final TemperatureCelsius temperature = ahasession.getHkrtSoll(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -1946,7 +1954,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Temperature temperature = ahasession.getHkrKomfort(AIN.of(AHASessionMiniTests.AIN1));
+    final TemperatureCelsius temperature = ahasession.getHkrKomfort(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -2000,7 +2008,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Temperature temperature = ahasession.getHkrAbsenk(AIN.of(AHASessionMiniTests.AIN1));
+    final TemperatureCelsius temperature = ahasession.getHkrAbsenk(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -2054,7 +2062,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    ahasession.setHkrtSoll(AIN.of(AHASessionMiniTests.AIN1), Temperature.of(temperature));
+    ahasession.setHkrtSoll(AIN.of(AHASessionMiniTests.AIN1), TemperatureCelsius.of(temperature));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -2108,7 +2116,7 @@ final class AHASessionMiniTests
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     /* final boolean successLogon = */ ahasession.logon();
     final var ain = AIN.of(AHASessionMiniTests.AIN1);
-    final var temp = Temperature.of(temperature);
+    final var temp = TemperatureCelsius.of(temperature);
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
       ahasession.setHkrtSoll(ain, temp);
@@ -2160,7 +2168,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Quintet<SortedMap<UnixTimestamp, Temperature>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = ahasession.getBasicDeviceStats(AIN.of(AHASessionMiniTests.AIN1));
+    final Quintet<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = ahasession.getBasicDeviceStats(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -3164,52 +3172,22 @@ final class AHASessionMiniTests
 
 
   /**
-   * Test hash code.
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException  Key store exception
-   * @throws NoSuchAlgorithmException  No such algorithm exception
-   * @throws KeyManagementException  Key management exception
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  public void equalsContract()
    {
-    final AHASessionMini session1 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
-    final AHASessionMini session2 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
-    final AHASessionMini session3 = AHASessionMini.newInstance("fritz2.box", 443, "", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(session1.hashCode(), session2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(session1.hashCode(), session3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException  Key store exception
-   * @throws NoSuchAlgorithmException  No such algorithm exception
-   * @throws KeyManagementException  Key management exception
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
-   {
-    final AHASessionMini session1 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
-    final AHASessionMini session2 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
-    final AHASessionMini session3 = AHASessionMini.newInstance("fritz2.box", 443, "", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final AHASessionMini session4 = AHASessionMini.newInstance(AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.PASSWORD); //$NON-NLS-1$
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(session1.equals(session1), "session11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(session1.equals(session2), "session12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(session2.equals(session1), "session21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(session2.equals(session4), "session24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(session1.equals(session4), "session14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(session1.equals(session3), "session13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(session3.equals(session1), "session31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(session1.equals(null), "session10 is equal") //$NON-NLS-1$
-    );
+    SID sid1 = SID.of("0000000000000000");
+    SID sid2 = SID.of("0000000000000001");
+    Hostname hostname1 = Hostname.of("fritz.box");
+    Hostname hostname2 = Hostname.of("fritz2.box");
+    Port port1 = Port.of(443);
+    Port port2 = Port.of(80);
+    Username username1 = Username.of("user1");
+    Username username2 = Username.of("user2");
+    Password password1 = Password.of("password1");
+    Password password2 = Password.of("password2");
+    EqualsVerifier.forClass(AHASessionMini.class).set(Mode.skipMockito()).withNonnullFields("docBuilder", "httpclient", "hostname", "port", "username", "password", "sid", "timeoutThread", "LOGGER", "TIMEOUT", "HOMEAUTOSWITCH", "HOMEAUTOSWITCH_WITH_AIN", "INVAL", "INVALID", "SESSIONID", "AIN_STR", "SHA256").withIgnoredFields("docBuilder", "httpclient", "lastAccess", "timeoutThread").withPrefabValues(SID.class, sid1, sid2).withPrefabValues(Hostname.class, hostname1, hostname2).withPrefabValues(Port.class, port1, port2).withPrefabValues(Username.class, username1, username2).withPrefabValues(Password.class, password1, password2).suppress(Warning.NONFINAL_FIELDS).verify();
    }
 
 
@@ -3341,7 +3319,7 @@ final class AHASessionMiniTests
        {
         HttpGetMatcher.LOGGER.debug("rpath: " + rpath); //$NON-NLS-1$
        }
-      return this.path.equals(rpath);
+      return path.equals(rpath);
      }
    }
 

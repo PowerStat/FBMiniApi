@@ -2,3 +2,4 @@ target/
 cov-int/
 cov-int.zip
 coverity.bat
+src/test/java/de/powerstat/fb/mini/test/*RealTests.java

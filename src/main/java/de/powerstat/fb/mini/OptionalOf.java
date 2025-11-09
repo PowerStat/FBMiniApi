@@ -15,7 +15,7 @@ import de.powerstat.validation.interfaces.IValueObject;
  *
  * @param <T> Use only value objects
  */
-public class OptionalOf<T extends IValueObject> // extends Hue & Saturation & TemperatureKelvin
+public final class OptionalOf<T extends IValueObject> // extends Hue & Saturation & TemperatureKelvin
  {
   /**
    * Value object.
@@ -42,7 +42,7 @@ public class OptionalOf<T extends IValueObject> // extends Hue & Saturation & Te
    */
   public String stringValue()
    {
-    return (this.value == null) ? "" : this.value.stringValue();
+    return (value == null) ? "" : value.stringValue();
    }
 
 
@@ -54,7 +54,7 @@ public class OptionalOf<T extends IValueObject> // extends Hue & Saturation & Te
    */
   public int intValue()
    {
-    return (this.value == null) ? -1 : Integer.parseInt(this.value.stringValue());
+    return (value == null) ? -1 : Integer.parseInt(value.stringValue());
    }
 
 
@@ -67,7 +67,7 @@ public class OptionalOf<T extends IValueObject> // extends Hue & Saturation & Te
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.value);
+    return Objects.hash(value);
    }
 
 
@@ -91,7 +91,7 @@ public class OptionalOf<T extends IValueObject> // extends Hue & Saturation & Te
      {
       return false;
      }
-    return this.value.equals(other.value);
+    return value.equals(other.value);
    }
 
 
@@ -110,7 +110,7 @@ public class OptionalOf<T extends IValueObject> // extends Hue & Saturation & Te
    {
     final var builder = new StringBuilder();
     builder.append("OptionalOf<>[value="); //$NON-NLS-1$
-    builder.append(this.value);
+    builder.append(value);
     builder.append(']');
     return builder.toString();
    }

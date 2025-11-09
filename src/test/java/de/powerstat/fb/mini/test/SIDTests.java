@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2022-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -13,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.SID;
 
 
@@ -130,43 +131,12 @@ final class SIDTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final SID sid1 = SID.of(SID_ONE);
-    final SID sid2 = SID.of(SID_ONE);
-    final SID sid3 = SID.of("0000000000000002"); //$NON-NLS-1$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(sid1.hashCode(), sid2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(sid1.hashCode(), sid3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  // @SuppressFBWarnings("EC_NULL_ARG")
-  /* default */ void testEquals()
-   {
-    final SID sid1 = SID.of(SID_ONE);
-    final SID sid2 = SID.of(SID_ONE);
-    final SID sid3 = SID.of("0000000000000002"); //$NON-NLS-1$
-    final SID sid4 = SID.of(SID_ONE);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(sid1.equals(sid1), "sid11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(sid1.equals(sid2), "sid12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(sid2.equals(sid1), "sid21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(sid2.equals(sid4), "sid24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(sid1.equals(sid4), "sid14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(sid1.equals(sid3), "sid13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(sid3.equals(sid1), "sid31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(sid1.equals(null), "sid10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(SID.class).withNonnullFields("sessionId").verify();
    }
 
 

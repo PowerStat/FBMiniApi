@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Metadata;
 import de.powerstat.fb.mini.ScenarioType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -120,42 +121,12 @@ final class MetadataTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final Metadata metadata1 = Metadata.of(0, ScenarioType.UNDEFINED);
-    final Metadata metadata2 = Metadata.of(0, ScenarioType.UNDEFINED);
-    final Metadata metadata3 = Metadata.of(-1, ScenarioType.COMING);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(metadata1.hashCode(), metadata2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(metadata1.hashCode(), metadata3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final Metadata metadata1 = Metadata.of(0, ScenarioType.UNDEFINED);
-    final Metadata metadata2 = Metadata.of(0, ScenarioType.UNDEFINED);
-    final Metadata metadata3 = Metadata.of(-1, ScenarioType.COMING);
-    final Metadata metadata4 = Metadata.of(0, ScenarioType.UNDEFINED);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(metadata1.equals(metadata1), "metadata11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(metadata1.equals(metadata2), "metadata12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(metadata2.equals(metadata1), "metadata21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(metadata2.equals(metadata4), "metadata24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(metadata1.equals(metadata4), "metadata14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(metadata1.equals(metadata3), "metadata13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(metadata3.equals(metadata1), "metadata31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(metadata1.equals(null), "metadata10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Metadata.class).withNonnullFields("type").verify();
    }
 
 
@@ -179,8 +150,8 @@ final class MetadataTests
    {
     final Metadata metadata1 = Metadata.of(0, ScenarioType.UNDEFINED);
     final Metadata metadata2 = Metadata.of(0, ScenarioType.UNDEFINED);
-    final Metadata metadata3 = Metadata.of(1, ScenarioType.UNDEFINED); //$NON-NLS-1$
-    final Metadata metadata4 = Metadata.of(-1, ScenarioType.COMING); //$NON-NLS-1$
+    final Metadata metadata3 = Metadata.of(1, ScenarioType.UNDEFINED);
+    final Metadata metadata4 = Metadata.of(-1, ScenarioType.COMING);
     final Metadata metadata5 = Metadata.of(0, ScenarioType.UNDEFINED);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(metadata1.compareTo(metadata2) == -metadata2.compareTo(metadata1), "reflexive1"), //$NON-NLS-1$

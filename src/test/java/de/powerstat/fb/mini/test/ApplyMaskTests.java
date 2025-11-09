@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import nl.jqno.equalsverifier.*;
 
 import de.powerstat.fb.mini.ApplyMask;
 
@@ -38,6 +39,30 @@ final class ApplyMaskTests
   /* default */ void testFactory1()
    {
     assertEquals(0, ApplyMask.of("HKR_SUMMER").getAction(), "Action not as expected");
+   }
+
+
+  /**
+   * Factory int test.
+   */
+  @Test
+  /* default */ void testFactory2()
+   {
+    assertEquals(2, ApplyMask.of(2).getAction(), "Action not as expected");
+   }
+
+
+  /**
+   * Factory int failure test.
+   */
+  @Test
+  /* default */ void testFactory3()
+   {
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      /* ApplyMask mask = */ ApplyMask.of(99);
+     }, "Illegal argument exception expected" //$NON-NLS-1$
+    );
    }
 
 

@@ -7,7 +7,7 @@ package de.powerstat.fb.mini.json;
 /**
  * FB Metadata json support class.
  */
-public class FBMetadata
+public final class FBMetadata
  {
   /**
    * Icon number.
@@ -25,6 +25,21 @@ public class FBMetadata
    */
   public FBMetadata()
    {
+    super();
+   }
+
+
+  /**
+   * Constructor.
+   *
+   * @param icon Icon number
+   * @param type Type
+   */
+  public FBMetadata(final int icon, final String type)
+   {
+    super();
+    this.icon = icon;
+    this.type = type;
    }
 
 

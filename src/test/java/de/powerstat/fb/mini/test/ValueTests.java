@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Value;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -76,42 +77,12 @@ final class ValueTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final Value value1 = Value.of(1);
-    final Value value2 = Value.of(1);
-    final Value value3 = Value.of(2);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(value1.hashCode(), value2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(value1.hashCode(), value3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final Value value1 = Value.of(1);
-    final Value value2 = Value.of(1);
-    final Value value3 = Value.of(2);
-    final Value value4 = Value.of(1);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(value1.equals(value1), "value11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(value1.equals(value2), "value12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(value2.equals(value1), "value21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(value2.equals(value4), "value24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(value1.equals(value4), "value14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(value1.equals(value3), "value13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(value3.equals(value1), "value31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(value1.equals(null), "value10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Value.class).verify();
    }
 
 
@@ -123,6 +94,17 @@ final class ValueTests
    {
     final Value value = Value.of(1);
     assertEquals("Value[value=1]", value.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+   }
+
+
+  /**
+   * Test stringValue.
+   */
+  @Test
+  /* default */ void testStringValue()
+   {
+    final Value value = Value.of(1);
+    assertEquals("1", value.stringValue(), "stringValue not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

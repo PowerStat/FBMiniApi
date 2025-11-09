@@ -42,6 +42,30 @@ final class ScenarioTypeTests
 
 
   /**
+   * Factory string test.
+   */
+  @Test
+  /* default */ void testFactory2()
+   {
+    assertEquals(1, ScenarioType.of(1).getAction(), "Action not as expected");
+   }
+
+
+  /**
+   * Factory string test.
+   */
+  @Test
+  /* default */ void testFactory3()
+   {
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      /* ScenarioType type = */ ScenarioType.of(999);
+     }, "Illegal argument exception expected" //$NON-NLS-1$
+    );
+   }
+
+
+  /**
    * Test getAction of ScenarioType.
    */
   @Test

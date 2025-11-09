@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -10,91 +10,94 @@ import de.powerstat.validation.interfaces.IValueObject;
 
 
 /**
- * Temperature in deci celsius.
+ * Temperature.
  */
 public final class Temperature implements Comparable<Temperature>, IValueObject
  {
   /**
    * Temperature in deci celsius.
    */
-  private final long temperatureCelsius;
+  private final TemperatureCelsius temperature;
+
+  /**
+   * Temperature offset in deci celsius.
+   */
+  private final TemperatureCelsius offset;
 
 
   /**
    * Constructor.
    *
-   * @param temperature Temperature in deci celsius (20 degrees will be 200 deci degrees)
-   * @throws IndexOutOfBoundsException If temperature is &lt; -2732
+   * @param temperature Temperature in deci celsius.
+   * @param offset Temperature offset in deci celsius.
+   * @throws NullPointerException When temperature or offset is null
    */
-  private Temperature(final long temperature)
+  private Temperature(final TemperatureCelsius temperature, final TemperatureCelsius offset)
    {
     super();
-    if (temperature < -2732)
-     {
-      throw new IndexOutOfBoundsException("temperature must be >= -2732"); //$NON-NLS-1$
-     }
-    this.temperatureCelsius = temperature;
+    Objects.requireNonNull(temperature, "temperature"); //$NON-NLS-1$
+    Objects.requireNonNull(offset, "offset"); //$NON-NLS-1$
+    this.temperature = temperature;
+    this.offset = offset;
    }
 
 
   /**
    * Temperature factory.
    *
-   * @param temperature Temperature in deci celsius. (must be &gt;= -2732)
+   * @param temperature Temperature in deci celsius.
+   * @param offset Temperature offset in deci celsius.
+   * @throws NullPointerException When temperature or offset is null
    * @return Temperature object
-   * @throws IndexOutOfBoundsException If temperature is less than -2732
    */
-  public static Temperature of(final long temperature)
+  public static Temperature of(final TemperatureCelsius temperature, final TemperatureCelsius offset)
    {
-    return new Temperature(temperature);
+    return new Temperature(temperature, offset);
    }
 
 
   /**
-   * Temperature factory.
+   * Get temperature (temperature + offset).
    *
-   * @param temperature Temperature in deci celsius (must be &gt;= -2732)
-   * @return Temperature object
-   * @throws IndexOutOfBoundsException If temperature is less than -2732
-   * @throws NumberFormatException If temperature does not contain a parsable long.
+   * @return Temperature + offset
    */
-  public static Temperature of(final String temperature)
+  public TemperatureCelsius temperatureValue()
    {
-    return new Temperature(Long.parseLong(temperature));
+    return temperature.add(offset);
    }
 
 
   /**
-   * Returns the value of this Energy as a long in deci celsius.
+   * Returns the value of this Temerature as a string.
    *
-   * @return The numeric value represented by this object after conversion to type long in deci celsius
-   */
-  public long longValue()
-   {
-    return this.temperatureCelsius;
-   }
-
-
-  /**
-   * Returns the value of this Energy as a String in deci celsius.
-   *
-   * @return The numeric value represented by this object after conversion to type String in deci celsius
+   * @return The numeric value represented by this object after conversion to type string.
    */
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.temperatureCelsius);
+    return temperatureValue().stringValue();
    }
 
 
   /**
-   * Get temperature in celsius.
+   * Get temperature.
    *
-   * @return Temperature in celsius
+   * @return Temperature
    */
-  public long getTemperatureCelsius()
+  public TemperatureCelsius getTemperature()
    {
-    return this.temperatureCelsius / 10;
+    return temperature;
+   }
+
+
+  /**
+   * Get temperature offset.
+   *
+   * @return Temperature offset
+   */
+  public TemperatureCelsius getOffset()
+   {
+    return offset;
    }
 
 
@@ -107,7 +110,7 @@ public final class Temperature implements Comparable<Temperature>, IValueObject
   @Override
   public int hashCode()
    {
-    return Long.hashCode(this.temperatureCelsius);
+    return Objects.hash(temperature, offset);
    }
 
 
@@ -129,25 +132,30 @@ public final class Temperature implements Comparable<Temperature>, IValueObject
      {
       return false;
      }
-    return this.temperatureCelsius == other.temperatureCelsius;
+    boolean result = temperature.equals(other.temperature);
+    if (result)
+     {
+      result = offset.equals(other.offset);
+     }
+    return result;
    }
 
 
   /**
-   * Returns the string representation of this Temperature in deci celsius.
+   * Returns the string representation of this Temperature.
    *
    * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
    *
-   * "Temperature[temperature=205]"
+   * "Temperature[temperature=0, offset=0]"
    *
-   * @return String representation of this Temperature in deci celsius
+   * @return String representation of this Temperature
    * @see java.lang.Object#toString()
    */
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder(25);
-    builder.append("Temperature[temperature=").append(this.temperatureCelsius).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder();
+    builder.append("Temperature[temperature=").append(temperature).append(", offset=").append(offset).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -163,7 +171,9 @@ public final class Temperature implements Comparable<Temperature>, IValueObject
   public int compareTo(final Temperature obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Long.compare(this.temperatureCelsius, obj.temperatureCelsius);
+    final TemperatureCelsius real1 = this.temperatureValue();
+    final TemperatureCelsius real2 = obj.temperatureValue();
+    return real1.compareTo(real2);
    }
 
  }

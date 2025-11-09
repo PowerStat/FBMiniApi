@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -14,8 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import nl.jqno.equalsverifier.*;
 
 import de.powerstat.fb.mini.AIN;
+import de.powerstat.fb.mini.Action;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -168,42 +170,12 @@ final class AINTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final AIN ain1 = AIN.of(AINTests.AIN0);
-    final AIN ain2 = AIN.of(AINTests.AIN0);
-    final AIN ain3 = AIN.of("000000000001"); //$NON-NLS-1$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(ain1.hashCode(), ain2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(ain1.hashCode(), ain3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final AIN ain1 = AIN.of(AINTests.AIN0);
-    final AIN ain2 = AIN.of(AINTests.AIN0);
-    final AIN ain3 = AIN.of("000000000001"); //$NON-NLS-1$
-    final AIN ain4 = AIN.of(AINTests.AIN0);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(ain1.equals(ain1), "ain11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(ain1.equals(ain2), "ain12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(ain2.equals(ain1), "ain21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(ain2.equals(ain4), "ain24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(ain1.equals(ain4), "ain14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(ain1.equals(ain3), "ain13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(ain3.equals(ain1), "ain31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(ain1.equals(null), "ain10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(AIN.class).withNonnullFields("aiNr").verify();
    }
 
 

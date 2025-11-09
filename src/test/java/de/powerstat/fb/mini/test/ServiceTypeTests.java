@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.ServiceType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -41,7 +42,7 @@ final class ServiceTypeTests
    * @param type ServiceType
    */
   @ParameterizedTest
-  @ValueSource(strings = {"urn:dslforum-org:service:DeviceConfig:1"})
+  @ValueSource(strings = {"urn:dslforum-org:service:DeviceConfig:1", "urn:dslforum-org:service:a:1", "urn:dslforum-org:service:1234567890123456789012345678901234567:1"})
   /* default */ void testServiceTypeCorrect(final String type)
    {
     final ServiceType cleanType = ServiceType.of(type);
@@ -95,42 +96,12 @@ final class ServiceTypeTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final ServiceType type1 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
-    final ServiceType type2 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
-    final ServiceType type3 = ServiceType.of("urn:dslforum-org:service:AnotherConfig:1"); //$NON-NLS-1$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(type1.hashCode(), type2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(type1.hashCode(), type3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final ServiceType type1 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
-    final ServiceType type2 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
-    final ServiceType type3 = ServiceType.of("urn:dslforum-org:service:OtherConfig:1"); //$NON-NLS-1$
-    final ServiceType type4 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(type1.equals(type1), "type11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(type1.equals(type2), "type12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(type2.equals(type1), "type21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(type2.equals(type4), "type24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(type1.equals(type4), "type14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(type1.equals(type3), "type13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(type3.equals(type1), "type31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(type1.equals(null), "type10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(ServiceType.class).withNonnullFields("serviceType").verify();
    }
 
 

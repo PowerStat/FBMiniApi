@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -75,7 +75,7 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.name;
+    return name;
    }
 
 
@@ -86,7 +86,7 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
    */
   public AIN ainValue()
    {
-    return this.ain;
+    return ain;
    }
 
 
@@ -97,7 +97,7 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
    */
   public boolean isActive()
    {
-    return this.active;
+    return active;
    }
 
 
@@ -110,7 +110,7 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.ain, this.name, this.active);
+    return Objects.hash(ain, name, active);
    }
 
 
@@ -132,13 +132,13 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
      {
       return false;
      }
-    boolean result = this.ain.equals(other.ain);
+    boolean result = ain.equals(other.ain);
     if (result)
      {
-      this.name.equals(other.name);
+      result = name.equals(other.name);
       if (result)
        {
-        result = (this.active == other.active);
+        result = (active == other.active);
        }
      }
     return result;
@@ -159,7 +159,7 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Trigger[ain=").append(this.ain).append(", name=").append(this.name).append(", active=").append(this.active).append(']'); //$NON-NLS-1$
+    builder.append("Trigger[ain=").append(ain).append(", name=").append(name).append(", active=").append(active).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -175,13 +175,13 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
   public int compareTo(final Trigger obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.ain.compareTo(obj.ain);
+    int result = ain.compareTo(obj.ain);
     if (result == 0)
      {
-      result = this.name.compareTo(obj.name);
+      result = name.compareTo(obj.name);
       if (result == 0)
        {
-        result = Boolean.compare(this.active, obj.active);
+        result = Boolean.compare(active, obj.active);
        }
      }
     return result;

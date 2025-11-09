@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -17,7 +17,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Color;
 import de.powerstat.fb.mini.Hs;
 import de.powerstat.fb.mini.Hue;
@@ -43,15 +44,33 @@ final class HsTests
 
   /**
    * Test correct Hs.
+   *
+   * @param index Index 1-12
    */
-  @Test
-  /* default */ void testHsCorrect()
+  @ParameterizedTest
+  @ValueSource(ints = {1, 12})
+  /* default */ void testHsCorrect1(final int index)
    {
     final List<Color> colors = new ArrayList<>();
     colors.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
-    final Hs cleanHs = Hs.of(1, 5569, "Rot", colors);
+    final Hs cleanHs = Hs.of(index, 5569, "Rot", colors);
+    assertEquals("", cleanHs.stringValue(), "Hs not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+   }
+
+
+  /**
+   * Test correct Hs.
+   */
+  @Test
+  /* default */ void testHsCorrect2()
+   {
+    final List<Color> colors = new ArrayList<>();
+    colors.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
+    colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
+    colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
+    final Hs cleanHs = Hs.of(1, 0, "Rot", colors);
     assertEquals("", cleanHs.stringValue(), "Hs not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -128,6 +147,23 @@ final class HsTests
 
 
   /**
+   * Test wrong Hs.
+   */
+  @Test
+  /* default */ void testHsWrong5()
+   {
+    final List<Color> colors = new ArrayList<>();
+    colors.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
+    colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      /* final Hs cleanHs = */ Hs.of(1, 5569, "Rot", colors);
+     }, "Illegal argument exception expected" //$NON-NLS-1$
+    );
+   }
+
+
+  /**
    * Test stringValue.
    */
   @Test
@@ -143,58 +179,12 @@ final class HsTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final List<Color> colors1 = new ArrayList<>();
-    colors1.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
-    colors1.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
-    colors1.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
-    final List<Color> colors2 = new ArrayList<>();
-    colors2.add(Color.of(1, Hue.of(1), Saturation.of(1), Value.of(1)));
-    colors2.add(Color.of(2, Hue.of(1), Saturation.of(1), Value.of(1)));
-    colors2.add(Color.of(3, Hue.of(1), Saturation.of(1), Value.of(1)));
-    final Hs hs1 = Hs.of(1, 5569, "Rot", colors1);
-    final Hs hs2 = Hs.of(1, 5569, "Rot", colors1);
-    final Hs hs3 = Hs.of(2, 5570, "Grün",colors2); //$NON-NLS-1$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(hs1.hashCode(), hs2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(hs1.hashCode(), hs3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final List<Color> colors1 = new ArrayList<>();
-    colors1.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
-    colors1.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
-    colors1.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
-    final List<Color> colors2 = new ArrayList<>();
-    colors2.add(Color.of(1, Hue.of(1), Saturation.of(1), Value.of(1)));
-    colors2.add(Color.of(2, Hue.of(1), Saturation.of(1), Value.of(1)));
-    colors2.add(Color.of(3, Hue.of(1), Saturation.of(1), Value.of(1)));
-    final Hs hs1 = Hs.of(1, 5569, "Rot", colors1);
-    final Hs hs2 = Hs.of(1, 5569, "Rot", colors1);
-    final Hs hs3 = Hs.of(2, 5570, "Grün", colors2); //$NON-NLS-1$
-    final Hs hs4 = Hs.of(1, 5569, "Rot", colors1);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(hs1.equals(hs1), "hs11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(hs1.equals(hs2), "hs12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(hs2.equals(hs1), "hs21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(hs2.equals(hs4), "hs24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(hs1.equals(hs4), "hs14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(hs1.equals(hs3), "hs13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(hs3.equals(hs1), "hs31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(hs1.equals(null), "hs10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Hs.class).withNonnullFields("name", "colors").verify();
    }
 
 

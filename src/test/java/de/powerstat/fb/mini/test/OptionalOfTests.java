@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -13,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Level;
 import de.powerstat.fb.mini.OptionalOf;
 import de.powerstat.validation.interfaces.IValueObject;
@@ -36,10 +37,10 @@ public class OptionalOfTests
 
 
   /**
-   * Test stringValue().
+   * Test toString().
    */
   @Test
-  /* default */ void testStringValue1()
+  /* default */ void testToString1()
    {
     final OptionalOf<Level> level = new OptionalOf<>(Level.of(1));
     assertEquals("OptionalOf<>[value=Level[level=1]]", level.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -50,9 +51,9 @@ public class OptionalOfTests
    * Test stringValue().
    */
   @Test
-  /* default */ void testStringValue2()
+  /* default */ void testStringValue1()
    {
-    assertEquals("", new OptionalOf<>((IValueObject)null).stringValue(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("50", new OptionalOf<>(Level.of(50)).stringValue(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -60,7 +61,7 @@ public class OptionalOfTests
    * Is an optional value.
    */
   @Test
-  /* default */ void testIsOptinalValue()
+  /* default */ void testIsOptionalValue()
    {
     assertEquals(-1, new OptionalOf<>((IValueObject)null).intValue(), "Not an optional value!"); //$NON-NLS-1$
    }
@@ -77,42 +78,12 @@ public class OptionalOfTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final OptionalOf<Level> level1 = new OptionalOf<>(Level.of(1));
-    final OptionalOf<Level> level2 = new OptionalOf<>(Level.of(1));
-    final OptionalOf<Level> level3 = new OptionalOf<>(Level.of(2));
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(level1.hashCode(), level2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(level1.hashCode(), level3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final OptionalOf<Level> level1 = new OptionalOf<>(Level.of(1));
-    final OptionalOf<Level> level2 = new OptionalOf<>(Level.of(1));
-    final OptionalOf<Level> level3 = new OptionalOf<>(Level.of(2));
-    final OptionalOf<Level> level4 = new OptionalOf<>(Level.of(1));
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(level1.equals(level1), "level11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(level1.equals(level2), "level12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(level2.equals(level1), "level21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(level2.equals(level4), "level24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(level1.equals(level4), "level14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(level1.equals(level3), "level13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(level3.equals(level1), "level31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(level1.equals(null), "level10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(OptionalOf.class).withNonnullFields("value").verify();
    }
 
 

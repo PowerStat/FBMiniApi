@@ -155,5 +155,4 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
     return Integer.compare(this.temperature, obj.temperature);
    }
 
-
  }

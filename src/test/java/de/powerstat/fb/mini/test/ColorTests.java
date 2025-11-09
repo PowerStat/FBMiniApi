@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Color;
 import de.powerstat.fb.mini.Color;
 import de.powerstat.fb.mini.Color;
@@ -136,42 +137,12 @@ final class ColorTests
 
 
    /**
-    * Test hash code.
+    * Equalsverifier.
     */
    @Test
-   /* default */ void testHashCode()
+   public void equalsContract()
     {
-     final Color color1 = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
-     final Color color2 = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
-     final Color color3 = Color.of(2, Hue.of(1), Saturation.of(1), Value.of(1));
-     assertAll("testHashCode", //$NON-NLS-1$
-       () -> assertEquals(color1.hashCode(), color2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-       () -> assertNotEquals(color1.hashCode(), color3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-     );
-    }
-
-
-   /**
-    * Test equals.
-    */
-   @Test
-   @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-   /* default */ void testEquals()
-    {
-     final Color color1 = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
-     final Color color2 = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
-     final Color color3 = Color.of(2, Hue.of(1), Saturation.of(1), Value.of(1));
-     final Color color4 = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
-     assertAll("testEquals", //$NON-NLS-1$
-       () -> assertTrue(color1.equals(color1), "color11 is not equal"), //$NON-NLS-1$
-       () -> assertTrue(color1.equals(color2), "color12 are not equal"), //$NON-NLS-1$
-       () -> assertTrue(color2.equals(color1), "color21 are not equal"), //$NON-NLS-1$
-       () -> assertTrue(color2.equals(color4), "color24 are not equal"), //$NON-NLS-1$
-       () -> assertTrue(color1.equals(color4), "color14 are not equal"), //$NON-NLS-1$
-       () -> assertFalse(color1.equals(color3), "color13 are equal"), //$NON-NLS-1$
-       () -> assertFalse(color3.equals(color1), "color31 are equal"), //$NON-NLS-1$
-       () -> assertFalse(color1.equals(null), "color10 is equal") //$NON-NLS-1$
-     );
+     EqualsVerifier.forClass(Color.class).withNonnullFields("hue", "saturation", "value").verify();
     }
 
 
@@ -195,8 +166,8 @@ final class ColorTests
     {
      final Color color1 = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
      final Color color2 = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
-     final Color color3 = Color.of(2, Hue.of(1), Saturation.of(1), Value.of(1)); //$NON-NLS-1$
-     final Color color4 = Color.of(3, Hue.of(2), Saturation.of(2), Value.of(2)); //$NON-NLS-1$
+     final Color color3 = Color.of(2, Hue.of(1), Saturation.of(1), Value.of(1));
+     final Color color4 = Color.of(3, Hue.of(2), Saturation.of(2), Value.of(2));
      final Color color5 = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
      assertAll("testCompareTo", //$NON-NLS-1$
        () -> assertTrue(color1.compareTo(color2) == -color2.compareTo(color1), "reflexive1"), //$NON-NLS-1$

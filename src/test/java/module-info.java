@@ -4,7 +4,7 @@
 
 
 /**
- * FB mini module.
+ * FB mini module test.
  */
 open module de.powerstat.fb.mini
  {
@@ -26,6 +26,7 @@ open module de.powerstat.fb.mini
   requires org.junit.jupiter.params;
   requires org.junit.platform.launcher;
   requires org.junit.platform.suite.api;
-  // requires nl.jqno.equalsverifier;
+  requires org.mockito;
+  requires nl.jqno.equalsverifier;
 
  }

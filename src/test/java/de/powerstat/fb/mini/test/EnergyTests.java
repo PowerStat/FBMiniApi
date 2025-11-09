@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Energy;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -65,52 +66,32 @@ final class EnergyTests
 
 
   /**
-   * Is an energy string value.
+   * Get energy kilowatt hours.
    */
   @Test
-  /* default */ void testIsEnergyString()
+  /* default */ void testGetKiloWattHours()
    {
     assertEquals(75, Energy.of("75519").getEnergyKiloWattHours(), "Not an energy value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
   /**
-   * Test hash code.
+   * Is an energy string value.
    */
   @Test
-  /* default */ void testHashCode()
+  /* default */ void teststringValue()
    {
-    final Energy energy1 = Energy.of(1);
-    final Energy energy2 = Energy.of(1);
-    final Energy energy3 = Energy.of(2);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(energy1.hashCode(), energy2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(energy1.hashCode(), energy3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
+    assertEquals("75519", Energy.of("75519").stringValue(), "Not an energy value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
   /**
-   * Test equals.
+   * Equalsverifier.
    */
   @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
+  public void equalsContract()
    {
-    final Energy energy1 = Energy.of(1);
-    final Energy energy2 = Energy.of(1);
-    final Energy energy3 = Energy.of(2);
-    final Energy energy4 = Energy.of(1);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(energy1.equals(energy1), "energy11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(energy1.equals(energy2), "energy12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(energy2.equals(energy1), "energy21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(energy2.equals(energy4), "energy24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(energy1.equals(energy4), "energy14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(energy1.equals(energy3), "energy13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(energy3.equals(energy1), "energy31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(energy1.equals(null), "energy10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Energy.class).verify();
    }
 
 

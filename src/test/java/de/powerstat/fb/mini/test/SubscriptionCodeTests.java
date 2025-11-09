@@ -32,12 +32,36 @@ final class SubscriptionCodeTests
 
 
   /**
-   * Factory string test.
+   * Factory test.
    */
   @Test
   /* default */ void testFactory1()
    {
     assertEquals(0, SubscriptionCode.of("NO_PROGRESS").getAction(), "Action not as expected");
+   }
+
+
+  /**
+   * Factory test.
+   */
+  @Test
+  /* default */ void testFactory2()
+   {
+    assertEquals(1, SubscriptionCode.of(1).getAction(), "Action not as expected");
+   }
+
+
+  /**
+   * Factory test.
+   */
+  @Test
+  /* default */ void testFactory3()
+   {
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      /* SubscriptionCode code = */ SubscriptionCode.of(999);
+     }, "Illegal argument exception expected" //$NON-NLS-1$
+    );
    }
 
 

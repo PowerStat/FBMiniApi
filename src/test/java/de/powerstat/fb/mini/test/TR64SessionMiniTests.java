@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import nl.jqno.equalsverifier.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -46,6 +47,7 @@ import org.xml.sax.SAXException;
 
 import de.powerstat.fb.mini.TR64SessionMini;
 import de.powerstat.fb.mini.Action;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.ServiceType;
 import de.powerstat.fb.mini.URIPath;
 import de.powerstat.validation.values.Hostname;
@@ -313,72 +315,16 @@ final class TR64SessionMiniTests
 
 
   /**
-   * Test hash code.
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException  Key store exception
-   * @throws NoSuchAlgorithmException  No such algorithm exception
-   * @throws KeyManagementException  Key management exception
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
+  public void equalsContract()
    {
-    final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
-    final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
-    final TR64SessionMini session3 = TR64SessionMini.newInstance("fritz2.box", 49443, "admin2", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(session1.hashCode(), session2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(session1.hashCode(), session3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException  Key store exception
-   * @throws NoSuchAlgorithmException  No such algorithm exception
-   * @throws KeyManagementException  Key management exception
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
-   {
-    final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
-    final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
-    final TR64SessionMini session3 = TR64SessionMini.newInstance("fritz2.box", 49443, "admin2", "TopSecret2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    final TR64SessionMini session4 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(session1.equals(session1), "session11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(session1.equals(session2), "session12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(session2.equals(session1), "session21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(session2.equals(session4), "session24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(session1.equals(session4), "session14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(session1.equals(session3), "session13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(session3.equals(session1), "session31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(session1.equals(null), "session10 is equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   *
-   * @throws ParserConfigurationException Parser configuration exception
-   * @throws KeyStoreException  Key store exception
-   * @throws NoSuchAlgorithmException  No such algorithm exception
-   * @throws KeyManagementException  Key management exception
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals2() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
-   {
-    final TR64SessionMini session1 = TR64SessionMini.newInstance(FBHOSTNAME, 49443, FBUSERNAME, FBPASSWORD2);
-    final TR64SessionMini session2 = TR64SessionMini.newInstance(FBHOSTNAME, 49444, FBUSERNAME, FBPASSWORD2);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertFalse(session1.equals(session2), "session11 is not equal") //$NON-NLS-1$
-    );
+    Hostname hostname1 = Hostname.of("fritz.box");
+    Hostname hostname2 = Hostname.of("fritz2.box");
+    Port port1 = Port.of(443);
+    Port port2 = Port.of(80);
+    EqualsVerifier.simple().forClass(TR64SessionMini.class).set(Mode.skipMockito()).withNonnullFields("hostname", "port").withIgnoredFields("httpclient", "docBuilder").withPrefabValues(Hostname.class, hostname1, hostname2).withPrefabValues(Port.class, port1, port2).verify();
    }
 
 
@@ -461,7 +407,7 @@ final class TR64SessionMiniTests
        {
         LOGGER.debug("rpath: " + rpath); //$NON-NLS-1$
        }
-      return this.path.equals(rpath) && right.containsHeader("SoapAction") && right.containsHeader("USER-AGENT") && right.containsHeader("Content-Type") && (right.getEntity() != null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      return path.equals(rpath) && right.containsHeader("SoapAction") && right.containsHeader("USER-AGENT") && right.containsHeader("Content-Type") && (right.getEntity() != null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
      }
    }
 

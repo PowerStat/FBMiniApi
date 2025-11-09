@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Power;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -75,42 +76,12 @@ final class PowerTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final Power power1 = Power.of(1);
-    final Power power2 = Power.of(1);
-    final Power power3 = Power.of(2);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(power1.hashCode(), power2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(power1.hashCode(), power3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final Power power1 = Power.of(1);
-    final Power power2 = Power.of(1);
-    final Power power3 = Power.of(2);
-    final Power power4 = Power.of(1);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(power1.equals(power1), "power11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(power1.equals(power2), "power12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(power2.equals(power1), "power21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(power2.equals(power4), "power24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(power1.equals(power4), "power14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(power1.equals(power3), "power13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(power3.equals(power1), "power31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(power1.equals(null), "power10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Power.class).verify();
    }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Hue;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -76,42 +77,12 @@ public class HueTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final Hue hue1 = Hue.of(1);
-    final Hue hue2 = Hue.of(1);
-    final Hue hue3 = Hue.of(2);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(hue1.hashCode(), hue2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(hue1.hashCode(), hue3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final Hue hue1 = Hue.of(1);
-    final Hue hue2 = Hue.of(1);
-    final Hue hue3 = Hue.of(2);
-    final Hue hue4 = Hue.of(1);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(hue1.equals(hue1), "hue11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(hue1.equals(hue2), "hue12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(hue2.equals(hue1), "hue21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(hue2.equals(hue4), "hue24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(hue1.equals(hue4), "hue14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(hue1.equals(hue3), "hue13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(hue3.equals(hue1), "hue31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(hue1.equals(null), "hue10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Hue.class).verify();
    }
 
 

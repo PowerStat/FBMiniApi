@@ -63,7 +63,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
      {
       throw new IllegalArgumentException("AIN with wrong format"); //$NON-NLS-1$
      }
-    this.aiNr = intAIN;
+    aiNr = intAIN;
    }
 
 
@@ -87,7 +87,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.aiNr;
+    return aiNr;
    }
 
 
@@ -98,7 +98,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
    */
   public boolean isTemplate()
    {
-    return (this.aiNr.startsWith("tmp"));
+    return (aiNr.startsWith("tmp"));
    }
 
 
@@ -109,7 +109,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
    */
   public boolean isZigbee()
    {
-    return (this.aiNr.charAt(0) == 'Z');
+    return (aiNr.charAt(0) == 'Z');
    }
 
 
@@ -120,7 +120,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
    */
   public boolean isUnit()
    {
-    return (this.aiNr.length() == (isZigbee() ? 19 : 14));
+    return (aiNr.length() == (isZigbee() ? 19 : 14));
    }
 
 
@@ -133,7 +133,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
   @Override
   public int hashCode()
    {
-    return this.aiNr.hashCode();
+    return aiNr.hashCode();
    }
 
 
@@ -155,7 +155,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
      {
       return false;
      }
-    return this.aiNr.equals(other.aiNr);
+    return aiNr.equals(other.aiNr);
    }
 
 
@@ -173,7 +173,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("AIN[ain=").append(this.aiNr).append(']'); //$NON-NLS-1$
+    builder.append("AIN[ain=").append(aiNr).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -189,7 +189,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
   public int compareTo(final AIN obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return this.aiNr.compareTo(obj.aiNr);
+    return aiNr.compareTo(obj.aiNr);
    }
 
  }

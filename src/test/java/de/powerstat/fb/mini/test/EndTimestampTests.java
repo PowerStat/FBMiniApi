@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.EndTimestamp;
 import de.powerstat.validation.values.Seconds;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -110,44 +111,25 @@ final class EndTimestampTests
 
 
   /**
-   * Test hash code.
+   * Is a EndTimestamp SecondsValue value.
    */
   @Test
-  /* default */ void testHashCode()
+  /* default */ void testSecondsValue()
    {
     final long now = Instant.now().getEpochSecond() + 10;
-    final EndTimestamp timestamp1 = EndTimestamp.of(Seconds.of(now));
-    final EndTimestamp timestamp2 = EndTimestamp.of(Seconds.of(now));
-    final EndTimestamp timestamp3 = EndTimestamp.of(Seconds.of(now + 20));
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(timestamp1.hashCode(), timestamp2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(timestamp1.hashCode(), timestamp3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
+    Seconds secs = Seconds.of(now);
+    final EndTimestamp timestamp = EndTimestamp.of(String.valueOf(now));
+    assertEquals(secs, timestamp.secondsValue(), "Not an EndTimestamp value!"); //$NON-NLS-1$
    }
 
 
   /**
-   * Test equals.
+   * Equalsverifier.
    */
   @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
+  public void equalsContract()
    {
-    final long now = Instant.now().getEpochSecond() + 10;
-    final EndTimestamp timestamp1 = EndTimestamp.of(Seconds.of(now));
-    final EndTimestamp timestamp2 = EndTimestamp.of(Seconds.of(now));
-    final EndTimestamp timestamp3 = EndTimestamp.of(Seconds.of(now + 20));
-    final EndTimestamp timestamp4 = EndTimestamp.of(Seconds.of(now));
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(timestamp1.equals(timestamp1), "timestamp11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(timestamp1.equals(timestamp2), "timestamp12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(timestamp2.equals(timestamp1), "timestamp21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(timestamp2.equals(timestamp4), "timestamp24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(timestamp1.equals(timestamp4), "timestamp14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(timestamp1.equals(timestamp3), "timestamp13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(timestamp3.equals(timestamp1), "timestamp31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(timestamp1.equals(null), "timestamp10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(EndTimestamp.class).withNonnullFields("seconds").verify();
    }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.TemperatureKelvin;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -76,42 +77,12 @@ final class TemperatureKelvinTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final TemperatureKelvin temperature1 = TemperatureKelvin.of(2700);
-    final TemperatureKelvin temperature2 = TemperatureKelvin.of(2700);
-    final TemperatureKelvin temperature3 = TemperatureKelvin.of(3000);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(temperature1.hashCode(), temperature2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(temperature1.hashCode(), temperature3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final TemperatureKelvin temperature1 = TemperatureKelvin.of(2700);
-    final TemperatureKelvin temperature2 = TemperatureKelvin.of(2700);
-    final TemperatureKelvin temperature3 = TemperatureKelvin.of(3000);
-    final TemperatureKelvin temperature4 = TemperatureKelvin.of(2700);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(temperature1.equals(temperature1), "temperature11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(temperature1.equals(temperature2), "temperature12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(temperature2.equals(temperature1), "temperature21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(temperature2.equals(temperature4), "temperature24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(temperature1.equals(temperature4), "temperature14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(temperature1.equals(temperature3), "temperature13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(temperature3.equals(temperature1), "temperature31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(temperature1.equals(null), "temperature10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(TemperatureKelvin.class).verify();
    }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Saturation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -76,42 +77,12 @@ final class SaturationTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final Saturation saturation1 = Saturation.of(1);
-    final Saturation saturation2 = Saturation.of(1);
-    final Saturation saturation3 = Saturation.of(2);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(saturation1.hashCode(), saturation2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(saturation1.hashCode(), saturation3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final Saturation saturation1 = Saturation.of(1);
-    final Saturation saturation2 = Saturation.of(1);
-    final Saturation saturation3 = Saturation.of(2);
-    final Saturation saturation4 = Saturation.of(1);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(saturation1.equals(saturation1), "saturation11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(saturation1.equals(saturation2), "saturation12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(saturation2.equals(saturation1), "saturation21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(saturation2.equals(saturation4), "saturation24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(saturation1.equals(saturation4), "saturation14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(saturation1.equals(saturation3), "saturation13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(saturation3.equals(saturation1), "saturation31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(saturation1.equals(null), "saturation10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Saturation.class).verify();
    }
 
 

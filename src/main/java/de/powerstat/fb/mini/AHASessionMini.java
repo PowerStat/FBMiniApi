@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2015-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini;
 
@@ -57,6 +57,7 @@ import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 
+import de.powerstat.fb.mini.Alert.AlertState;
 import de.powerstat.fb.mini.json.FBMetadata;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Milliseconds;
@@ -221,7 +222,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      */
     public int getAction()
      {
-      return this.action;
+      return action;
      }
 
 
@@ -238,7 +239,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     @Override
     public String toString()
      {
-      return switch (this.action)
+      return switch (action)
        {
        case 0 -> "close"; //$NON-NLS-1$
        case 1 -> "open"; //$NON-NLS-1$
@@ -295,7 +296,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      */
     public int getAction()
      {
-      return this.action;
+      return action;
      }
 
 
@@ -312,7 +313,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     @Override
     public String toString()
      {
-      return switch (this.action)
+      return switch (action)
        {
        case 0 -> "off"; //$NON-NLS-1$
        case 1 -> "on"; //$NON-NLS-1$
@@ -323,60 +324,6 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
 
    }
 
-
-/*
-functionbitmask: Bitmaske der Geräte-Funktionsklassen, beginnen mit Bit 0, es können mehrere Bits gesetzt sein
-Bit 0: HAN-FUN Gerät
-Bit 2: Licht/Lampe
-Bit 4: Alarm-Sensor
-Bit 5: AVM Button
-Bit 6: AVM Heizkörperregler
-Bit 7: AVM Energie Messgerät
-Bit 8: Temperatursensor
-Bit 9: AVM Schaltsteckdose
-Bit 10: AVM DECT Repeater
-Bit 11: AVM Mikrofon
-Bit 13: HAN-FUN-Unit
-Bit 15: an-/ausschaltbares Gerät/Steckdose/Lampe/Aktor
-Bit 16: Gerät mit einstellbarem Dimm-, Höhen- bzw. Niveau-Level
-Bit 17: Lampe mit einstellbarer Farbe/Farbtemperatur
-Bit 18: Rollladen(Blind) - hoch, runter, stop und level 0% bis 100 %
-Bit 20: Luftfeuchtigkeitssensor
-Die Bits 5,6,7,9,10 und 11 werden nur von FRITZ!-Geräten verwendet und nicht von HANFUN- oder Zigbee-Geräten.
-
-HAN-FUN Unit Typ
-273 = SIMPLE_BUTTON
-256 = SIMPLE_ON_OFF_SWITCHABLE
-257 = SIMPLE_ON_OFF_SWITCH
-262 = AC_OUTLET
-263 = AC_OUTLET_SIMPLE_POWER_METERING
-264 = SIMPLE_LIGHT
-265 = DIMMABLE_LIGHT
-266 = DIMMER_SWITCH
-277 = COLOR_BULB
-278 = DIMMABLE_COLOR_BULB
-281 = BLIND
-282 = LAMELLAR
-512 = SIMPLE_DETECTOR
-513 = DOOR_OPEN_CLOSE_DETECTOR
-514 = WINDOW_OPEN_CLOSE_DETECTOR
-515 = MOTION_DETECTOR
-518 = FLOOD_DETECTOR
-519 = GLAS_BREAK_DETECTOR
-520 = VIBRATION_DETECTOR
-640 = SIREN
-
-HAN-FUN Interfaces
-277 = KEEP_ALIVE
-256 = ALERT
-512 = ON_OFF
-513 = LEVEL_CTRL
-514 = COLOR_CTRL
-516 = OPEN_CLOSE
-517 = OPEN_CLOSE_CONFIG
-772 = SIMPLE_BUTTON
-1024 = SUOTA-Update
-*/
 
   /**
    * Constructor.
@@ -557,7 +504,7 @@ HAN-FUN Interfaces
          {
           AHASessionMini.LOGGER.debug("Checking timeout"); //$NON-NLS-1$
          }
-        if ((this.lastAccess + AHASessionMini.TIMEOUT.longValue()) >= System.currentTimeMillis())
+        if ((lastAccess + AHASessionMini.TIMEOUT.longValue()) >= System.currentTimeMillis())
          {
           if (AHASessionMini.LOGGER.isDebugEnabled())
            {
@@ -567,7 +514,7 @@ HAN-FUN Interfaces
           // TODO check disconnect and login again
           // TODO update device infos
          }
-        Thread.sleep((this.lastAccess + AHASessionMini.TIMEOUT.longValue()) - System.currentTimeMillis());
+        Thread.sleep((lastAccess + AHASessionMini.TIMEOUT.longValue()) - System.currentTimeMillis());
        }
       catch (final InterruptedException e)
        {
@@ -600,14 +547,14 @@ HAN-FUN Interfaces
     assert (urlPath != null) && (urlQuery != null);
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
-      AHASessionMini.LOGGER.debug("url: https://{}:{}{}{}", this.hostname.stringValue(), this.port.intValue(), urlPath.stringValue(), urlQuery.stringValue()); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("url: https://{}:{}{}{}", hostname.stringValue(), port.intValue(), urlPath.stringValue(), urlQuery.stringValue()); //$NON-NLS-1$
      }
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + urlPath.stringValue() + urlQuery.stringValue()))) //$NON-NLS-1$ //$NON-NLS-2$
+    try (CloseableHttpResponse response = httpclient.execute(new HttpGet("https://" + hostname.stringValue() + ":" + port.intValue() + urlPath.stringValue() + urlQuery.stringValue()))) //$NON-NLS-1$ //$NON-NLS-2$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
        {
-        this.lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
+        lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
         if (AHASessionMini.LOGGER.isDebugEnabled())
          {
           AHASessionMini.LOGGER.debug("StatusLine: {}", response.getStatusLine()); //$NON-NLS-1$
@@ -653,7 +600,7 @@ HAN-FUN Interfaces
        }
       final var byteStream = new ByteArrayInputStream(bytes);
       final var stream = new InputSource(byteStream);
-      final Document doc = this.docBuilder.parse(stream);
+      final Document doc = docBuilder.parse(stream);
       EntityUtils.consume(entity);
       return doc;
      }
@@ -673,12 +620,12 @@ HAN-FUN Interfaces
   private String getString(final URIPath urlPath, final URIQuery<URIQueryParameter> urlQuery) throws IOException
    {
     assert (urlPath != null) && (urlQuery != null);
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + urlPath.stringValue() + urlQuery.stringValue() + "&sid=" + this.sid.stringValue())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    try (CloseableHttpResponse response = httpclient.execute(new HttpGet("https://" + hostname.stringValue() + ":" + port.intValue() + urlPath.stringValue() + urlQuery.stringValue() + "&sid=" + sid.stringValue())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
        {
-        this.lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
+        lastAccess = System.currentTimeMillis(); // TODO Will the session timeout be updated on bad requests?
         if (AHASessionMini.LOGGER.isDebugEnabled())
          {
           AHASessionMini.LOGGER.debug(response.getStatusLine());
@@ -806,7 +753,7 @@ HAN-FUN Interfaces
    */
   public final boolean hasValidSession()
    {
-    return this.sid.isValidSession();
+    return sid.isValidSession();
    }
 
 
@@ -838,10 +785,10 @@ HAN-FUN Interfaces
     final URIQuery<URIQueryParameter> query1 = new URIQuery<>();
     query1.addEntry(URIQueryParameter.of("version", "2"));
     Document doc = getDoc(path, query1);
-    this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
+    sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
-      AHASessionMini.LOGGER.debug("sid: {}", this.sid.stringValue()); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("sid: {}", sid.stringValue()); //$NON-NLS-1$
      }
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
@@ -852,7 +799,7 @@ HAN-FUN Interfaces
     // Rigths?
 
     // login
-    if (!this.sid.isValidSession())
+    if (!sid.isValidSession())
      {
       String challenge = doc.getElementsByTagName("Challenge").item(0).getTextContent(); //$NON-NLS-1$
       if (AHASessionMini.LOGGER.isDebugEnabled())
@@ -869,7 +816,7 @@ HAN-FUN Interfaces
         final int iter2 = Integer.parseInt(challengeParts[3]);
         final byte[] salt2 = fromHex(challengeParts[4]);
         // <hash1> = pbdkf2_hmac_sha256(<password>, <salt1>, <iter1>)
-        final byte[] hash1 = pbkdf2HmacSha256(this.password.stringValue().getBytes(StandardCharsets.UTF_8), salt1, iter1);
+        final byte[] hash1 = pbkdf2HmacSha256(password.stringValue().getBytes(StandardCharsets.UTF_8), salt1, iter1);
         // <response> = <salt2>$ + pbdkf2_hmac_sha256(<hash1>, <salt2>, <iter2>)
         final byte[] hash2 = pbkdf2HmacSha256(hash1, salt2, iter2);
         response = challengeParts[4] + '$' + toHex(hash2);
@@ -879,17 +826,17 @@ HAN-FUN Interfaces
         // TODO
         // Aus Kompatibilitätsgründen muss für jedes Zeichen, dessen Unicode Codepoint > 255 ist, die Codierung des "."-Zeichens benutzt werden (0x2e 0x00 in UTF-16LE).
         // Dies betrifft also alle Zeichen, die nicht in ISO-8859-1 dargestellt werden können, z.B. das Euro-Zeichen
-        response = challenge + '-' + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + '-' + this.password.stringValue()).getBytes(StandardCharsets.UTF_16LE)))); //$NON-NLS-1$
+        response = challenge + '-' + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + '-' + password.stringValue()).getBytes(StandardCharsets.UTF_16LE)))); //$NON-NLS-1$
        }
       final URIQuery<URIQueryParameter> query2 = new URIQuery<>();
       query2.addEntry(URIQueryParameter.of("version", "2"));
-      query2.addEntry(URIQueryParameter.of("username", this.username.stringValue()));
+      query2.addEntry(URIQueryParameter.of("username", username.stringValue()));
       query2.addEntry(URIQueryParameter.of("response", response));
       doc = getDoc(path, query2);
-      this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
+      sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
-        AHASessionMini.LOGGER.debug("sid: {}", this.sid.stringValue()); //$NON-NLS-1$
+        AHASessionMini.LOGGER.debug("sid: {}", sid.stringValue()); //$NON-NLS-1$
        }
       if (AHASessionMini.LOGGER.isDebugEnabled())
        {
@@ -907,17 +854,17 @@ HAN-FUN Interfaces
     // check sid validity
     final URIQuery<URIQueryParameter> query3 = new URIQuery<>();
     query3.addEntry(URIQueryParameter.of("version", "2"));
-    query3.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    query3.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
     doc = getDoc(path, query3);
-    this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
-    if (!this.sid.isValidSession())
+    sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
+    if (!sid.isValidSession())
      {
       AHASessionMini.LOGGER.error("login invalid"); //$NON-NLS-1$
       // blocktime
       return false;
      }
-    this.timeoutThread = new Thread();
-    this.timeoutThread.start();
+    timeoutThread = new Thread();
+    timeoutThread.start();
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("login valid"); //$NON-NLS-1$
@@ -951,13 +898,13 @@ HAN-FUN Interfaces
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("version", "2"));
     query.addEntry(URIQueryParameter.of("logout", "1"));
-    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
     final Document doc = getDoc(path, query);
-    this.sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
-    if (!this.sid.isValidSession())
+    sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
+    if (!sid.isValidSession())
      {
       // TODO check for existing thread
-      this.timeoutThread.interrupt();
+      timeoutThread.interrupt();
       if (AHASessionMini.LOGGER.isInfoEnabled())
        {
         AHASessionMini.LOGGER.info("successfully logged out."); //$NON-NLS-1$
@@ -1016,7 +963,7 @@ HAN-FUN Interfaces
     final var result = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("setSwitchOn()->{}<", result); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("setSwitchOn({})->{}<", ain.stringValue(), result); //$NON-NLS-1$
      }
     return "1".equals((result.length() == 0) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -1041,7 +988,7 @@ HAN-FUN Interfaces
     final var result = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("setSwitchOff()->{}<", result); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("setSwitchOff({})->{}<", ain.stringValue(), result); //$NON-NLS-1$
      }
     return "0".equals((result.length() == 0) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -1066,7 +1013,7 @@ HAN-FUN Interfaces
     final var state = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("setSwitchToggle()->{}<", state); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("setSwitchToggle({})->{}<", ain.stringValue(), state); //$NON-NLS-1$
      }
     return "1".equals((state.length() == 0) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -1092,7 +1039,7 @@ HAN-FUN Interfaces
     final var state = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("getSwitchState()->{}<", state); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("getSwitchState({})->{}<", ain.stringValue(), state); //$NON-NLS-1$
      }
     if ((state.length() >= 5) && AHASessionMini.INVAL.equals(state.substring(0, 5)))
      {
@@ -1121,7 +1068,7 @@ HAN-FUN Interfaces
     final var present = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("getSwitchPresent()->{}<", present); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("getSwitchPresent({})->{}<", ain.stringValue(), present); //$NON-NLS-1$
      }
     return "1".equals((present.length() == 0) ? "" : present.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
@@ -1147,7 +1094,7 @@ HAN-FUN Interfaces
     var power = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("getSwitchPower()->{}<", power); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("getSwitchPower({})->{}<", ain.stringValue(), power); //$NON-NLS-1$
      }
     if (power.length() > 1)
      {
@@ -1181,7 +1128,7 @@ HAN-FUN Interfaces
     var energy = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
-      AHASessionMini.LOGGER.info("getSwitchEnergy()->{}<", energy); //$NON-NLS-1$
+      AHASessionMini.LOGGER.info("getSwitchEnergy({})->{}<", ain.stringValue(), energy); //$NON-NLS-1$
      }
     if (energy.length() > 1)
      {
@@ -1232,8 +1179,164 @@ HAN-FUN Interfaces
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "getdevicelistinfos"));
-    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
-    return getDoc(path, query);
+    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    Document doc = getDoc(path, query);
+
+    final Node deviceListNode = doc.getElementsByTagName("devicelist").item(0);
+    if (deviceListNode != null)
+     {
+      final NamedNodeMap attributes = deviceListNode.getAttributes();
+      final Node versionAttr = attributes.getNamedItem("version");
+      final long version = Long.parseLong(versionAttr.getNodeValue());
+      LOGGER.debug("version: " + version);
+      final Node fwversionAttr = attributes.getNamedItem("fwversion");
+      final String fwversion = fwversionAttr.getNodeValue();
+      LOGGER.debug("fwversion: " + fwversion);
+
+      final NodeList deviceNodes = deviceListNode.getChildNodes();
+      if (deviceNodes.getLength() > 0)
+       {
+        for (int index = 0; index < deviceNodes.getLength(); ++index)
+         {
+          final Node deviceNode = deviceNodes.item(index);
+
+          final NamedNodeMap deviceattributes = deviceNode.getAttributes();
+          final Node identifierAttr = deviceattributes.getNamedItem("identifier");
+          AIN ain = AIN.of(identifierAttr.getNodeValue());
+          LOGGER.debug("  ain: " + ain);
+
+          final Node idAttr = deviceattributes.getNamedItem("id");
+          final long id = Long.parseLong(idAttr.getNodeValue());
+
+          final Node functionbitmaskAttr = deviceattributes.getNamedItem("functionbitmask");
+          final String functionbitmask = functionbitmaskAttr.getNodeValue();
+          LOGGER.debug("  functionbitmask: " + functionbitmask);
+          // TODO EnumSet<Functions> functionbitmask; // TODO map long to bitmask
+
+          final Node devfwversionAttr = deviceattributes.getNamedItem("fwversion");
+          Version devfwversion = Version.of(devfwversionAttr.getNodeValue());
+
+          final Node manufacturerAttr = deviceattributes.getNamedItem("manufacturer");
+          final String manufacturer = manufacturerAttr.getNodeValue();
+
+          final Node productnameAttr = deviceattributes.getNamedItem("productname");
+          final String productname = productnameAttr.getNodeValue();
+
+          final NodeList childNodes = deviceNode.getChildNodes();
+          if (childNodes.getLength() > 0)
+           {
+            for (int childindex = 0; childindex < childNodes.getLength(); ++childindex)
+             {
+              final Node childNode = childNodes.item(childindex);
+              switch (childNode.getNodeName())
+               {
+                case "present":
+                  boolean present = Boolean.valueOf(childNode.getTextContent());
+                  break;
+                case "txbusy":
+                  boolean txbusy = Boolean.valueOf(childNode.getTextContent());
+                  break;
+                case "name":
+                  String name = childNode.getTextContent();
+                  break;
+                case "batterylow":
+                  boolean batterylow = Boolean.valueOf(childNode.getTextContent());
+                  break;
+                case "battery":
+                  Percent battery = Percent.of(childNode.getTextContent());
+                  break;
+                case "switch":
+                  // TODO state
+                  // TODO mode
+                  // TODO lock
+                  // TODO devicelock
+                  break;
+                case "powermeter":
+                  // TODO power
+                  // TODO energy
+                  // TODO voltage
+                  break;
+                case "temperature":
+                  // TODO celsius
+                  // TODO offset
+                  break;
+                case "alert":
+                  // TODO state
+                  // TODO lastalertchgtimestamp
+                  break;
+                case "button": // Multiple buttons possible
+                  // TODO attr: identifier
+                  // TODO attr: id
+                  // TODO lastpressedtimestamp
+                  // TODO name
+                  break;
+                case "etsiunitinfo":
+                  // TODO etsideviceid
+                  // TODO unittype
+                  // TODO interfaces
+                  break;
+                case "simpleonoff":
+                  // TODO state
+                  break;
+                case "hkr":
+                  // TODO tist
+                  // TODO tsoll
+                  // TODO komfort
+                  // TODO absenk
+                  // TODO batterylow
+                  // TODO battery
+                  // TODO windowopenactiv
+                  // TODO windowopenactiveendtime
+                  // TODO boostactive
+                  // TODO boostactiveendtime
+                  // TODO adaptiveHeatingActive
+                  // TODO adaptiveHeatingRunning
+                  // TODO holidayactive
+                  // TODO summeractive
+                  // TODO lock
+                  // TODO devicelock
+                  // TODO nextchange
+                  //   TODO endperiod
+                  //   TODO tchange
+                  // TODO errorcode
+                  break;
+                case "levelcontrol":
+                  // TODO level
+                  // TODO levelpercentage
+                  break;
+                case "colorcontrol":
+                  // TODO attr: supported_modes
+                  // TODO attr: current_mode
+                  // TODO attr: fullcolorsupport
+                  // TODO attr: mapped
+                  // TODO hue
+                  // TODO saturation
+                  // TODO unmapped_hue
+                  // TODO unmapped_saturation
+                  // TODO temperature
+                  break;
+                case "humidity":
+                  // TODO rel_humidity
+                  break;
+                case "blind":
+                  // TODO level
+                  // TODO mode
+                  // TODO endpositionsset
+                  break;
+                case "groupinfo":
+                  // TODO masterdeviceid
+                  // TODO members
+                  break;
+                default:
+                  // TODO unsupported
+               }
+             }
+           }
+          // Device dev = Device.of(ain, id, null, devfwversion, manufacturer, productname, present, txbusy, "", false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+         }
+       }
+     }
+    return doc;
    }
 
 
@@ -1247,7 +1350,7 @@ HAN-FUN Interfaces
    * @throws NullPointerException If ain is null
    * @throws IndexOutOfBoundsException If temperature is out of range or undefined
    */
-  public final Temperature getTemperature(final AIN ain) throws IOException
+  public final TemperatureCelsius getTemperature(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
@@ -1255,7 +1358,7 @@ HAN-FUN Interfaces
     query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
     query.addEntry(URIQueryParameter.of("switchcmd", "gettemperature"));
     final var temperature = getString(path, query);
-    return Temperature.of((temperature.length() > 0) ? temperature.substring(0, temperature.length() - 1) : ""); //$NON-NLS-1$
+    return TemperatureCelsius.of((temperature.length() > 0) ? temperature.substring(0, temperature.length() - 1) : ""); //$NON-NLS-1$
    }
 
 
@@ -1267,7 +1370,7 @@ HAN-FUN Interfaces
    * @throws IndexOutOfBoundsException If temperature is out of range or undefined
    * @throws NumberFormatException If fbTemerature is of wrong format
    */
-  private static Temperature temperatureConversion(final String fbTemperatureString)
+  private static TemperatureCelsius temperatureConversion(final String fbTemperatureString)
    {
     assert fbTemperatureString != null;
     final int fbTemperature = Integer.parseInt((fbTemperatureString.length() > 0) ? fbTemperatureString.substring(0, fbTemperatureString.length() - 1) : ""); //$NON-NLS-1$
@@ -1284,7 +1387,7 @@ HAN-FUN Interfaces
      {
       temperature = (fbTemperature * 10) / 2;
      }
-    return Temperature.of(temperature);
+    return TemperatureCelsius.of(temperature);
    }
 
 
@@ -1298,7 +1401,7 @@ HAN-FUN Interfaces
    * @throws NullPointerException If ain is null
    * @throws IndexOutOfBoundsException If temperature is out of range or undefined
    */
-  public final Temperature getHkrtSoll(final AIN ain) throws IOException
+  public final TemperatureCelsius getHkrtSoll(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
@@ -1320,7 +1423,7 @@ HAN-FUN Interfaces
    * @throws NullPointerException If ain is null
    * @throws IndexOutOfBoundsException If temperature is out of range or undefined
    */
-  public final Temperature getHkrKomfort(final AIN ain) throws IOException
+  public final TemperatureCelsius getHkrKomfort(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
@@ -1342,7 +1445,7 @@ HAN-FUN Interfaces
    * @throws NullPointerException If ain is null
    * @throws IndexOutOfBoundsException If temperature is out of range or undefined
    */
-  public final Temperature getHkrAbsenk(final AIN ain) throws IOException
+  public final TemperatureCelsius getHkrAbsenk(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
@@ -1365,7 +1468,7 @@ HAN-FUN Interfaces
    * @throws NullPointerException If ain or temperature is null
    * @since 6.35
    */
-  public final void setHkrtSoll(final AIN ain, final Temperature temperature) throws IOException
+  public final void setHkrtSoll(final AIN ain, final TemperatureCelsius temperature) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     Objects.requireNonNull(temperature, "temperature"); //$NON-NLS-1$
@@ -1444,18 +1547,18 @@ HAN-FUN Interfaces
    * @throws SAXException SAX exception
    * @since 6.98
    */
-  public final Quintet<SortedMap<UnixTimestamp, Temperature>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> getBasicDeviceStats(final AIN ain) throws IOException, SAXException
+  public final Quintet<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
     query.addEntry(URIQueryParameter.of("switchcmd", "getbasicdevicestats"));
-    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
     final Document doc = getDoc(path, query);
 
     final Node temperatureNode = doc.getElementsByTagName("temperature").item(0);
-    final SortedMap<UnixTimestamp, Temperature> temperatures = new TreeMap<>();
+    final SortedMap<UnixTimestamp, TemperatureCelsius> temperatures = new TreeMap<>();
     // AHASessionMini.<Temperature>parseStats(temperatureNode, temperatures);
     if (temperatureNode != null)
      {
@@ -1477,7 +1580,7 @@ HAN-FUN Interfaces
           for (int i = 0; i < content.length; ++i)
            {
             final long datetimepos = datetime - (grid * (count - (i + 1)));
-            temperatures.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Temperature.of(Long.parseLong(content[i])));
+            temperatures.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : TemperatureCelsius.of(Long.parseLong(content[i])));
            }
          }
        }
@@ -1599,7 +1702,7 @@ HAN-FUN Interfaces
        }
      }
 
-    final Quintet<SortedMap<UnixTimestamp, Temperature>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = Quintet.with(temperatures, humidities, voltages, powers, energies);
+    final Quintet<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = Quintet.with(temperatures, humidities, voltages, powers, energies);
     return devicestats;
    }
 
@@ -1617,7 +1720,7 @@ HAN-FUN Interfaces
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "gettemplatelistinfos"));
-    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
     final Document doc = getDoc(path, query);
     final List<Template> templates = new ArrayList<>();
 
@@ -1874,7 +1977,7 @@ HAN-FUN Interfaces
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "getcolordefaults"));
-    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
     final Document doc = getDoc(path, query);
 
     final List<Hs> hsdefaults = new ArrayList<>();
@@ -2064,7 +2167,7 @@ HAN-FUN Interfaces
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "getsubscriptionstate"));
-    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
     final Document doc = getDoc(path, query);
     final SubscriptionCode code = SubscriptionCode.of(Integer.valueOf(doc.getElementsByTagName("state").item(0).getAttributes().getNamedItem("code").getNodeValue()));
     final String ain = doc.getElementsByTagName("latestain").item(0).getTextContent();
@@ -2153,7 +2256,7 @@ HAN-FUN Interfaces
     final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("switchcmd", "gettriggerlistinfos"));
-    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
     final Document doc = getDoc(path, query);
     final NodeList nodes = doc.getElementsByTagName("trigger");
     final List<Trigger> triggers = new ArrayList<>();
@@ -2256,14 +2359,12 @@ HAN-FUN Interfaces
    * Provides the basic information of the SmartHome device.
    *
    * @param ain AIN
-   * @return Device infos in XML format see getdevicelistinfos
+   * @return Device or null
    * @throws ClientProtocolException Client protocol exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 7.24
-   *
-   * TODO Change Document result to value object
    */
   public final Document getDeviceInfos(final AIN ain) throws IOException, SAXException
    {
@@ -2272,8 +2373,450 @@ HAN-FUN Interfaces
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
     query.addEntry(URIQueryParameter.of("switchcmd", "getdeviceinfos"));
-    query.addEntry(URIQueryParameter.of("sid", this.sid.stringValue()));
+    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
     final Document doc = getDoc(path, query);
+
+    NodeList hsNodes = doc.getElementsByTagName("device");
+    if (hsNodes.getLength() == 0)
+     {
+      hsNodes = doc.getElementsByTagName("group");
+     }
+    final Device device = null;
+    if (hsNodes.getLength() == 1)
+     {
+      final Node hsNode = hsNodes.item(0);
+      // Attributes
+      final NamedNodeMap attributes = hsNode.getAttributes();
+      final AIN identifier = AIN.of(attributes.getNamedItem("identifier").getNodeValue());
+      final long id = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
+      final Version fwversion = Version.of(attributes.getNamedItem("fwversion").getNodeValue());
+      final String manufacturer = attributes.getNamedItem("manufacturer").getNodeValue();
+      final String productname = attributes.getNamedItem("productname").getNodeValue();
+      final long fbm = Long.parseLong(attributes.getNamedItem("functionbitmask").getNodeValue());
+      final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
+      for (int pos = 20; pos >= 0; --pos)
+       {
+        if ((fbm & (1L << pos)) != 0)
+         {
+          functionbitmask.add(Functions.of(pos));
+         }
+       }
+      // Child nodes
+      final NodeList childs = hsNode.getChildNodes();
+      boolean present = false;
+      boolean txbusy = false;
+      String name = null;
+      boolean batterylow = false;
+      Percent battery = null;
+      Percent humidity = null;
+      Temperature temperature = null;
+      Switch switchState = null;
+      Powermeter powermeter = null;
+      SimpleOnOff simpleonoff = null;
+      Alert alert = null;
+      LevelControl levelControl = null;
+      ColorControl colorControl = null;
+      Blind blind = null;
+      EtsiUnitInfo etsiunitinfo = null;
+      HKR hkr = null;
+      GroupInfo groupinfo = null;
+      final List<Button> buttons = new ArrayList<>();
+      for (int childPos = 0; childPos < childs.getLength(); ++childPos)
+       {
+        final Node child = childs.item(childPos);
+        if ("present".equals(child.getNodeName()))
+         {
+          present = "1".equals(child.getTextContent());
+         }
+        else if ("txbusy".equals(child.getNodeName()))
+         {
+          txbusy = "1".equals(child.getTextContent());
+         }
+        else if ("name".equals(child.getNodeName()))
+         {
+          name = child.getTextContent();
+         }
+        else if ("batterylow".equals(child.getNodeName()))
+         {
+          batterylow = "1".equals(child.getTextContent());
+         }
+        else if ("battery".equals(child.getNodeName()))
+         {
+          battery = Percent.of(child.getTextContent());
+         }
+        else if ("switch".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          Boolean state = null;
+          Boolean mode = null;
+          Boolean lock = null;
+          Boolean devicelock = null;
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("state".equals(subchild.getNodeName()))
+             {
+              state = Boolean.valueOf("1".equals(subchild.getTextContent()));
+             }
+            else if ("mode".equals(subchild.getNodeName()))
+             {
+              mode = Boolean.valueOf("auto".equals(subchild.getTextContent()));
+             }
+            else if ("lock".equals(subchild.getNodeName()))
+             {
+              lock = Boolean.valueOf("1".equals(subchild.getTextContent()));
+             }
+            else if ("devicelock".equals(subchild.getNodeName()))
+             {
+              devicelock = Boolean.valueOf("1".equals(subchild.getTextContent()));
+             }
+           }
+          switchState = Switch.of(state, mode, lock, devicelock);
+         }
+        else if ("powermeter".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          Voltage voltage = null;
+          Power power = null;
+          Energy energy = null;
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("voltage".equals(subchild.getNodeName()))
+             {
+              voltage = Voltage.of(subchild.getTextContent());
+             }
+            else if ("power".equals(subchild.getNodeName()))
+             {
+              power = Power.of(subchild.getTextContent());
+             }
+            else if ("energy".equals(subchild.getNodeName()))
+             {
+              energy = Energy.of(subchild.getTextContent());
+             }
+           }
+          powermeter = Powermeter.of(voltage, power, energy);
+         }
+        else if ("temperature".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          TemperatureCelsius celsius = null;
+          TemperatureCelsius offset = null;
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("celsius".equals(subchild.getNodeName()))
+             {
+              celsius = TemperatureCelsius.of(child.getTextContent());
+             }
+            else if ("offset".equals(subchild.getNodeName()))
+             {
+              offset = TemperatureCelsius.of(child.getTextContent());
+             }
+           }
+          temperature = Temperature.of(celsius, offset);
+         }
+        else if ("alert".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          AlertState state = null;
+          UnixTimestamp lastalertchgtimestamp =  null;
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("state".equals(subchild.getNodeName()))
+             {
+              state = AlertState.of(Integer.parseInt(child.getTextContent()));
+             }
+            else if ("lastalertchgtimestamp".equals(subchild.getNodeName()))
+             {
+              lastalertchgtimestamp = UnixTimestamp.of(child.getTextContent());
+             }
+           }
+          alert = Alert.of(state, lastalertchgtimestamp);
+         }
+        else if ("button".equals(child.getNodeName()))
+         {
+          AIN buttonIdentifier = null;
+          long buttonId = 0;
+          final NamedNodeMap attrs = child.getAttributes();
+          Node attr = attributes.getNamedItem("identifier");
+          if (attr != null)
+           {
+            buttonIdentifier = AIN.of(attr.getNodeValue());
+           }
+          attr = attributes.getNamedItem("id");
+          if (attr != null)
+           {
+            buttonId = Long.parseLong(attr.getNodeValue());
+           }
+
+          String buttonName = null;
+          UnixTimestamp lastpressedtimestamp = null;
+          final NodeList subchilds = child.getChildNodes();
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("lastpressedtimestamp".equals(subchild.getNodeName()))
+             {
+              lastpressedtimestamp = UnixTimestamp.of(subchild.getTextContent());
+             }
+            else if ("name".equals(subchild.getNodeName()))
+             {
+              buttonName = subchild.getTextContent();
+             }
+           }
+          final Button button = Button.of(buttonIdentifier, buttonId, buttonName, lastpressedtimestamp);
+          buttons.add(button);
+         }
+        else if ("humidity".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("rel_humidity".equals(subchild.getNodeName()))
+             {
+              humidity = Percent.of(subchild.getTextContent());
+             }
+           }
+         }
+        else if ("etsiunitinfo".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          long etsideviceid = 0;
+          HANFUNUnits unittype =  null;
+          final EnumSet<HANFUNInterfaces> interfaces = EnumSet.noneOf(HANFUNInterfaces.class);
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("etsideviceid".equals(subchild.getNodeName()))
+             {
+              etsideviceid = Long.parseLong(child.getTextContent());
+             }
+            else if ("unittype".equals(subchild.getNodeName()))
+             {
+              unittype = HANFUNUnits.of(Integer.parseInt(child.getTextContent()));
+             }
+            else if ("interfaces".equals(subchild.getNodeName()))
+             {
+              final String[] inums = child.getTextContent().split(",");
+              for (final String inum : inums)
+               {
+                interfaces.add(HANFUNInterfaces.of(Integer.parseInt(inum)));
+               }
+             }
+           }
+          etsiunitinfo = EtsiUnitInfo.of(etsideviceid, unittype, interfaces);
+         }
+        else if ("simpleonoff".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("state".equals(subchild.getNodeName()))
+             {
+              simpleonoff = SimpleOnOff.of("1".equals(subchild.getTextContent()));
+             }
+           }
+         }
+        else if ("levelcontrol".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          Level level = null;
+          Percent percent =  null;
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("level".equals(subchild.getNodeName()))
+             {
+              level = Level.of(child.getTextContent());
+             }
+            else if ("levelpercentage".equals(subchild.getNodeName()))
+             {
+              percent = Percent.of(child.getTextContent());
+             }
+           }
+          levelControl = LevelControl.of(level, percent);
+         }
+        else if ("colorcontrol".equals(child.getNodeName()))
+         {
+          final EnumSet<ColorModes> supportedModes = EnumSet.noneOf(ColorModes.class);
+          final NamedNodeMap attrs = child.getAttributes();
+          // supported_modes="5"   (bitmask)
+          // supportedModes = attributes.getNamedItem("supported_modes").getNodeValue();
+          final int modes = Integer.parseInt(attributes.getNamedItem("supported_modes").getNodeValue());
+          if ((modes & 1) != 0)
+           {
+            supportedModes.add(ColorModes.HUE_SATURATION);
+           }
+          if ((modes & 4) != 0)
+           {
+            supportedModes.add(ColorModes.COLOR_TEMPERATURE);
+           }
+          final ColorModes currentMode = ColorModes.of(Integer.parseInt(attributes.getNamedItem("current_mode").getNodeValue()));
+          final boolean fullcolorsupport = "1".equals(attributes.getNamedItem("fullcolorsupport").getNodeValue());
+          final boolean mapped = "1".equals(attributes.getNamedItem("mapped").getNodeValue());
+
+          Hue hue = null;
+          Saturation saturation = null;
+          Hue unmappedHue = null;
+          Saturation unmappedSaturation = null;
+          TemperatureKelvin ccTemperature = null;
+          final NodeList subchilds = child.getChildNodes();
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("hue".equals(subchild.getNodeName()))
+             {
+              hue = Hue.of(child.getTextContent());
+             }
+            else if ("saturation".equals(subchild.getNodeName()))
+             {
+              saturation = Saturation.of(child.getTextContent());
+             }
+            else if ("unmapped_hue".equals(subchild.getNodeName()))
+             {
+              unmappedHue = Hue.of(child.getTextContent());
+             }
+            else if ("unmapped_saturation".equals(subchild.getNodeName()))
+             {
+              unmappedSaturation = Saturation.of(child.getTextContent());
+             }
+            else if ("temperature".equals(subchild.getNodeName()))
+             {
+              ccTemperature = TemperatureKelvin.of(child.getTextContent());
+             }
+           }
+          colorControl = ColorControl.of(supportedModes, currentMode, fullcolorsupport, mapped, hue, saturation, unmappedHue, unmappedSaturation, ccTemperature);
+         }
+        else if ("blind".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          Boolean mode = null;
+          Boolean endpositionsset =  null;
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("mode".equals(subchild.getNodeName()))
+             {
+              mode = Boolean.valueOf("auto".equals(child.getTextContent()));
+             }
+            else if ("endpositionsset".equals(subchild.getNodeName()))
+             {
+              endpositionsset =  Boolean.valueOf("1".equals(child.getTextContent()));
+             }
+           }
+          blind = Blind.of(mode, endpositionsset);
+         }
+        else if ("hkr".equals(child.getNodeName()))
+         {
+          final TemperatureCelsius tist = null;
+          final TemperatureCelsius tsoll = null;
+          final TemperatureCelsius absenk = null;
+          final TemperatureCelsius komfort = null;
+          final Boolean lock = null;
+          final Boolean devicelock = null;
+          final HkrErrorCodes errorcode = null;
+          final boolean windowsopenactive = false;
+          final UnixTimestamp windowopenactiveendtime = null;
+          final boolean boostactive = false;
+          final UnixTimestamp boostactiveendtime = null;
+          final boolean hkrBatterylow = false;
+          final Percent hkrBattery = null;
+          final HkrNextChange nextchange = null;
+          final boolean summeractive = false;
+          final boolean holidayactive = false;
+          final boolean adaptiveHeatingActive = false;
+          final boolean adaptiveHeatingRunning = false;
+          final NodeList subchilds = child.getChildNodes();
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("tist".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("tsoll".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("absenk".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("komfort".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("lock".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("devicelock".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("errorcode".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("windowopenactiv".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("windowopenactiveendtime".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("boostactive".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("boostactiveendtime".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("batterylow".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("battery".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("nextchange".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("summeractive".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("holidayactive".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("adaptiveHeatingActive".equals(subchild.getNodeName()))
+             {
+             }
+            else if ("adaptiveHeatingRunning".equals(subchild.getNodeName()))
+             {
+             }
+           }
+          hkr = HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, hkrBatterylow, hkrBattery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
+         }
+        else if ("groupinfo".equals(child.getNodeName()))
+         {
+          final NodeList subchilds = child.getChildNodes();
+          long masterdeviceid = 0;
+          final List<Long> members =  new ArrayList<>();
+          for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
+           {
+            final Node subchild = subchilds.item(subchildPos);
+            if ("masterdeviceid".equals(subchild.getNodeName()))
+             {
+              masterdeviceid = Long.parseLong(child.getTextContent());
+             }
+            else if ("members".equals(subchild.getNodeName()))
+             {
+              final String[] memberList = child.getTextContent().split(",");
+              for (final String member : memberList)
+               {
+                members.add(Long.parseLong(member));
+               }
+             }
+           }
+          groupinfo = GroupInfo.of(masterdeviceid, members);
+         }
+       }
+      // device = Device.of(identifier, id, functionbitmask, fwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switchState, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelControl, colorControl, etsiunitinfo, alert, blind, groupinfo);
+     }
     return doc;
    }
 
@@ -2285,9 +2828,9 @@ HAN-FUN Interfaces
    * @see java.lang.Object#hashCode()
    */
   @Override
-  public int hashCode()
+  public final int hashCode()
    {
-    return Objects.hash(this.hostname, this.username, this.password, this.sid.stringValue());
+    return Objects.hash(hostname, port, username, password, sid.stringValue());
    }
 
 
@@ -2299,19 +2842,17 @@ HAN-FUN Interfaces
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public final boolean equals(final Object obj)
    {
     if (this == obj)
      {
       return true;
      }
-    if ((obj == null) || (this.getClass() != obj.getClass()))
-    // if (!(obj instanceof AHASessionMini))
+    if (!(obj instanceof final AHASessionMini other))
      {
       return false;
      }
-    final AHASessionMini other = (AHASessionMini)obj;
-    return (this.hostname.equals(other.hostname)) && (this.username.equals(other.username)) && (this.password.equals(other.password)) && (this.sid.equals(other.sid));
+    return (hostname.equals(other.hostname)) && (port.equals(other.port)) && (username.equals(other.username)) && (password.equals(other.password)) && (sid.equals(other.sid));
    }
 
 
@@ -2328,7 +2869,7 @@ HAN-FUN Interfaces
   @Override
   public String toString()
    {
-    return new StringBuilder().append("AHASessionMini[hostname=").append(this.hostname.stringValue()).append(", username=").append(this.username.stringValue()).append(", sid=").append(this.sid.stringValue()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    return new StringBuilder().append("AHASessionMini[hostname=").append(hostname.stringValue()).append(", username=").append(username.stringValue()).append(", sid=").append(sid.stringValue()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
    }
 
 
@@ -2343,13 +2884,13 @@ HAN-FUN Interfaces
   public int compareTo(final AHASessionMini ahaSessionMiniObj)
    {
     Objects.requireNonNull(ahaSessionMiniObj, "obj"); //$NON-NLS-1$
-    int result = this.hostname.compareTo(ahaSessionMiniObj.hostname);
+    int result = hostname.compareTo(ahaSessionMiniObj.hostname);
     if (result == 0)
      {
-      result = this.username.compareTo(ahaSessionMiniObj.username);
+      result = username.compareTo(ahaSessionMiniObj.username);
       if (result == 0)
        {
-        result = this.sid.compareTo(ahaSessionMiniObj.sid);
+        result = sid.compareTo(ahaSessionMiniObj.sid);
        }
      }
     return result;

@@ -82,7 +82,7 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
   @Override
   public String stringValue()
    {
-    return (this.icon >= 0) ? String.valueOf(this.icon) : this.type.stringValue();
+    return (icon >= 0) ? String.valueOf(icon) : type.stringValue();
    }
 
 
@@ -95,7 +95,7 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.icon, this.type);
+    return Objects.hash(icon, type);
    }
 
 
@@ -117,10 +117,10 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
      {
       return false;
      }
-    boolean result = (this.icon == other.icon);
-    if (result && (this.icon == -1))
+    boolean result = (icon == other.icon);
+    if (result) // && (icon == -1)
      {
-      result = this.type.equals(other.type);
+      result = type.equals(other.type);
      }
     return result;
    }
@@ -140,7 +140,7 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Metadata[icon=").append(this.icon).append(", type=").append(this.type).append(']'); //$NON-NLS-1$
+    builder.append("Metadata[icon=").append(icon).append(", type=").append(type).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -156,14 +156,14 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
   public int compareTo(final Metadata obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = Integer.compare(this.icon, obj.icon);
-    if ((result == 0) && (this.icon == -1))
+    int result = Integer.compare(icon, obj.icon);
+    if ((result == 0) && (icon == -1))
      {
-      result = this.type.compareTo(obj.type);
+      result = type.compareTo(obj.type);
      }
-    else if ((this.icon == -1) || (obj.icon == -1))
+    else if ((icon == -1) || (obj.icon == -1))
      {
-      result = (this.icon == -1) ? 1 : -1;
+      result = (icon == -1) ? 1 : -1;
      }
     return result;
    }

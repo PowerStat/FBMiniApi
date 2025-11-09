@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -14,8 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import nl.jqno.equalsverifier.*;
 
 import de.powerstat.fb.mini.AIN;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Trigger;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -37,15 +39,34 @@ final class TriggerTests
 
   /**
    * Test correct Trigger.
+   *
+   * @param name Name
    */
-  @Test
-  /* default */ void testTriggerFactory1()
+  @ParameterizedTest
+  @ValueSource(strings = {"abc", "1", "1234567890123456789012345678901234567890"})
+  /* default */ void testTriggerFactory1(final String name)
    {
-    final Trigger cleanTrigger = Trigger.of(AIN.of("000000000000"), "abc", true);
+    final Trigger cleanTrigger = Trigger.of(AIN.of("000000000000"), name, true);
+    assertAll("testFactory", //$NON-NLS-1$
+      () -> assertEquals(AIN.of("000000000000"), cleanTrigger.ainValue(), "ain not as expected"), //$NON-NLS-1$
+      () -> assertEquals(name, cleanTrigger.stringValue(), "name not as expected"), //$NON-NLS-1$
+      () -> assertTrue(cleanTrigger.isActive(), "active state not as expected") //$NON-NLS-1$
+    );
+   }
+
+
+  /**
+   * Test correct Trigger.
+   *
+   * @param name Name
+   */
+  /* default */ void testTriggerFactory2(final String name)
+   {
+    final Trigger cleanTrigger = Trigger.of(AIN.of("000000000000"), "abc", false);
     assertAll("testFactory", //$NON-NLS-1$
       () -> assertEquals(AIN.of("000000000000"), cleanTrigger.ainValue(), "ain not as expected"), //$NON-NLS-1$
       () -> assertEquals("abc", cleanTrigger.stringValue(), "name not as expected"), //$NON-NLS-1$
-      () -> assertTrue(cleanTrigger.isActive(), "active state not as expected") //$NON-NLS-1$
+      () -> assertFalse(cleanTrigger.isActive(), "active state not as expected") //$NON-NLS-1$
     );
    }
 
@@ -89,7 +110,7 @@ final class TriggerTests
    */
   @ParameterizedTest
   @ValueSource(strings = {"", "12345678901234567890123456789012345678901"})
-  /* default */ void testTriggerFactoryFail2(final String name)
+  /* default */ void testTriggerFactoryFail3(final String name)
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
@@ -111,42 +132,12 @@ final class TriggerTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final Trigger trigger1 = Trigger.of(AIN.of("000000000000"), "abc", true); //$NON-NLS-1$
-    final Trigger trigger2 = Trigger.of(AIN.of("000000000000"), "abc", true); //$NON-NLS-1$
-    final Trigger trigger3 = Trigger.of(AIN.of("000000000001"), "def", false); //$NON-NLS-1$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(trigger1.hashCode(), trigger2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(trigger1.hashCode(), trigger3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final Trigger trigger1 = Trigger.of(AIN.of("000000000000"), "abc", true);
-    final Trigger trigger2 = Trigger.of(AIN.of("000000000000"), "abc", true);
-    final Trigger trigger3 = Trigger.of(AIN.of("000000000001"), "def", false); //$NON-NLS-1$
-    final Trigger trigger4 = Trigger.of(AIN.of("000000000000"), "abc", true);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(trigger1.equals(trigger1), "trigger11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(trigger1.equals(trigger2), "trigger12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(trigger2.equals(trigger1), "trigger21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(trigger2.equals(trigger4), "trigger24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(trigger1.equals(trigger4), "trigger14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(trigger1.equals(trigger3), "trigger13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(trigger3.equals(trigger1), "trigger31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(trigger1.equals(null), "trigger10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Trigger.class).withNonnullFields("ain", "name").verify();
    }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import nl.jqno.equalsverifier.*;
 
 import de.powerstat.fb.mini.Voltage;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -75,42 +76,22 @@ final class VoltageTests
 
 
   /**
-   * Test hash code.
+   * Voltage string value.
    */
   @Test
-  /* default */ void testHashCode()
+  /* default */ void testVoltageStringValue()
    {
-    final Voltage voltage1 = Voltage.of(1);
-    final Voltage voltage2 = Voltage.of(1);
-    final Voltage voltage3 = Voltage.of(2);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(voltage1.hashCode(), voltage2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(voltage1.hashCode(), voltage3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
+    assertEquals("228201", Voltage.of("228201").stringValue(), "Not an voltage value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
   /**
-   * Test equals.
+   * Equalsverifier.
    */
   @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
+  public void equalsContract()
    {
-    final Voltage voltage1 = Voltage.of(1);
-    final Voltage voltage2 = Voltage.of(1);
-    final Voltage voltage3 = Voltage.of(2);
-    final Voltage voltage4 = Voltage.of(1);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(voltage1.equals(voltage1), "voltage11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(voltage1.equals(voltage2), "voltage12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(voltage2.equals(voltage1), "voltage21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(voltage2.equals(voltage4), "voltage24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(voltage1.equals(voltage4), "voltage14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(voltage1.equals(voltage3), "voltage13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(voltage3.equals(voltage1), "voltage31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(voltage1.equals(null), "voltage10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Voltage.class).verify();
    }
 
 

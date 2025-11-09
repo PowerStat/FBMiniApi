@@ -32,12 +32,36 @@ final class FunctionsTests
 
 
   /**
-   * Factory string test.
+   * Factory test.
    */
   @Test
   /* default */ void testFactory1()
    {
     assertEquals(0, Functions.of("HANFUN_DEVICE").getAction(), "Action not as expected");
+   }
+
+
+  /**
+   * Factory test.
+   */
+  @Test
+  /* default */ void testFactory2()
+   {
+    assertEquals(2, Functions.of(2).getAction(), "Action not as expected");
+   }
+
+
+  /**
+   * Factory test.
+   */
+  @Test
+  /* default */ void testFactory3()
+   {
+    assertThrows(IllegalArgumentException.class, () ->
+     {
+      /* Functions fun = */ Functions.of(99).getAction();
+     }, "Illegal argument exception expected" //$NON-NLS-1$
+    );
    }
 
 

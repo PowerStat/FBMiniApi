@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
+import nl.jqno.equalsverifier.*;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.DurationMS100;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -76,42 +77,12 @@ final class DurationMS100Tests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final DurationMS100 duration1 = DurationMS100.of(1);
-    final DurationMS100 duration2 = DurationMS100.of(1);
-    final DurationMS100 duration3 = DurationMS100.of(2);
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(duration1.hashCode(), duration2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(duration1.hashCode(), duration3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final DurationMS100 duration1 = DurationMS100.of(1);
-    final DurationMS100 duration2 = DurationMS100.of(1);
-    final DurationMS100 duration3 = DurationMS100.of(2);
-    final DurationMS100 duration4 = DurationMS100.of(1);
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(duration1.equals(duration1), "duration11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(duration1.equals(duration2), "duration12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(duration2.equals(duration1), "duration21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(duration2.equals(duration4), "duration24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(duration1.equals(duration4), "duration14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(duration1.equals(duration3), "duration13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(duration3.equals(duration1), "duration31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(duration1.equals(null), "duration10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(DurationMS100.class).verify();
    }
 
 

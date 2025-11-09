@@ -1,0 +1,202 @@
+/*
+ * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ */
+package de.powerstat.fb.mini;
+
+
+import java.util.Objects;
+
+import de.powerstat.validation.interfaces.IValueObject;
+
+
+/**
+ * Powermeter.
+ */
+public final class Powermeter implements Comparable<Powermeter>, IValueObject
+ {
+  /**
+   * Voltage.
+   */
+  private final Voltage voltage;
+
+  /**
+   * Power.
+   */
+  private final Power power;
+
+  /**
+   * Energy.
+   */
+  private final Energy energy;
+
+
+  /**
+   * Constructor.
+   *
+   * @param voltage Voltage
+   * @param power Power
+   * @param engery Energy
+   * @throws NullPointerException When one of the parameters is null
+   */
+  private Powermeter(final Voltage voltage, final Power power, final Energy energy)
+   {
+    super();
+    Objects.requireNonNull(voltage, "voltage"); //$NON-NLS-1$
+    Objects.requireNonNull(power, "power"); //$NON-NLS-1$
+    Objects.requireNonNull(energy, "energy"); //$NON-NLS-1$
+    this.voltage = voltage;
+    this.power = power;
+    this.energy = energy;
+   }
+
+
+  /**
+   * Powermeter factory.
+   *
+   * @param voltage Voltage
+   * @param power Power
+   * @param energy Energy
+   * @return Powermeter object
+   * @throws NullPointerException When one of the parameters is null
+   */
+  public static Powermeter of(final Voltage voltage, final Power power, final Energy energy)
+   {
+    return new Powermeter(voltage, power, energy);
+   }
+
+
+  /**
+   * Returns the value of this Powermeter as a string.
+   *
+   * @return The value represented by this object after conversion to type string.
+   */
+  @Override
+  public String stringValue()
+   {
+    return this.power.stringValue();
+   }
+
+
+  /**
+   * Get voltage.
+   *
+   * @return Voltage.
+   */
+  public Voltage getVoltage()
+   {
+    return this.voltage;
+   }
+
+
+  /**
+   * Get power.
+   *
+   * @return Power.
+   */
+  public Power getPower()
+   {
+    return this.power;
+   }
+
+
+  /**
+   * Get energy.
+   *
+   * @return Energy.
+   */
+  public Energy getEnergy()
+   {
+    return this.energy;
+   }
+
+
+  /**
+   * Calculate hash code.
+   *
+   * @return Hash
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode()
+   {
+    return Objects.hash(this.voltage, this.power, this.energy);
+   }
+
+
+  /**
+   * Is equal with another object.
+   *
+   * @param obj Object
+   * @return true when equal, false otherwise
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(final Object obj)
+   {
+    if (this == obj)
+     {
+      return true;
+     }
+    if (!(obj instanceof final Powermeter other))
+     {
+      return false;
+     }
+    boolean result = this.voltage.equals(other.voltage);
+    if (result)
+     {
+      result = this.power.equals(other.power);
+      if (result)
+       {
+        result = this.energy.equals(other.energy);
+       }
+     }
+    return result;
+   }
+
+
+  /**
+   * Returns the string representation of this Powermeter.
+   *
+   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
+   *
+   * "Powermeter[voltage=0, power=0, energy=0]"
+   *
+   * @return String representation of this Powermeter
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString()
+   {
+    final var builder = new StringBuilder();
+    builder.append("Powermeter[voltage=").append(this.voltage)
+      .append(", power=").append(this.power)
+      .append(", energy=").append(this.energy)
+      .append(']');
+    return builder.toString();
+   }
+
+
+  /**
+   * Compare with another object.
+   *
+   * @param obj Object to compare with
+   * @return 0: equal; 1: greater; -1: smaller
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  @Override
+  public int compareTo(final Powermeter obj)
+   {
+    Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
+    int result = this.voltage.compareTo(obj.voltage);
+    if (result == 0)
+     {
+      result = this.power.compareTo(obj.power);
+      if (result == 0)
+       {
+        result = this.energy.compareTo(obj.energy);
+       }
+     }
+    return result;
+   }
+
+ }

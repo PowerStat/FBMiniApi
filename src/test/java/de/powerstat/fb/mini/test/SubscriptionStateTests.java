@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -13,8 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import nl.jqno.equalsverifier.*;
 
 import de.powerstat.fb.mini.AIN;
+import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.SubscriptionCode;
 import de.powerstat.fb.mini.SubscriptionState;
 
@@ -100,42 +102,12 @@ final class SubscriptionStateTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final SubscriptionState state1 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000"));
-    final SubscriptionState state2 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000"));
-    final SubscriptionState state3 = SubscriptionState.of(SubscriptionCode.of(1), AIN.of("000000000001")); //$NON-NLS-1$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(state1.hashCode(), state2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(state1.hashCode(), state3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final SubscriptionState state1 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000"));
-    final SubscriptionState state2 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000"));
-    final SubscriptionState state3 = SubscriptionState.of(SubscriptionCode.of(1), AIN.of("000000000001")); //$NON-NLS-1$
-    final SubscriptionState state4 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000"));
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(state1.equals(state1), "state11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(state1.equals(state2), "state12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(state2.equals(state1), "state21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(state2.equals(state4), "state24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(state1.equals(state4), "state14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(state1.equals(state3), "state13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(state3.equals(state1), "state31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(state1.equals(null), "state10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(SubscriptionState.class).withNonnullFields("code", "latestain").verify();
    }
 
 

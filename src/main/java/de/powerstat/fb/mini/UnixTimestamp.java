@@ -30,10 +30,6 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
   private UnixTimestamp(final Seconds seconds)
    {
     super();
-    if (seconds.longValue() < 0)
-     {
-      throw new IndexOutOfBoundsException("Seconds are < 0"); //$NON-NLS-1$
-     }
     this.seconds = seconds;
    }
 
@@ -69,7 +65,7 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
    */
   public long longValue()
    {
-    return this.seconds.longValue();
+    return seconds.longValue();
    }
 
 
@@ -80,7 +76,7 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
    */
   public Seconds secondsValue()
    {
-    return this.seconds;
+    return seconds;
    }
 
 
@@ -92,7 +88,7 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
   @Override
   public String stringValue()
    {
-    return this.seconds.stringValue();
+    return seconds.stringValue();
    }
 
 
@@ -105,7 +101,7 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
   @Override
   public int hashCode()
    {
-    return Objects.hashCode(this.seconds);
+    return Objects.hashCode(seconds);
    }
 
 
@@ -133,7 +129,7 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
      {
       return false;
      }
-    return this.seconds.equals(other.seconds);
+    return seconds.equals(other.seconds);
    }
 
 
@@ -151,7 +147,7 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
   public String toString()
    {
     final var builder = new StringBuilder(17);
-    builder.append("UnixTimestamp[seconds=").append(this.seconds).append(']'); //$NON-NLS-1$
+    builder.append("UnixTimestamp[seconds=").append(seconds).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -167,7 +163,7 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
   public int compareTo(final UnixTimestamp obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return this.seconds.compareTo(obj.seconds);
+    return seconds.compareTo(obj.seconds);
    }
 
  }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
  */
 package de.powerstat.fb.mini.test;
 
@@ -15,8 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import nl.jqno.equalsverifier.*;
 
 import de.powerstat.fb.mini.Action;
+import de.powerstat.validation.values.BIC;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -42,7 +44,7 @@ final class ActionTests
    * @param action Action
    */
   @ParameterizedTest
-  @ValueSource(strings = {"GetPersistentData"})
+  @ValueSource(strings = {"GetPersistentData", "abcdef", "abcdefghijklmnopqrstuvwxyzabcdef"})
   /* default */ void testActionCorrect(final String action)
    {
     final Action cleanAction = Action.of(action);
@@ -96,42 +98,12 @@ final class ActionTests
 
 
   /**
-   * Test hash code.
+   * Equalsverifier.
    */
   @Test
-  /* default */ void testHashCode()
+  public void equalsContract()
    {
-    final Action action1 = Action.of("GetPersistentData");
-    final Action action2 = Action.of("GetPersistentData");
-    final Action action3 = Action.of("AnotherCommand"); //$NON-NLS-1$
-    assertAll("testHashCode", //$NON-NLS-1$
-      () -> assertEquals(action1.hashCode(), action2.hashCode(), "hashCodes are not equal"), //$NON-NLS-1$
-      () -> assertNotEquals(action1.hashCode(), action3.hashCode(), "hashCodes are equal") //$NON-NLS-1$
-    );
-   }
-
-
-  /**
-   * Test equals.
-   */
-  @Test
-  @SuppressWarnings({"PMD.EqualsNull", "java:S5785"})
-  /* default */ void testEquals()
-   {
-    final Action action1 = Action.of("GetPersistentData");
-    final Action action2 = Action.of("GetPersistentData");
-    final Action action3 = Action.of("OtherCommand"); //$NON-NLS-1$
-    final Action action4 = Action.of("GetPersistentData");
-    assertAll("testEquals", //$NON-NLS-1$
-      () -> assertTrue(action1.equals(action1), "action11 is not equal"), //$NON-NLS-1$
-      () -> assertTrue(action1.equals(action2), "action12 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(action2.equals(action1), "action21 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(action2.equals(action4), "action24 are not equal"), //$NON-NLS-1$
-      () -> assertTrue(action1.equals(action4), "action14 are not equal"), //$NON-NLS-1$
-      () -> assertFalse(action1.equals(action3), "action13 are equal"), //$NON-NLS-1$
-      () -> assertFalse(action3.equals(action1), "action31 are equal"), //$NON-NLS-1$
-      () -> assertFalse(action1.equals(null), "action10 is equal") //$NON-NLS-1$
-    );
+    EqualsVerifier.forClass(Action.class).withNonnullFields("action").verify();
    }
 
 
