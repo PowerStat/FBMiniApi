@@ -14,7 +14,7 @@ import de.powerstat.validation.values.Seconds;
 /**
  * End timestamp could be 0 or maximum 24 hours in the future.
  */
-public final class EndTimestamp  implements Comparable<EndTimestamp>, IValueObject
+public final class EndTimestamp implements Comparable<EndTimestamp>, IValueObject
  {
   /**
    * Seconds since 1970-01-01T00:00:00.
@@ -70,7 +70,7 @@ public final class EndTimestamp  implements Comparable<EndTimestamp>, IValueObje
    */
   public long longValue()
    {
-    return this.seconds.longValue();
+    return seconds.longValue();
    }
 
 
@@ -81,7 +81,7 @@ public final class EndTimestamp  implements Comparable<EndTimestamp>, IValueObje
    */
   public Seconds secondsValue()
    {
-    return this.seconds;
+    return seconds;
    }
 
 
@@ -93,7 +93,7 @@ public final class EndTimestamp  implements Comparable<EndTimestamp>, IValueObje
   @Override
   public String stringValue()
    {
-    return this.seconds.stringValue();
+    return seconds.stringValue();
    }
 
 
@@ -106,7 +106,7 @@ public final class EndTimestamp  implements Comparable<EndTimestamp>, IValueObje
   @Override
   public int hashCode()
    {
-    return Objects.hashCode(this.seconds);
+    return Objects.hashCode(seconds);
    }
 
 
@@ -134,7 +134,7 @@ public final class EndTimestamp  implements Comparable<EndTimestamp>, IValueObje
      {
       return false;
      }
-    return this.seconds.equals(other.seconds);
+    return seconds.equals(other.seconds);
    }
 
 
@@ -152,7 +152,7 @@ public final class EndTimestamp  implements Comparable<EndTimestamp>, IValueObje
   public String toString()
    {
     final var builder = new StringBuilder(17);
-    builder.append("EndTimestamp[seconds=").append(this.seconds).append(']'); //$NON-NLS-1$
+    builder.append("EndTimestamp[seconds=").append(seconds).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -168,7 +168,7 @@ public final class EndTimestamp  implements Comparable<EndTimestamp>, IValueObje
   public int compareTo(final EndTimestamp obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return this.seconds.compareTo(obj.seconds);
+    return seconds.compareTo(obj.seconds);
    }
 
  }

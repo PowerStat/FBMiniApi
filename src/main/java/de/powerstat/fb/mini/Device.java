@@ -273,7 +273,7 @@ public final class Device implements Comparable<Device>, IValueObject
 
 
   /**
-   * Get id
+   * Get id.
    *
    * @return Id
    */

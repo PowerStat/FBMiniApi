@@ -13,6 +13,8 @@ import java.util.TreeSet;
 
 /**
  * URI query.
+ *
+ * @param T Parameter type
  */
 public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
  {
@@ -42,7 +44,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
    {
     final var builder = new StringBuilder();
     final int initLength = builder.length();
-    for (final T entry : this.queries)
+    for (final T entry : queries)
      {
       builder.append(entry.stringValue());
       builder.append('&');
@@ -65,11 +67,11 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
   @Override
   public int hashCode()
    {
-    if (this.queries.isEmpty())
+    if (queries.isEmpty())
      {
       return 0;
      }
-    return Objects.hash(this.queries);
+    return Objects.hash(queries);
    }
 
 
@@ -93,11 +95,11 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
       return false;
      }
     final URIQuery<T> other = (URIQuery<T>)obj;
-    if ((this.queries.isEmpty()) || (other.queries.isEmpty()))
+    if ((queries.isEmpty()) || (other.queries.isEmpty()))
      {
-      return ((this.queries.isEmpty()) && (other.queries.isEmpty()));
+      return ((queries.isEmpty()) && (other.queries.isEmpty()));
      }
-    return this.queries.equals(other.queries);
+    return queries.equals(other.queries);
    }
 
 
@@ -117,7 +119,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
     final var builder = new StringBuilder();
     builder.append("URIQuery<>["); //$NON-NLS-1$
     final int initLength = builder.length();
-    for (final T entry : this.queries)
+    for (final T entry : queries)
      {
       builder.append(entry.stringValue());
       builder.append("&"); //$NON-NLS-1$
@@ -138,7 +140,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
    */
   public boolean isEmpty()
    {
-    return this.queries.isEmpty();
+    return queries.isEmpty();
    }
 
 
@@ -151,7 +153,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
   public void addEntry(final T entry)
    {
     Objects.requireNonNull(entry, "entry"); //$NON-NLS-1$
-    this.queries.add(entry);
+    queries.add(entry);
    }
 
 
@@ -163,7 +165,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
   @Override
   public Iterator<T> iterator()
    {
-    return this.queries.iterator();
+    return queries.iterator();
    }
 
  }

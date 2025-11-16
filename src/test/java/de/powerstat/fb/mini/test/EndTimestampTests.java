@@ -6,17 +6,14 @@ package de.powerstat.fb.mini.test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.*;
-import de.powerstat.fb.mini.Alert;
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import de.powerstat.fb.mini.EndTimestamp;
 import de.powerstat.validation.values.Seconds;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

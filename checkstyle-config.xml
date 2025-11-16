@@ -835,7 +835,7 @@
     <module name="NoWhitespaceBefore">
       <property name="severity" value="warning"/>
       <property name="allowLineBreaks" value="false"/>
-      <property name="tokens" value="COMMA, SEMI, POST_INC, POST_DEC, DOT, GENERIC_START, GENERIC_END"/> <!-- TODO , ELLIPSIS, METHOD_REF -->
+      <property name="tokens" value="COMMA, SEMI, POST_INC, POST_DEC, GENERIC_START, GENERIC_END"/> <!-- TODO , ELLIPSIS, METHOD_REF -->
     </module>
     <module name="NoWhitespaceBeforeCaseDefaultColon">
     </module>
@@ -851,7 +851,11 @@
     </module>
     <module name="SeparatorWrap">
       <property name="option" value="eol"/>
-      <property name="tokens" value=""/>
+      <property name="tokens" value="COMMA, SEMI, ELLIPSIS, ARRAY_DECLARATOR, RBRACK, METHOD_REF"/>
+    </module>
+    <module name="SeparatorWrap">
+      <property name="option" value="nl"/>
+      <property name="tokens" value="AT, DOT, LPAREN"/>
     </module>
     <module name="SingleSpaceSeparator">
       <property name="validateComments" value="false"/>

@@ -26,7 +26,7 @@ public final class Blind implements Comparable<Blind>, IValueObject
   /**
    * Constructor.
    *
-   * @param false: manuel; mode true: auto; null: unknown or error.
+   * @param mode false: manuel; mode true: auto; null: unknown or error.
    * @param endpositionsset false: not configured; true: configured; null: unknown
    */
   private Blind(final Boolean mode, final Boolean endpositionsset)
@@ -58,7 +58,7 @@ public final class Blind implements Comparable<Blind>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.mode.toString();
+    return mode.toString();
    }
 
 
@@ -71,7 +71,7 @@ public final class Blind implements Comparable<Blind>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.mode, this.endpositionsset);
+    return Objects.hash(mode, endpositionsset);
    }
 
 
@@ -93,10 +93,10 @@ public final class Blind implements Comparable<Blind>, IValueObject
      {
       return false;
      }
-    boolean result = this.mode.equals(other.mode);
+    boolean result = mode.equals(other.mode);
     if (result)
      {
-      result = this.endpositionsset.equals(other.endpositionsset);
+      result = endpositionsset.equals(other.endpositionsset);
      }
     return result;
    }
@@ -116,7 +116,7 @@ public final class Blind implements Comparable<Blind>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Blind[mode=").append(this.mode).append(", endpositionsset=").append(this.endpositionsset).append(']'); //$NON-NLS-1$
+    builder.append("Blind[mode=").append(mode).append(", endpositionsset=").append(endpositionsset).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -132,10 +132,10 @@ public final class Blind implements Comparable<Blind>, IValueObject
   public int compareTo(final Blind obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.mode.compareTo(obj.mode);
+    int result = mode.compareTo(obj.mode);
     if (result == 0)
      {
-      result = this.endpositionsset.compareTo(obj.endpositionsset);
+      result = endpositionsset.compareTo(obj.endpositionsset);
      }
     return result;
    }

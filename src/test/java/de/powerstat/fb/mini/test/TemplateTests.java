@@ -6,8 +6,6 @@ package de.powerstat.fb.mini.test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,14 +16,14 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.*;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Mode;
 
 import de.powerstat.fb.mini.AIN;
 import de.powerstat.fb.mini.ApplyMask;
 import de.powerstat.fb.mini.Functions;
 import de.powerstat.fb.mini.Metadata;
 import de.powerstat.fb.mini.ScenarioType;
-import de.powerstat.fb.mini.Temperature;
 import de.powerstat.fb.mini.Template;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -541,7 +539,7 @@ final class TemplateTests
   @Test
   public void equalsContract()
    {
-    EqualsVerifier.forClass(Template.class).withNonnullFields("identifier").verify();
+    EqualsVerifier.forClass(Template.class).set(Mode.skipMockito()).withNonnullFields("identifier", "functionbitmask", "name", "metadata", "devices", "triggers", "subtemplates", "applymask").verify();
    }
 
 

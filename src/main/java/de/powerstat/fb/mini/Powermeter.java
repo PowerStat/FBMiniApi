@@ -35,7 +35,7 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
    *
    * @param voltage Voltage
    * @param power Power
-   * @param engery Energy
+   * @param energy Energy
    * @throws NullPointerException When one of the parameters is null
    */
   private Powermeter(final Voltage voltage, final Power power, final Energy energy)
@@ -73,7 +73,7 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.power.stringValue();
+    return power.stringValue();
    }
 
 
@@ -84,7 +84,7 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
    */
   public Voltage getVoltage()
    {
-    return this.voltage;
+    return voltage;
    }
 
 
@@ -95,7 +95,7 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
    */
   public Power getPower()
    {
-    return this.power;
+    return power;
    }
 
 
@@ -106,7 +106,7 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
    */
   public Energy getEnergy()
    {
-    return this.energy;
+    return energy;
    }
 
 
@@ -119,7 +119,7 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.voltage, this.power, this.energy);
+    return Objects.hash(voltage, power, energy);
    }
 
 
@@ -141,13 +141,13 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
      {
       return false;
      }
-    boolean result = this.voltage.equals(other.voltage);
+    boolean result = voltage.equals(other.voltage);
     if (result)
      {
-      result = this.power.equals(other.power);
+      result = power.equals(other.power);
       if (result)
        {
-        result = this.energy.equals(other.energy);
+        result = energy.equals(other.energy);
        }
      }
     return result;
@@ -168,9 +168,9 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Powermeter[voltage=").append(this.voltage)
-      .append(", power=").append(this.power)
-      .append(", energy=").append(this.energy)
+    builder.append("Powermeter[voltage=").append(voltage)
+      .append(", power=").append(power)
+      .append(", energy=").append(energy)
       .append(']');
     return builder.toString();
    }
@@ -187,13 +187,13 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
   public int compareTo(final Powermeter obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.voltage.compareTo(obj.voltage);
+    int result = voltage.compareTo(obj.voltage);
     if (result == 0)
      {
-      result = this.power.compareTo(obj.power);
+      result = power.compareTo(obj.power);
       if (result == 0)
        {
-        result = this.energy.compareTo(obj.energy);
+        result = energy.compareTo(obj.energy);
        }
      }
     return result;

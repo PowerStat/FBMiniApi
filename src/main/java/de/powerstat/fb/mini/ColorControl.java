@@ -26,32 +26,32 @@ public final class ColorControl implements Comparable<ColorControl>, IValueObjec
   private final ColorModes currentMode;
 
   /**
-   * Full color support: true: setunmappedcolor supported, false otherwise
+   * Full color support: true: setunmappedcolor supported, false otherwise.
    */
   private final boolean fullcolorsupport;
 
   /**
-   * true: Colordefaults value set, false otherwise
+   * true: Colordefaults value set, false otherwise.
    */
   private final boolean mapped;
 
   /**
-   * Hue value, only when currentMode = 1
+   * Hue value, only when currentMode = 1.
    */
   private final Hue hue;
 
   /**
-   * Saturation value, only when currentMode = 1
+   * Saturation value, only when currentMode = 1.
    */
   private final Saturation saturation;
 
   /**
-   * Only when mapped is true: corrected value by Colordefaults
+   * Only when mapped is true: corrected value by Colordefaults.
    */
   private final Hue unmappedHue;
 
   /**
-   * Only when mapped is true: corrected value by Colordefaults
+   * Only when mapped is true: corrected value by Colordefaults.
    */
   private final Saturation unmappedSaturation;
 
@@ -106,7 +106,7 @@ public final class ColorControl implements Comparable<ColorControl>, IValueObjec
      }
     else // if ((currentMode == null) || (currentMode == ColorModes.COLOR_TEMPERATURE))
      {
-      if  (currentMode == ColorModes.COLOR_TEMPERATURE)
+      if (currentMode == ColorModes.COLOR_TEMPERATURE)
        {
         Objects.requireNonNull(temperature, "temperature"); //$NON-NLS-1$
        }
@@ -173,7 +173,7 @@ public final class ColorControl implements Comparable<ColorControl>, IValueObjec
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.supportedModes, this.currentMode, this.fullcolorsupport, this.mapped, this.hue, this.saturation, this.unmappedHue, this.unmappedSaturation, this.temperature);
+    return Objects.hash(supportedModes, currentMode, fullcolorsupport, mapped, hue, saturation, unmappedHue, unmappedSaturation, temperature);
    }
 
 
@@ -209,31 +209,31 @@ public final class ColorControl implements Comparable<ColorControl>, IValueObjec
      {
       return false;
      }
-    boolean result = equalField(this.supportedModes, other.supportedModes);
+    boolean result = equalField(supportedModes, other.supportedModes);
     if (result)
      {
-      result = this.currentMode == other.currentMode;
+      result = currentMode == other.currentMode;
       if (result)
        {
-        result = this.fullcolorsupport == other.fullcolorsupport;
+        result = fullcolorsupport == other.fullcolorsupport;
         if (result)
          {
-          result = this.mapped == other.mapped;
+          result = mapped == other.mapped;
           if (result)
            {
-            result = equalField(this.hue, other.hue);
+            result = equalField(hue, other.hue);
             if (result)
              {
-              result = equalField(this.saturation, other.saturation);
+              result = equalField(saturation, other.saturation);
               if (result)
                {
-                result = equalField(this.unmappedHue, other.unmappedHue);
+                result = equalField(unmappedHue, other.unmappedHue);
                 if (result)
                  {
-                  result = equalField(this.unmappedSaturation, other.unmappedSaturation);
+                  result = equalField(unmappedSaturation, other.unmappedSaturation);
                   if (result)
                    {
-                    result = equalField(this.temperature, other.temperature);
+                    result = equalField(temperature, other.temperature);
                    }
                  }
                }
@@ -260,15 +260,15 @@ public final class ColorControl implements Comparable<ColorControl>, IValueObjec
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("ColorControl[supportedModes=").append(this.supportedModes)
-      .append(", currentMode=").append(this.currentMode)
-      .append(", fullcolorsupport=").append(this.fullcolorsupport)
-      .append(", mapped=").append(this.mapped)
-      .append(", hue=").append(this.hue)
-      .append(", saturation=").append(this.saturation)
-      .append(", unmappedHue=").append(this.unmappedHue)
-      .append(", unmappedSaturation=").append(this.unmappedSaturation)
-      .append(", temperature=").append(this.temperature)
+    builder.append("ColorControl[supportedModes=").append(supportedModes)
+      .append(", currentMode=").append(currentMode)
+      .append(", fullcolorsupport=").append(fullcolorsupport)
+      .append(", mapped=").append(mapped)
+      .append(", hue=").append(hue)
+      .append(", saturation=").append(saturation)
+      .append(", unmappedHue=").append(unmappedHue)
+      .append(", unmappedSaturation=").append(unmappedSaturation)
+      .append(", temperature=").append(temperature)
       .append(']');
     return builder.toString();
    }
@@ -302,28 +302,28 @@ public final class ColorControl implements Comparable<ColorControl>, IValueObjec
     int result = 0; // this.supportedModes.compareTo(obj.supportedModes);
     if (result == 0)
      {
-      result = compareField(this.currentMode, obj.currentMode);
+      result = compareField(currentMode, obj.currentMode);
       if (result == 0)
        {
-        result = Boolean.compare(this.fullcolorsupport, obj.fullcolorsupport);
+        result = Boolean.compare(fullcolorsupport, obj.fullcolorsupport);
         if (result == 0)
          {
-          result = Boolean.compare(this.mapped, obj.mapped);
+          result = Boolean.compare(mapped, obj.mapped);
           if (result == 0)
            {
-            result = compareField(this.hue, obj.hue);
+            result = compareField(hue, obj.hue);
             if (result == 0)
              {
-              result = compareField(this.saturation, obj.saturation);
+              result = compareField(saturation, obj.saturation);
               if (result == 0)
                {
-                result = compareField(this.unmappedHue, obj.unmappedHue);
+                result = compareField(unmappedHue, obj.unmappedHue);
                 if (result == 0)
                  {
-                  result = compareField(this.unmappedSaturation, obj.unmappedSaturation);
+                  result = compareField(unmappedSaturation, obj.unmappedSaturation);
                   if (result == 0)
                    {
-                    result = compareField(this.temperature, obj.temperature);
+                    result = compareField(temperature, obj.temperature);
                    }
                  }
                }

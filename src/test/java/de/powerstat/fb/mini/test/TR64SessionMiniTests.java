@@ -6,14 +6,12 @@ package de.powerstat.fb.mini.test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import nl.jqno.equalsverifier.*;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Mode;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,7 +45,6 @@ import org.xml.sax.SAXException;
 
 import de.powerstat.fb.mini.TR64SessionMini;
 import de.powerstat.fb.mini.Action;
-import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.ServiceType;
 import de.powerstat.fb.mini.URIPath;
 import de.powerstat.validation.values.Hostname;

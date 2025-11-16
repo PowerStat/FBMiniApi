@@ -155,7 +155,7 @@ public final class Template implements Comparable<Template>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.identifier.stringValue();
+    return identifier.stringValue();
    }
 
 
@@ -166,7 +166,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public AIN getIdentifier()
    {
-    return this.identifier;
+    return identifier;
    }
 
 
@@ -177,7 +177,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public long getId()
    {
-    return this.id;
+    return id;
    }
 
 
@@ -188,7 +188,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public EnumSet<Functions> getFunctionbitmask()
    {
-    return this.functionbitmask;
+    return functionbitmask;
    }
 
 
@@ -199,7 +199,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public boolean getAutocreate()
    {
-    return this.autocreate;
+    return autocreate;
    }
 
 
@@ -210,7 +210,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public long getApplymaskField()
    {
-    return this.applymaskField;
+    return applymaskField;
    }
 
 
@@ -221,7 +221,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public String getName()
    {
-    return this.name;
+    return name;
    }
 
 
@@ -232,7 +232,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public Metadata getMetadata()
    {
-    return this.metadata;
+    return metadata;
    }
 
 
@@ -243,7 +243,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public List<AIN> getDevices()
    {
-    return this.devices;
+    return devices;
    }
 
 
@@ -254,7 +254,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public List<AIN> getTriggers()
    {
-    return this.triggers;
+    return triggers;
    }
 
 
@@ -265,7 +265,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public List<AIN> getSubtemplates()
    {
-    return this.subtemplates;
+    return subtemplates;
    }
 
 
@@ -276,7 +276,7 @@ public final class Template implements Comparable<Template>, IValueObject
    */
   public EnumSet<ApplyMask> getApplymask()
    {
-    return this.applymask;
+    return applymask;
    }
 
 
@@ -289,7 +289,7 @@ public final class Template implements Comparable<Template>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.identifier, this.id, this.functionbitmask, this.autocreate, this.applymaskField, this.name, this.metadata, this.devices, this.triggers, this.subtemplates, this.applymask);
+    return Objects.hash(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
    }
 
 
@@ -311,7 +311,48 @@ public final class Template implements Comparable<Template>, IValueObject
      {
       return false;
      }
-    return this.identifier.equals(other.identifier);
+    boolean result = identifier.equals(other.identifier);
+    if (result)
+     {
+      result = (id == other.id);
+      if (result)
+       {
+        result = functionbitmask.equals(other.functionbitmask);
+        if (result)
+         {
+          result = (autocreate == other.autocreate);
+          if (result)
+           {
+            result = (applymaskField == other.applymaskField);
+            if (result)
+             {
+              result = name.equals(other.name);
+              if (result)
+               {
+                result = metadata.equals(other.metadata);
+                if (result)
+                 {
+                  result = devices.equals(other.devices);
+                  if (result)
+                   {
+                    result = triggers.equals(other.triggers);
+                    if (result)
+                     {
+                      result = subtemplates.equals(other.subtemplates);
+                      if (result)
+                       {
+                        result = applymask.equals(other.applymask);
+                       }
+                     }
+                   }
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+    return result;
    }
 
 
@@ -329,17 +370,17 @@ public final class Template implements Comparable<Template>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Template[identifier=").append(this.identifier)
-      .append(", id=").append(this.id)
-      .append(", functionbitmask=").append(this.functionbitmask)
-      .append(", autocreate=").append(this.autocreate)
-      .append(", applymaskField=").append(this.applymaskField)
-      .append(", name=").append(this.name)
-      .append(", metadata=").append(this.metadata)
-      .append(", devices=").append(this.devices)
-      .append(", triggers=").append(this.triggers)
-      .append(", subtemplates=").append(this.subtemplates)
-      .append(", applymask=").append(this.applymask)
+    builder.append("Template[identifier=").append(identifier)
+      .append(", id=").append(id)
+      .append(", functionbitmask=").append(functionbitmask)
+      .append(", autocreate=").append(autocreate)
+      .append(", applymaskField=").append(applymaskField)
+      .append(", name=").append(name)
+      .append(", metadata=").append(metadata)
+      .append(", devices=").append(devices)
+      .append(", triggers=").append(triggers)
+      .append(", subtemplates=").append(subtemplates)
+      .append(", applymask=").append(applymask)
       .append(']');
     return builder.toString();
    }
@@ -356,7 +397,7 @@ public final class Template implements Comparable<Template>, IValueObject
   public int compareTo(final Template obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return this.identifier.compareTo(obj.identifier);
+    return identifier.compareTo(obj.identifier);
    }
 
  }

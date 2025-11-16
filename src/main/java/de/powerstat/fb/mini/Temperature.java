@@ -47,8 +47,8 @@ public final class Temperature implements Comparable<Temperature>, IValueObject
    *
    * @param temperature Temperature in deci celsius.
    * @param offset Temperature offset in deci celsius.
-   * @throws NullPointerException When temperature or offset is null
    * @return Temperature object
+   * @throws NullPointerException When temperature or offset is null
    */
   public static Temperature of(final TemperatureCelsius temperature, final TemperatureCelsius offset)
    {
