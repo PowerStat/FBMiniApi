@@ -7,8 +7,8 @@ package de.powerstat.fb.mini;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.ProviderNotFoundException;
 import java.security.InvalidKeyException;
@@ -17,6 +17,7 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -84,7 +86,7 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
  * TODO 1.35 -> 1.61
  * TODO XML results -> value objects
  */
-@SuppressWarnings("java:S1160")
+@SuppressWarnings({"java:S1160", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity"})
 public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
  {
   /**
@@ -100,12 +102,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * Url constant.
    */
-  private static final String HOMEAUTOSWITCH = "/webservices/homeautoswitch.lua?"; //$NON-NLS-1$
-
-  /**
-   * Url constant.
-   */
-  private static final String HOMEAUTOSWITCH_WITH_AIN = "/webservices/homeautoswitch.lua?ain="; //$NON-NLS-1$
+  private static final String WEBSERVICES_HOMEAUTOSWITCH_LUA = "/webservices/homeautoswitch.lua";
 
   /**
    * FB invalid string constant.
@@ -126,6 +123,106 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * AIN.
    */
   private static final String AIN_STR = "ain"; //$NON-NLS-1$
+
+  /**
+   * SID.
+   */
+  private static final String SID2 = "sid"; //$NON-NLS-1$
+
+  /**
+   * Version.
+   */
+  private static final String VERSION = "version"; //$NON-NLS-1$
+
+  /**
+   * FW version.
+   */
+  private static final String FWVERSION2 = "fwversion"; //$NON-NLS-1$
+
+  /**
+   * Switch command.
+   */
+  private static final String SWITCHCMD = "switchcmd"; //$NON-NLS-1$
+
+  /**
+   * Identifier.
+   */
+  private static final String IDENTIFIER = "identifier"; //$NON-NLS-1$
+
+  /**
+   * Id.
+   */
+  private static final String ID2 = "id"; //$NON-NLS-1$
+
+  /**
+   * functionbitmask.
+   */
+  private static final String FUNCTIONBITMASK2 = "functionbitmask"; //$NON-NLS-1$
+
+  /**
+   * Name.
+   */
+  private static final String NAME2 = "name"; //$NON-NLS-1$
+
+  /**
+   * Battery low.
+   */
+  private static final String BATTERYLOW2 = "batterylow"; //$NON-NLS-1$
+
+  /**
+   * Battery.
+   */
+  private static final String BATTERY2 = "battery"; //$NON-NLS-1$
+
+  /**
+   * Temperature.
+   */
+  private static final String TEMPERATURE = "temperature"; //$NON-NLS-1$
+
+  /**
+   * Humidity.
+   */
+  private static final String HUMIDITY = "humidity"; //$NON-NLS-1$
+
+  /**
+   * State.
+   */
+  private static final String STATE2 = "state"; //$NON-NLS-1$
+
+  /**
+   * Duration.
+   */
+  private static final String DURATION2 = "duration"; //$NON-NLS-1$
+
+  /**
+   * Saturation.
+   */
+  private static final String SATURATION2 = "saturation"; //$NON-NLS-1$
+
+  /**
+   * Hue.
+   */
+  private static final String HUE2 = "hue"; //$NON-NLS-1$
+
+  /**
+   * Level.
+   */
+  private static final String LEVEL2 = "level"; //$NON-NLS-1$
+
+  /**
+   * Datetime.
+   */
+  private static final String DATETIME2 = "datetime"; //$NON-NLS-1$
+
+  /**
+   * Grid.
+   */
+  private static final String GRID2 = "grid"; //$NON-NLS-1$
+
+  /**
+   * Count.
+   */
+  private static final String COUNT2 = "count"; //$NON-NLS-1$
 
   /**
    * Hmac SHA256 algorithm.
@@ -443,7 +540,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
        {
         httpclient.close();
        }
-      catch (final IOException e1)
+      catch (final IOException ex)
        {
         // ignore
        }
@@ -542,6 +639,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws UnsupportedOperationException When a bad request appears, could happen when using commands from a newer api version
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   private Document getDoc(final URIPath urlPath, final URIQuery<URIQueryParameter> urlQuery) throws IOException, SAXException
    {
     assert (urlPath != null) && (urlQuery != null);
@@ -617,6 +715,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws UnsupportedOperationException When a bad request appears, could happen when using commands from a newer api version
    */
+  @SuppressWarnings("PMD.LawOfDemeter")
   private String getString(final URIPath urlPath, final URIQuery<URIQueryParameter> urlQuery) throws IOException
    {
     assert (urlPath != null) && (urlQuery != null);
@@ -783,7 +882,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     // get first challenge
     final URIPath path = URIPath.of("/login_sid.lua");
     final URIQuery<URIQueryParameter> query1 = new URIQuery<>();
-    query1.addEntry(URIQueryParameter.of("version", "2"));
+    query1.addEntry(URIQueryParameter.of(VERSION, "2"));
     Document doc = getDoc(path, query1);
     sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (AHASessionMini.LOGGER.isDebugEnabled())
@@ -829,7 +928,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
         response = challenge + '-' + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest((challenge + '-' + password.stringValue()).getBytes(StandardCharsets.UTF_16LE)))); //$NON-NLS-1$
        }
       final URIQuery<URIQueryParameter> query2 = new URIQuery<>();
-      query2.addEntry(URIQueryParameter.of("version", "2"));
+      query2.addEntry(URIQueryParameter.of(VERSION, "2"));
       query2.addEntry(URIQueryParameter.of("username", username.stringValue()));
       query2.addEntry(URIQueryParameter.of("response", response));
       doc = getDoc(path, query2);
@@ -853,8 +952,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
 
     // check sid validity
     final URIQuery<URIQueryParameter> query3 = new URIQuery<>();
-    query3.addEntry(URIQueryParameter.of("version", "2"));
-    query3.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    query3.addEntry(URIQueryParameter.of(VERSION, "2"));
+    query3.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
     doc = getDoc(path, query3);
     sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (!sid.isValidSession())
@@ -896,9 +995,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     */
     final URIPath path = URIPath.of("/login_sid.lua");
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("version", "2"));
+    query.addEntry(URIQueryParameter.of(VERSION, "2"));
     query.addEntry(URIQueryParameter.of("logout", "1"));
-    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    query.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
     final Document doc = getDoc(path, query);
     sid = SID.of(doc.getElementsByTagName(AHASessionMini.SESSIONID).item(0).getTextContent());
     if (!sid.isValidSession())
@@ -926,9 +1025,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final List<AIN> getSwitchList() throws IOException
    {
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchlist"));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getswitchlist"));
     final var list = getString(path, query);
     if (list.length() < 13)
      {
@@ -953,19 +1052,20 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    */
+  @SuppressWarnings("PMD.LinguisticNaming")
   public final boolean setSwitchOn(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setswitchon"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setswitchon"));
     final var result = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("setSwitchOn({})->{}<", ain.stringValue(), result); //$NON-NLS-1$
      }
-    return "1".equals((result.length() == 0) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "1".equals((result.isEmpty()) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -978,19 +1078,20 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    */
+  @SuppressWarnings("PMD.LinguisticNaming")
   public final boolean setSwitchOff(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setswitchoff"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setswitchoff"));
     final var result = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("setSwitchOff({})->{}<", ain.stringValue(), result); //$NON-NLS-1$
      }
-    return "0".equals((result.length() == 0) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "0".equals((result.isEmpty()) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1003,19 +1104,20 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws ClientProtocolException Client protocol exception
    * @throws NullPointerException If ain is null
    */
+  @SuppressWarnings("PMD.LinguisticNaming")
   public final boolean setSwitchToggle(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setswitchtoggle"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setswitchtoggle"));
     final var state = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("setSwitchToggle({})->{}<", ain.stringValue(), state); //$NON-NLS-1$
      }
-    return "1".equals((state.length() == 0) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "1".equals((state.isEmpty()) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1032,10 +1134,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final boolean getSwitchState(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain",ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchstate"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getswitchstate"));
     final var state = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
@@ -1045,7 +1147,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       throw new ProviderNotFoundException(AHASessionMini.INVALID);
      }
-    return "1".equals((state.length() == 0) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "1".equals((state.isEmpty()) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1061,16 +1163,16 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final boolean isSwitchPresent(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchpresent"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getswitchpresent"));
     final var present = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
       AHASessionMini.LOGGER.info("getSwitchPresent({})->{}<", ain.stringValue(), present); //$NON-NLS-1$
      }
-    return "1".equals((present.length() == 0) ? "" : present.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "1".equals((present.isEmpty()) ? "" : present.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1087,10 +1189,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final Power getSwitchPower(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchpower"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getswitchpower"));
     var power = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
@@ -1121,10 +1223,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final Energy getSwitchEnergy(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchenergy"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getswitchenergy"));
     var energy = getString(path, query);
     if (AHASessionMini.LOGGER.isInfoEnabled())
      {
@@ -1154,12 +1256,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final String getSwitchName(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "getswitchname"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getswitchname"));
     final var name = getString(path, query);
-    return (name.length() > 0) ? name.substring(0, name.length() - 1) : ""; //$NON-NLS-1$
+    return (name.isEmpty()) ? "" : name.substring(0, name.length() - 1); //$NON-NLS-1$
    }
 
 
@@ -1171,27 +1273,26 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws IOException IO exception
    * @throws SAXException SAX exception
-   *
-   * TODO Change Document result to value object
    */
-  public final Document getDeviceListInfos() throws IOException, SAXException
+  public final List<Device> getDeviceListInfos() throws IOException, SAXException
    {
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("switchcmd", "getdevicelistinfos"));
-    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
-    Document doc = getDoc(path, query);
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getdevicelistinfos"));
+    query.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
+    final Document doc = getDoc(path, query);
 
+    List<Device> devices = new ArrayList<>();
     final Node deviceListNode = doc.getElementsByTagName("devicelist").item(0);
     if (deviceListNode != null)
      {
       final NamedNodeMap attributes = deviceListNode.getAttributes();
-      final Node versionAttr = attributes.getNamedItem("version");
+      final Node versionAttr = attributes.getNamedItem(VERSION);
       final long version = Long.parseLong(versionAttr.getNodeValue());
-      LOGGER.debug("version: " + version);
-      final Node fwversionAttr = attributes.getNamedItem("fwversion");
+      LOGGER.debug("version: {}", version);
+      final Node fwversionAttr = attributes.getNamedItem(FWVERSION2);
       final String fwversion = fwversionAttr.getNodeValue();
-      LOGGER.debug("fwversion: " + fwversion);
+      LOGGER.debug("fwversion: {}", fwversion);
 
       final NodeList deviceNodes = deviceListNode.getChildNodes();
       if (deviceNodes.getLength() > 0)
@@ -1201,20 +1302,28 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           final Node deviceNode = deviceNodes.item(index);
 
           final NamedNodeMap deviceattributes = deviceNode.getAttributes();
-          final Node identifierAttr = deviceattributes.getNamedItem("identifier");
-          AIN ain = AIN.of(identifierAttr.getNodeValue());
-          LOGGER.debug("  ain: " + ain);
+          final Node identifierAttr = deviceattributes.getNamedItem(IDENTIFIER);
+          final AIN ain = AIN.of(identifierAttr.getNodeValue());
+          LOGGER.debug("  ain: {}", ain);
 
-          final Node idAttr = deviceattributes.getNamedItem("id");
+          final Node idAttr = deviceattributes.getNamedItem(ID2);
           final long id = Long.parseLong(idAttr.getNodeValue());
 
-          final Node functionbitmaskAttr = deviceattributes.getNamedItem("functionbitmask");
-          final String functionbitmask = functionbitmaskAttr.getNodeValue();
-          LOGGER.debug("  functionbitmask: " + functionbitmask);
-          // TODO EnumSet<Functions> functionbitmask; // TODO map long to bitmask
+          final Node functionbitmaskAttr = deviceattributes.getNamedItem(FUNCTIONBITMASK2);
+          final int functionbitmaskInt = Integer.parseInt(functionbitmaskAttr.getNodeValue());
+          LOGGER.debug("  functionbitmask: {}", functionbitmaskInt);
+          final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
+          for (Functions func : EnumSet.allOf(Functions.class))
+           {
+            final int pos = func.getAction();
+            if (BigInteger.valueOf(functionbitmaskInt).testBit(pos))
+             {
+              functionbitmask.add(func);
+             }
+           }
 
-          final Node devfwversionAttr = deviceattributes.getNamedItem("fwversion");
-          Version devfwversion = Version.of(devfwversionAttr.getNodeValue());
+          final Node devfwversionAttr = deviceattributes.getNamedItem(FWVERSION2);
+          final Version devfwversion = Version.of(devfwversionAttr.getNodeValue());
 
           final Node manufacturerAttr = deviceattributes.getNamedItem("manufacturer");
           final String manufacturer = manufacturerAttr.getNodeValue();
@@ -1223,120 +1332,584 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           final String productname = productnameAttr.getNodeValue();
 
           final NodeList childNodes = deviceNode.getChildNodes();
+          boolean present =  false;
+          boolean txbusy = false;
+          String name = null;
+          boolean batterylow = false;
+          Percent battery =  null;
+          Switch switch2 = null;
+          Powermeter powermeter =  null;
+          Temperature temperature = null;
+          Alert alert = null;
+          EtsiUnitInfo etsiunitinfo = null;
+          SimpleOnOff simpleonoff = null;
+          LevelControl levelcontrol = null;
+          Percent humidity = null;
+          Blind blind = null;
+          GroupInfo groupinfo = null;
+          HKR hkr = null;
+          List<Button> buttons = new ArrayList<>();
+          ColorControl colorcontrol = null;
           if (childNodes.getLength() > 0)
            {
             for (int childindex = 0; childindex < childNodes.getLength(); ++childindex)
              {
               final Node childNode = childNodes.item(childindex);
+              NodeList subChildNodes;
               switch (childNode.getNodeName())
                {
                 case "present":
-                  boolean present = Boolean.valueOf(childNode.getTextContent());
+                  present = Boolean.valueOf(childNode.getTextContent());
                   break;
                 case "txbusy":
-                  boolean txbusy = Boolean.valueOf(childNode.getTextContent());
+                  txbusy = Boolean.valueOf(childNode.getTextContent());
                   break;
-                case "name":
-                  String name = childNode.getTextContent();
+                case NAME2:
+                  name = childNode.getTextContent();
                   break;
-                case "batterylow":
-                  boolean batterylow = Boolean.valueOf(childNode.getTextContent());
+                case BATTERYLOW2:
+                  batterylow = Boolean.valueOf(childNode.getTextContent());
                   break;
-                case "battery":
-                  Percent battery = Percent.of(childNode.getTextContent());
+                case BATTERY2:
+                  battery = Percent.of(childNode.getTextContent());
                   break;
                 case "switch":
-                  // TODO state
-                  // TODO mode
-                  // TODO lock
-                  // TODO devicelock
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    Boolean state = null;
+                    Boolean mode = null;
+                    Boolean lock = null;
+                    Boolean devicelock = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case STATE2:
+                          state = Boolean.valueOf(subChildNode.getTextContent());
+                          break;
+                        case "mode":
+                          mode = Boolean.valueOf(subChildNode.getTextContent());
+                          break;
+                        case "lock":
+                          lock = Boolean.valueOf(subChildNode.getTextContent());
+                          break;
+                        case "devicelock":
+                          devicelock = Boolean.valueOf(subChildNode.getTextContent());
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    switch2 = Switch.of(state, mode, lock, devicelock);
+                   }
                   break;
                 case "powermeter":
-                  // TODO power
-                  // TODO energy
-                  // TODO voltage
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    Power power = null;
+                    Energy energy = null;
+                    Voltage voltage = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case "power":
+                          final String pow = subChildNode.getTextContent();
+                          LOGGER.debug("pow: {}", pow);
+                          power = Power.of(pow.isBlank() ? "0" : pow);
+                          break;
+                        case "energy":
+                          final String ener = subChildNode.getTextContent();
+                          energy = Energy.of(ener.isBlank() ? "0" : ener);
+                          break;
+                        case "voltage":
+                          final String volt = subChildNode.getTextContent();
+                          voltage = Voltage.of(volt.isBlank() ? "0" : volt);
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      powermeter = Powermeter.of(voltage, power, energy);
+                     }
+                    catch(Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
-                case "temperature":
-                  // TODO celsius
-                  // TODO offset
+                case TEMPERATURE:
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    TemperatureCelsius celsius = null;
+                    TemperatureCelsius offset = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case "celsius":
+                          final String cel = subChildNode.getTextContent();
+                          celsius = TemperatureCelsius.of(cel.isBlank() ? "0" : cel);
+                          break;
+                        case "offset":
+                          final String off = subChildNode.getTextContent();
+                          offset = TemperatureCelsius.of(off.isBlank() ? "0" : off);
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      temperature = Temperature.of(celsius, offset);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
                 case "alert":
-                  // TODO state
-                  // TODO lastalertchgtimestamp
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    AlertState state = null;
+                    UnixTimestamp lastalertchgtimestamp = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case STATE2:
+                          final String al = subChildNode.getTextContent();
+                          state = AlertState.of(Integer.parseInt(al.isBlank() ? "0" : al));
+                          break;
+                        case "lastalertchgtimestamp":
+                          final String ts = subChildNode.getTextContent();
+                          lastalertchgtimestamp = UnixTimestamp.of(ts.isBlank() ? "0" : ts);
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      alert = Alert.of(state, lastalertchgtimestamp);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
                 case "button": // Multiple buttons possible
-                  // TODO attr: identifier
-                  // TODO attr: id
-                  // TODO lastpressedtimestamp
-                  // TODO name
+                  final NamedNodeMap attrs = childNode.getAttributes();
+                  final Node identAttr = attrs.getNamedItem(IDENTIFIER);
+                  final AIN identifier = AIN.of(identAttr.getNodeValue());
+                  final Node idAttr2 = attrs.getNamedItem("id");
+                  final long id2 = Long.parseLong(idAttr2.getNodeValue());
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    UnixTimestamp lastpressed = null;
+                    String name2 = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case "lastpressedtimestamp":
+                          final String lpts = subChildNode.getTextContent();
+                          lastpressed = UnixTimestamp.of(lpts.isBlank() ? "0" : lpts);
+                          break;
+                        case "name":
+                          name2 = subChildNode.getTextContent();
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    Button button = Button.of(identifier, id2, name2, lastpressed);
+                    buttons.add(button);
+                   }
                   break;
                 case "etsiunitinfo":
-                  // TODO etsideviceid
-                  // TODO unittype
-                  // TODO interfaces
-                  break;
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    long etsideviceid = 0;
+                    HANFUNUnits unittype = null;
+                    EnumSet<HANFUNInterfaces> interfaces = EnumSet.noneOf(HANFUNInterfaces.class);
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case "etsideviceid":
+                          etsideviceid = Long.parseLong(subChildNode.getTextContent());
+                          break;
+                        case "unittype":
+                          unittype = HANFUNUnits.of(Integer.parseInt(subChildNode.getTextContent()));
+                          break;
+                        case "interfaces":
+                          final String inter = subChildNode.getTextContent();
+                          List<Integer> interList = Arrays.asList(subChildNode.getTextContent().split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
+                          for (Integer interf : interList)
+                           {
+                            interfaces.add(HANFUNInterfaces.of(interf));
+                           }
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      etsiunitinfo = EtsiUnitInfo.of(etsideviceid, unittype, interfaces);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
+                   break;
                 case "simpleonoff":
-                  // TODO state
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    boolean state = false;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case STATE2:
+                          state = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      simpleonoff = SimpleOnOff.of(state);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
                 case "hkr":
-                  // TODO tist
-                  // TODO tsoll
-                  // TODO komfort
-                  // TODO absenk
-                  // TODO batterylow
-                  // TODO battery
-                  // TODO windowopenactiv
-                  // TODO windowopenactiveendtime
-                  // TODO boostactive
-                  // TODO boostactiveendtime
-                  // TODO adaptiveHeatingActive
-                  // TODO adaptiveHeatingRunning
-                  // TODO holidayactive
-                  // TODO summeractive
-                  // TODO lock
-                  // TODO devicelock
-                  // TODO nextchange
-                  //   TODO endperiod
-                  //   TODO tchange
-                  // TODO errorcode
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    TemperatureCelsius tist = null;
+                    TemperatureCelsius tsoll = null;
+                    TemperatureCelsius absenk = null;
+                    TemperatureCelsius komfort = null;
+                    Boolean lock = null;
+                    Boolean devicelock = null;
+                    HkrErrorCodes errorcode = null;
+                    boolean windowsopenactive = false;
+                    UnixTimestamp windowopenactiveendtime = null;
+                    boolean boostactive = false;
+                    UnixTimestamp boostactiveendtime = null;
+                    boolean batterylow2 = false;
+                    Percent battery2 = null;
+                    HkrNextChange nextchange = null;
+                    boolean summeractive = false;
+                    boolean holidayactive = false;
+                    boolean adaptiveHeatingActive = false;
+                    boolean adaptiveHeatingRunning = false;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case "tist":
+                          final String ti = subChildNode.getTextContent();
+                          tist = ti.isBlank() ? null : TemperatureCelsius.of(ti);
+                          break;
+                        case "tsoll":
+                          final String ts = subChildNode.getTextContent();
+                          tsoll = ts.isBlank() ? null : TemperatureCelsius.of(ts);
+                          break;
+                        case "absenk":
+                          final String abs = subChildNode.getTextContent();
+                          absenk = TemperatureCelsius.of(abs.isBlank() ? "0" : abs);
+                          break;
+                        case "komfort":
+                          final String kom = subChildNode.getTextContent();
+                          komfort = TemperatureCelsius.of(kom.isBlank() ? "0" : kom);
+                          break;
+                        case "lock":
+                          lock = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case "devicelock":
+                          devicelock = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case "errorcode":
+                          errorcode = HkrErrorCodes.of(Integer.parseInt(subChildNode.getTextContent()));
+                          break;
+                        case "windowsopenactive":
+                          windowsopenactive = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case "windowopenactiveendtime":
+                          final String uts = subChildNode.getTextContent();
+                          if (!"-1".equals(uts))
+                           {
+                            windowopenactiveendtime = UnixTimestamp.of(uts);
+                           }
+                          break;
+                        case "boostactive":
+                          boostactive = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case "boostactiveendtime":
+                          boostactiveendtime = UnixTimestamp.of(subChildNode.getTextContent());
+                          break;
+                        case BATTERYLOW2:
+                          batterylow2 = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case BATTERY2:
+                          battery2 = Percent.of(subChildNode.getTextContent());
+                          break;
+                        case "nextchange":
+                          final NodeList subSubChildNodes = subChildNode.getChildNodes();
+                          UnixTimestamp endperiod = null;
+                          TemperatureCelsius tchange = null;
+                          if (subSubChildNodes.getLength() > 0)
+                           {
+                            boolean state = false;
+                            for (int subSubchildindex = 0; subSubchildindex < subSubChildNodes.getLength(); ++subSubchildindex)
+                             {
+                              final Node subSubChildNode = subSubChildNodes.item(subSubchildindex);
+                              switch (subSubChildNode.getNodeName())
+                               {
+                                case "endperiod":
+                                  endperiod = UnixTimestamp.of(subSubChildNode.getTextContent());
+                                  break;
+                                case "tchange":
+                                  tchange = TemperatureCelsius.of(subSubChildNode.getTextContent());
+                                  break;
+                                default:
+                                  // TODO unsupported
+                               }
+                             }
+                           }
+                          nextchange = HkrNextChange.of(endperiod, tchange);
+                          break;
+                        case "summeractive":
+                          summeractive = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case "holidayactive":
+                          holidayactive = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case "adaptiveHeatingActive":
+                          adaptiveHeatingActive = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case "adaptiveHeatingRunning":
+                          adaptiveHeatingRunning = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      hkr = HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow2, battery2, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
                 case "levelcontrol":
-                  // TODO level
-                  // TODO levelpercentage
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    Level level = null;
+                    Percent levelpercentage = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case LEVEL2:
+                          final String lev = subChildNode.getTextContent();
+                          level = Level.of(lev.isBlank() ? "0" : lev);
+                          break;
+                        case "levelpercentage":
+                          final String lp = subChildNode.getTextContent();
+                          levelpercentage = Percent.of(lp.isBlank() ? "0" : lp);
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      levelcontrol = LevelControl.of(level, levelpercentage);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
                 case "colorcontrol":
-                  // TODO attr: supported_modes
-                  // TODO attr: current_mode
-                  // TODO attr: fullcolorsupport
-                  // TODO attr: mapped
-                  // TODO hue
-                  // TODO saturation
-                  // TODO unmapped_hue
-                  // TODO unmapped_saturation
-                  // TODO temperature
+                  final NamedNodeMap attrs2 = childNode.getAttributes();
+                  EnumSet<ColorModes> supportedModes = EnumSet.noneOf(ColorModes.class);
+                  final Node smodesAttr = attrs2.getNamedItem("supported_modes");
+                  final int smodes = Integer.parseInt(smodesAttr.getNodeValue());
+                  for (ColorModes cmode : ColorModes.values())
+                   {
+                    if ((smodes & cmode.getAction()) != 0)
+                     {
+                      supportedModes.add(cmode);
+                     }
+                   }
+                  final Node cmodeAttr = attrs2.getNamedItem("current_mode");
+                  final String cmodeStr = cmodeAttr.getNodeValue();
+                  final ColorModes currentMode = cmodeStr.isBlank() ? null : ColorModes.of(cmodeStr);
+                  final Node fcsAttr = attrs2.getNamedItem("fullcolorsupport");
+                  final boolean fullcolorsupport = Boolean.parseBoolean(fcsAttr.getNodeValue());
+                  final Node mappedAttr = attrs2.getNamedItem("mapped");
+                  final boolean mapped = Boolean.parseBoolean(mappedAttr.getNodeValue());
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    Hue hue = null;
+                    Saturation saturation = null;
+                    Hue unmappedHue = null;
+                    Saturation unmappedSaturation = null;
+                    TemperatureKelvin temperatureK = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case "hue":
+                          final String hueStr = subChildNode.getTextContent();
+                          hue = hueStr.isBlank() ? null : Hue.of(hueStr);
+                          break;
+                        case SATURATION2:
+                          final String satStr = subChildNode.getTextContent();
+                          saturation = satStr.isBlank() ? null : Saturation.of(satStr);
+                          break;
+                        case "unmapped hue":
+                          unmappedHue = Hue.of(subChildNode.getTextContent());
+                          break;
+                        case "unmapped saturation":
+                          unmappedSaturation = Saturation.of(subChildNode.getTextContent());
+                          break;
+                        case TEMPERATURE:
+                          final String tempStr = subChildNode.getTextContent();
+                          temperatureK = tempStr.isBlank() ? null : TemperatureKelvin.of(tempStr);
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      colorcontrol = ColorControl.of(supportedModes, currentMode, fullcolorsupport, mapped, hue, saturation, unmappedHue, unmappedSaturation, temperatureK);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
-                case "humidity":
-                  // TODO rel_humidity
+                case HUMIDITY:
+                  humidity = Percent.of(childNode.getTextContent());
                   break;
                 case "blind":
-                  // TODO level
-                  // TODO mode
-                  // TODO endpositionsset
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    Level level = null;
+                    Boolean mode = null;
+                    Boolean endpositionsset = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case LEVEL2:
+                          level = Level.of(subChildNode.getTextContent()); // TODO unused
+                          break;
+                        case "mode":
+                          mode = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        case "endpositionsset":
+                          endpositionsset = Boolean.parseBoolean(subChildNode.getTextContent());
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      blind = Blind.of(mode, endpositionsset);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
                 case "groupinfo":
-                  // TODO masterdeviceid
-                  // TODO members
+                  subChildNodes = childNode.getChildNodes();
+                  if (subChildNodes.getLength() > 0)
+                   {
+                    long masterdeviceid = 0;
+                    List<Long> members = null;
+                    for (int subchildindex = 0; subchildindex < subChildNodes.getLength(); ++subchildindex)
+                     {
+                      final Node subChildNode = subChildNodes.item(subchildindex);
+                      switch (subChildNode.getNodeName())
+                       {
+                        case "masterdeviceid":
+                          masterdeviceid = Long.parseLong(subChildNode.getTextContent());
+                          break;
+                        case "members":
+                          members = Arrays.asList(subChildNode.getTextContent().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+                          break;
+                        default:
+                          // TODO unsupported
+                       }
+                     }
+                    try
+                     {
+                      groupinfo = GroupInfo.of(masterdeviceid, members);
+                     }
+                    catch (Exception e)
+                     {
+                      // ignore
+                     }
+                   }
                   break;
                 default:
                   // TODO unsupported
                }
              }
            }
-          // Device dev = Device.of(ain, id, null, devfwversion, manufacturer, productname, present, txbusy, "", false, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+          final Device device = Device.of(ain, id, functionbitmask, devfwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switch2, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelcontrol, colorcontrol, etsiunitinfo, alert, blind, groupinfo);
+          devices.add(device);
          }
        }
      }
-    return doc;
+    return devices;
    }
 
 
@@ -1353,12 +1926,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final TemperatureCelsius getTemperature(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "gettemperature"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "gettemperature"));
     final var temperature = getString(path, query);
-    return TemperatureCelsius.of((temperature.length() > 0) ? temperature.substring(0, temperature.length() - 1) : ""); //$NON-NLS-1$
+    return TemperatureCelsius.of((temperature.isEmpty()) ? "" : temperature.substring(0, temperature.length() - 1)); //$NON-NLS-1$
    }
 
 
@@ -1370,10 +1943,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws IndexOutOfBoundsException If temperature is out of range or undefined
    * @throws NumberFormatException If fbTemerature is of wrong format
    */
+  @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
   private static TemperatureCelsius temperatureConversion(final String fbTemperatureString)
    {
     assert fbTemperatureString != null;
-    final int fbTemperature = Integer.parseInt((fbTemperatureString.length() > 0) ? fbTemperatureString.substring(0, fbTemperatureString.length() - 1) : ""); //$NON-NLS-1$
+    final int fbTemperature = Integer.parseInt((fbTemperatureString.isEmpty()) ? "" : fbTemperatureString.substring(0, fbTemperatureString.length() - 1)); //$NON-NLS-1$
     long temperature;
     if (fbTemperature == 253)
      {
@@ -1404,10 +1978,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final TemperatureCelsius getHkrtSoll(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "gethkrtsoll"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "gethkrtsoll"));
     final var resultStr = getString(path, query);
     return temperatureConversion(resultStr);
    }
@@ -1426,10 +2000,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final TemperatureCelsius getHkrKomfort(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "gethkrkomfort"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "gethkrkomfort"));
     final var resultStr = getString(path, query);
     return temperatureConversion(resultStr);
    }
@@ -1448,10 +2022,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final TemperatureCelsius getHkrAbsenk(final AIN ain) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "gethkrabsenk"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "gethkrabsenk"));
     final var resultStr = getString(path, query);
     return temperatureConversion(resultStr);
    }
@@ -1468,10 +2042,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws NullPointerException If ain or temperature is null
    * @since 6.35
    */
+  @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
   public final void setHkrtSoll(final AIN ain, final TemperatureCelsius temperature) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    Objects.requireNonNull(temperature, "temperature"); //$NON-NLS-1$
+    Objects.requireNonNull(temperature, TEMPERATURE);
     long fbTemperature;
     if (temperature.longValue() == 0)
      {
@@ -1489,10 +2064,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       fbTemperature = (temperature.longValue() * 2) / 10;
      }
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "sethkrtsoll"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "sethkrtsoll"));
     query.addEntry(URIQueryParameter.of("param", String.valueOf(fbTemperature)));
     /* String result = */ getString(path, query);
    }
@@ -1547,17 +2122,18 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws SAXException SAX exception
    * @since 6.98
    */
+  @SuppressWarnings("PMD.NPathComplexity")
   public final Quintet<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "getbasicdevicestats"));
-    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getbasicdevicestats"));
+    query.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
     final Document doc = getDoc(path, query);
 
-    final Node temperatureNode = doc.getElementsByTagName("temperature").item(0);
+    final Node temperatureNode = doc.getElementsByTagName(TEMPERATURE).item(0);
     final SortedMap<UnixTimestamp, TemperatureCelsius> temperatures = new TreeMap<>();
     // AHASessionMini.<Temperature>parseStats(temperatureNode, temperatures);
     if (temperatureNode != null)
@@ -1569,12 +2145,13 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final Node child = childs.item(index);
           final NamedNodeMap attributes = child.getAttributes();
-          final Node countAttr = attributes.getNamedItem("count");
+          final Node countAttr = attributes.getNamedItem(COUNT2);
           final long count = Long.parseLong(countAttr.getNodeValue());
-          final Node gridAttr = attributes.getNamedItem("grid");
+          final Node gridAttr = attributes.getNamedItem(GRID2);
           final long grid = Long.parseLong(gridAttr.getNodeValue());
-          final Node datetimeAttr = attributes.getNamedItem("datetime");
-          final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
+          final Node datetimeAttr = attributes.getNamedItem("datatime");
+          final String datetimeStr = datetimeAttr.getNodeValue();
+          final long datetime = datetimeStr.isBlank() ? 0 : Long.parseLong(datetimeStr);
           final String contentStr = child.getTextContent();
           final String[] content = contentStr.split(",");
           for (int i = 0; i < content.length; ++i)
@@ -1586,7 +2163,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
        }
      }
 
-    final Node humidityNode = doc.getElementsByTagName("humidity").item(0);
+    final Node humidityNode = doc.getElementsByTagName(HUMIDITY).item(0);
     final SortedMap<UnixTimestamp, Percent> humidities = new TreeMap<>();
     // AHASessionMini.<Percent>parseStats(humidityNode, humidities);
     if (humidityNode != null)
@@ -1598,11 +2175,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final Node child = childs.item(index);
           final NamedNodeMap attributes = child.getAttributes();
-          final Node countAttr = attributes.getNamedItem("count");
+          final Node countAttr = attributes.getNamedItem(COUNT2);
           final long count = Long.parseLong(countAttr.getNodeValue());
-          final Node gridAttr = attributes.getNamedItem("grid");
+          final Node gridAttr = attributes.getNamedItem(GRID2);
           final long grid = Long.parseLong(gridAttr.getNodeValue());
-          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final Node datetimeAttr = attributes.getNamedItem("datatime");
           final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
           final String contentStr = child.getTextContent();
           final String[] content = contentStr.split(",");
@@ -1627,11 +2204,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final Node child = childs.item(index);
           final NamedNodeMap attributes = child.getAttributes();
-          final Node countAttr = attributes.getNamedItem("count");
+          final Node countAttr = attributes.getNamedItem(COUNT2);
           final long count = Long.parseLong(countAttr.getNodeValue());
-          final Node gridAttr = attributes.getNamedItem("grid");
+          final Node gridAttr = attributes.getNamedItem(GRID2);
           final long grid = Long.parseLong(gridAttr.getNodeValue());
-          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final Node datetimeAttr = attributes.getNamedItem(DATETIME2);
           final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
           final String contentStr = child.getTextContent();
           final String[] content = contentStr.split(",");
@@ -1656,11 +2233,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final Node child = childs.item(index);
           final NamedNodeMap attributes = child.getAttributes();
-          final Node countAttr = attributes.getNamedItem("count");
+          final Node countAttr = attributes.getNamedItem(COUNT2);
           final long count = Long.parseLong(countAttr.getNodeValue());
-          final Node gridAttr = attributes.getNamedItem("grid");
+          final Node gridAttr = attributes.getNamedItem(GRID2);
           final long grid = Long.parseLong(gridAttr.getNodeValue());
-          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final Node datetimeAttr = attributes.getNamedItem(DATETIME2);
           final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
           final String contentStr = child.getTextContent();
           final String[] content = contentStr.split(",");
@@ -1685,11 +2262,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final Node child = childs.item(index);
           final NamedNodeMap attributes = child.getAttributes();
-          final Node countAttr = attributes.getNamedItem("count");
+          final Node countAttr = attributes.getNamedItem(COUNT2);
           final long count = Long.parseLong(countAttr.getNodeValue());
-          final Node gridAttr = attributes.getNamedItem("grid");
+          final Node gridAttr = attributes.getNamedItem(GRID2);
           final long grid = Long.parseLong(gridAttr.getNodeValue());
-          final Node datetimeAttr = attributes.getNamedItem("datetime");
+          final Node datetimeAttr = attributes.getNamedItem(DATETIME2);
           final long datetime = Long.parseLong(datetimeAttr.getNodeValue());
           final String contentStr = child.getTextContent();
           final String[] content = contentStr.split(",");
@@ -1715,12 +2292,13 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws SAXException SAX exception
    * @since 6.98
    */
+  @SuppressWarnings("AvoidNestedBlocks")
   public final List<Template> getTemplateListInfos() throws IOException, SAXException
    {
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("switchcmd", "gettemplatelistinfos"));
-    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "gettemplatelistinfos"));
+    query.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
     final Document doc = getDoc(path, query);
     final List<Template> templates = new ArrayList<>();
 
@@ -1730,7 +2308,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       final Node templateNode = templateNodes.item(pos);
       final NamedNodeMap attrs = templateNode.getAttributes();
 
-      final long fbm = Long.parseLong(attrs.getNamedItem("functionbitmask").getNodeValue());
+      final long fbm = Long.parseLong(attrs.getNamedItem(FUNCTIONBITMASK2).getNodeValue());
       final List<Functions> functionsList = new ArrayList<>();
       for (int i = 0; i <= Functions.HUMIDITY_SENSOR.getAction(); ++i) // TODO Change HUMIDITY_SENSOR in case that Functions will be extended
        {
@@ -1741,8 +2319,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          }
        }
 
-      final AIN identifier = AIN.of(attrs.getNamedItem("identifier").getNodeValue());
-      final long id = Long.parseLong(attrs.getNamedItem("id").getNodeValue());
+      final AIN identifier = AIN.of(attrs.getNamedItem(IDENTIFIER).getNodeValue());
+      final long id = Long.parseLong(attrs.getNamedItem(ID2).getNodeValue());
       final EnumSet<Functions> functionbitmask = EnumSet.copyOf(functionsList);
       final boolean autocreate = "1".equals(attrs.getNamedItem("autocreate").getNodeValue());
       final long applymaskField = Long.parseLong(attrs.getNamedItem("applymask").getNodeValue());
@@ -1759,7 +2337,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
         final Node childNode = childs.item(pos);
         switch(childNode.getNodeName())
          {
-          case "name":
+          case NAME2:
             name = childNode.getTextContent();
             break;
           case "metadata":
@@ -1778,8 +2356,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
             final NodeList deviceNodes = childNode.getChildNodes();
             for (int devpos = 0; devpos < childs.getLength(); ++devpos)
              {
-              final Node deviceNode = deviceNodes.item(devpos);
-              devices.add(AIN.of(deviceNode.getAttributes().getNamedItem("identifier").getNodeValue()));
+              final Node deviceNode = deviceNodes.item(devpos); // device
+              devices.add(AIN.of(deviceNode.getAttributes().getNamedItem(IDENTIFIER).getNodeValue()));
              }
             break;
            }
@@ -1788,8 +2366,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
             final NodeList triggerNodes = childNode.getChildNodes();
             for (int trpos = 0; trpos < triggerNodes.getLength(); ++trpos)
              {
-              final Node triggerNode = triggerNodes.item(trpos);
-              triggers.add(AIN.of(triggerNode.getAttributes().getNamedItem("identifier").getNodeValue()));
+              final Node triggerNode = triggerNodes.item(trpos); // trigger
+              triggers.add(AIN.of(triggerNode.getAttributes().getNamedItem(IDENTIFIER).getNodeValue()));
              }
             break;
            }
@@ -1798,8 +2376,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
             final NodeList subtemplateNodes = childNode.getChildNodes();
             for (int stpos = 0; stpos < subtemplateNodes.getLength(); ++stpos)
              {
-              final Node subtemplateNode = subtemplateNodes.item(stpos);
-              subtemplates.add(AIN.of(subtemplateNode.getAttributes().getNamedItem("identifier").getNodeValue()));
+              final Node subtemplateNode = subtemplateNodes.item(stpos); // template
+              subtemplates.add(AIN.of(subtemplateNode.getAttributes().getNamedItem(IDENTIFIER).getNodeValue()));
              }
             break;
            }
@@ -1814,6 +2392,8 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
              }
             break;
            }
+          default:
+            // ignore
          }
        }
       final EnumSet<ApplyMask> applymask = EnumSet.copyOf(applyMaskList);
@@ -1833,10 +2413,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void applyTemplate(final AIN templateAIN) throws IOException
    {
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", templateAIN.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "applytemplate"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, templateAIN.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "applytemplate"));
     /* final String id = */ getString(path, query);
    }
 
@@ -1855,10 +2435,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setSimpleOnOff(final AIN ain, final HandleOnOff onoff) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setsimpleonoff"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setsimpleonoff"));
     query.addEntry(URIQueryParameter.of("onoff", String.valueOf(onoff.getAction())));
     /* final String result = */ getString(path, query);
    }
@@ -1878,11 +2458,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setLevel(final AIN ain, final Level level) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setlevel"));
-    query.addEntry(URIQueryParameter.of("level", level.stringValue()));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setlevel"));
+    query.addEntry(URIQueryParameter.of(LEVEL2, level.stringValue()));
     /* final String result = */ getString(path, query);
    }
 
@@ -1901,11 +2481,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setLevelPercentage(final AIN ain, final Percent level) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setlevelpercentage"));
-    query.addEntry(URIQueryParameter.of("level", level.stringValue()));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setlevelpercentage"));
+    query.addEntry(URIQueryParameter.of(LEVEL2, level.stringValue()));
     /* final String result = */ getString(path, query);
    }
 
@@ -1926,13 +2506,13 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setColor(final AIN ain, final Hue hue, final Saturation saturation, final DurationMS100 duration) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setcolor"));
-    query.addEntry(URIQueryParameter.of("hue", hue.stringValue()));
-    query.addEntry(URIQueryParameter.of("saturation", saturation.stringValue()));
-    query.addEntry(URIQueryParameter.of("duration", duration.stringValue()));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setcolor"));
+    query.addEntry(URIQueryParameter.of(HUE2, hue.stringValue()));
+    query.addEntry(URIQueryParameter.of(SATURATION2, saturation.stringValue()));
+    query.addEntry(URIQueryParameter.of(DURATION2, duration.stringValue()));
     /* final String result = */ getString(path, query);
    }
 
@@ -1952,12 +2532,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setColorTemperature(final AIN ain, final TemperatureKelvin temperatureKelvin, final DurationMS100 duration) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setcolortemperature"));
-    query.addEntry(URIQueryParameter.of("temperature", temperatureKelvin.stringValue()));
-    query.addEntry(URIQueryParameter.of("duration", duration.stringValue()));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setcolortemperature"));
+    query.addEntry(URIQueryParameter.of(TEMPERATURE, temperatureKelvin.stringValue()));
+    query.addEntry(URIQueryParameter.of(DURATION2, duration.stringValue()));
     /* final String result = */ getString(path, query);
    }
 
@@ -1974,10 +2554,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final Pair<List<Hs>, List<TemperatureKelvin>> getColorDefaults() throws IOException, SAXException
    {
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("switchcmd", "getcolordefaults"));
-    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getcolordefaults"));
+    query.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
     final Document doc = getDoc(path, query);
 
     final List<Hs> hsdefaults = new ArrayList<>();
@@ -1993,7 +2573,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       for (int childPos = 0; childPos < childs.getLength(); ++childPos)
        {
         final Node child = childs.item(childPos);
-        if ("name".equals(child.getNodeName()))
+        if (NAME2.equals(child.getNodeName()))
          {
           name = child.getTextContent();
           nameEnum = Integer.parseInt(child.getAttributes().getNamedItem("enum").getNodeValue());
@@ -2002,7 +2582,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final NamedNodeMap attributes = child.getAttributes();
           final int idx = Integer.parseInt(attributes.getNamedItem("sat_index").getNodeValue());
-          final Hue hue = Hue.of(attributes.getNamedItem("hue").getNodeValue());
+          final Hue hue = Hue.of(attributes.getNamedItem(HUE2).getNodeValue());
           final Saturation sat = Saturation.of(attributes.getNamedItem("sat").getNodeValue());
           final Value val = Value.of(attributes.getNamedItem("val").getNodeValue());
           final Color color = Color.of(idx, hue, sat, val);
@@ -2041,10 +2621,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final long setHkrBoost(final AIN ain, final EndTimestamp endtimestamp) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "sethkrboost"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "sethkrboost"));
     query.addEntry(URIQueryParameter.of("endtimestamp", endtimestamp.stringValue()));
     final var result = getString(path, query);
     return Long.parseLong(result.substring(0, result.length() - 1));
@@ -2066,10 +2646,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final long setHkrWindowOpen(final AIN ain, final EndTimestamp endtimestamp) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "sethkrwindowopen"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "sethkrwindowopen"));
     query.addEntry(URIQueryParameter.of("endtimestamp", endtimestamp.stringValue()));
     final var result = getString(path, query);
     return Long.parseLong(result.substring(0, result.length() - 1));
@@ -2090,10 +2670,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setBlind(final AIN ain, final HandleBlind target) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setblind"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setblind"));
     query.addEntry(URIQueryParameter.of("target", target.name().toLowerCase(Locale.getDefault())));
     /* final var result = */ getString(path, query);
    }
@@ -2102,11 +2682,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * Set name.
    *
-   * Change device or group name (UTF-8).
+   * Change device, group, template, scenario or routine name (UTF-8).
    * Requires smarthome and restricted app rights.
    *
    * @param ain AIN
-   * @param name Device or group name in UTF-8
+   * @param name Device, group, template, scenario or routine name in UTF-8
    * @throws IOException IO exception
    * @throws ClientProtocolException Client protocol exception
    * @throws IllegalArgumentException If name is &gt; 40 characters
@@ -2118,16 +2698,16 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setName(final AIN ain, final String name) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    Objects.requireNonNull(name, "name"); //$NON-NLS-1$
+    Objects.requireNonNull(name, NAME2);
     if (name.length() > 40)
      {
       throw new IllegalArgumentException("Name longer than 40 characters!"); //$NON-NLS-1$
      }
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setname"));
-    query.addEntry(URIQueryParameter.of("name", name));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setname"));
+    query.addEntry(URIQueryParameter.of(NAME2, name));
     /* final var result = */ getString(path, query);
    }
 
@@ -2145,9 +2725,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void startUleSubscription() throws IOException
    {
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("switchcmd", "startulesubscription"));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "startulesubscription"));
     /* final var result = */ getString(path, query);
    }
 
@@ -2164,12 +2744,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final SubscriptionState getSubscriptionState() throws IOException, SAXException
    {
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("switchcmd", "getsubscriptionstate"));
-    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getsubscriptionstate"));
+    query.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
     final Document doc = getDoc(path, query);
-    final SubscriptionCode code = SubscriptionCode.of(Integer.valueOf(doc.getElementsByTagName("state").item(0).getAttributes().getNamedItem("code").getNodeValue()));
+    final SubscriptionCode code = SubscriptionCode.of(Integer.valueOf(doc.getElementsByTagName(STATE2).item(0).getAttributes().getNamedItem("code").getNodeValue()));
     final String ain = doc.getElementsByTagName("latestain").item(0).getTextContent();
     final AIN latestain = ain.isBlank() ? null : AIN.of(ain);
     final SubscriptionState state = SubscriptionState.of(code, latestain);
@@ -2195,13 +2775,13 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setUnmappedColor(final AIN ain, final Hue hue, final Saturation saturation, final DurationMS100 duration) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setunmappedcolor"));
-    query.addEntry(URIQueryParameter.of("hue", hue.stringValue()));
-    query.addEntry(URIQueryParameter.of("saturation", saturation.stringValue()));
-    query.addEntry(URIQueryParameter.of("duration", duration.stringValue()));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setunmappedcolor"));
+    query.addEntry(URIQueryParameter.of(HUE2, hue.stringValue()));
+    query.addEntry(URIQueryParameter.of(SATURATION2, saturation.stringValue()));
+    query.addEntry(URIQueryParameter.of(DURATION2, duration.stringValue()));
     /* final var result = */ getString(path, query);
    }
 
@@ -2227,16 +2807,16 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     Objects.requireNonNull(metadata, "metadata");
-    if (metadata.getBytes(Charset.forName("UTF-8")).length > 200)
+    if (metadata.getBytes(StandardCharsets.UTF_8).length > 200)
      {
       throw new IllegalArgumentException("metatdata should not have more than 200 bytes"); //$NON-NLS-1$
      }
     // TODO Check ain for template
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "setmetadata"));
-    query.addEntry(URIQueryParameter.of("level", metadata));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "setmetadata"));
+    query.addEntry(URIQueryParameter.of(LEVEL2, metadata));
     /* final var result = */ getString(path, query);
    }
 
@@ -2253,17 +2833,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final List<Trigger> getTriggerListInfos() throws IOException, SAXException
    {
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("switchcmd", "gettriggerlistinfos"));
-    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "gettriggerlistinfos"));
+    query.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
     final Document doc = getDoc(path, query);
     final NodeList nodes = doc.getElementsByTagName("trigger");
     final List<Trigger> triggers = new ArrayList<>();
     for (int index = 0; index < nodes.getLength(); ++index)
      {
       final Node node = nodes.item(index);
-      final AIN ain = AIN.of(node.getAttributes().getNamedItem("identifier").getNodeValue());
+      final AIN ain = AIN.of(node.getAttributes().getNamedItem(IDENTIFIER).getNodeValue());
       final String name = node.getChildNodes().item(0).getTextContent();
       final boolean active = "1".equals(node.getAttributes().getNamedItem("active").getNodeValue());
       final Trigger trigger = Trigger.of(ain, name, active);
@@ -2286,10 +2866,10 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   public final void setTriggerActive(final AIN ain, final boolean active) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "settriggeractive"));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "settriggeractive"));
     query.addEntry(URIQueryParameter.of("active", (active ? "1" : "0")));
     /* final var result = */ getString(path, query);
    }
@@ -2315,9 +2895,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    */
   public final void addColorLevelTemplate(final String name, final Percent levelPercentage, final OptionalOf<Hue> hue, final OptionalOf<Saturation> saturation, final OptionalOf<TemperatureKelvin> temperatureKelvin, final boolean colorpreset, final AIN ... ains) throws IOException
    {
-    Objects.requireNonNull(name, "name");
-    Objects.requireNonNull(hue, "hue");
-    Objects.requireNonNull(saturation, "saturation");
+    Objects.requireNonNull(name, NAME2);
+    Objects.requireNonNull(hue, HUE2);
+    Objects.requireNonNull(saturation, SATURATION2);
     Objects.requireNonNull(temperatureKelvin, "temperatureKelvin");
     // TODO name regexp
     if (((hue.intValue() == -1) || (saturation.intValue() == -1)) && (temperatureKelvin.intValue() == -1))
@@ -2329,27 +2909,27 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       throw new IllegalArgumentException("More than 9 ains are not allowed"); //$NON-NLS-1$
      }
 
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("switchcmd", "addcolorleveltemplate"));
-    query.addEntry(URIQueryParameter.of("name", name));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "addcolorleveltemplate"));
+    query.addEntry(URIQueryParameter.of(NAME2, name));
     query.addEntry(URIQueryParameter.of("levelPercentage", levelPercentage.stringValue()));
     query.addEntry(URIQueryParameter.of("colorpreset", String.valueOf(colorpreset)));
 
     if ((hue.intValue() != -1) && (saturation.intValue() != -1))
      {
-      query.addEntry(URIQueryParameter.of("hue", hue.stringValue()));
-      query.addEntry(URIQueryParameter.of("saturation", saturation.stringValue()));
+      query.addEntry(URIQueryParameter.of(HUE2, hue.stringValue()));
+      query.addEntry(URIQueryParameter.of(SATURATION2, saturation.stringValue()));
      }
     else if (temperatureKelvin.intValue() != -1)
      {
-      query.addEntry(URIQueryParameter.of("temperature", temperatureKelvin.stringValue()));
+      query.addEntry(URIQueryParameter.of(TEMPERATURE, temperatureKelvin.stringValue()));
      }
-    int n = 1;
+    int num = 1;
     for (final AIN ain : ains)
      {
-      query.addEntry(URIQueryParameter.of("child_" + n, ain.stringValue()));
-      ++n;
+      query.addEntry(URIQueryParameter.of("child_" + num, ain.stringValue()));
+      ++num;
      }
     /* final var result = */ getString(path, query);
    }
@@ -2366,14 +2946,15 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws SAXException SAX exception
    * @since 7.24
    */
-  public final Document getDeviceInfos(final AIN ain) throws IOException, SAXException
+  @SuppressWarnings({"MethodLength", "PMD.NcssCount", "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.AvoidLiteralsInIfCondition"})
+  public final Device getDeviceInfos(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
-    final URIPath path = URIPath.of("/webservices/homeautoswitch.lua");
+    final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
-    query.addEntry(URIQueryParameter.of("ain", ain.stringValue()));
-    query.addEntry(URIQueryParameter.of("switchcmd", "getdeviceinfos"));
-    query.addEntry(URIQueryParameter.of("sid", sid.stringValue()));
+    query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
+    query.addEntry(URIQueryParameter.of(SWITCHCMD, "getdeviceinfos"));
+    query.addEntry(URIQueryParameter.of(SID2, sid.stringValue()));
     final Document doc = getDoc(path, query);
 
     NodeList hsNodes = doc.getElementsByTagName("device");
@@ -2381,18 +2962,18 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       hsNodes = doc.getElementsByTagName("group");
      }
-    final Device device = null;
+    Device device = null;
     if (hsNodes.getLength() == 1)
      {
       final Node hsNode = hsNodes.item(0);
       // Attributes
       final NamedNodeMap attributes = hsNode.getAttributes();
-      final AIN identifier = AIN.of(attributes.getNamedItem("identifier").getNodeValue());
-      final long id = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
-      final Version fwversion = Version.of(attributes.getNamedItem("fwversion").getNodeValue());
+      final AIN identifier = AIN.of(attributes.getNamedItem(IDENTIFIER).getNodeValue());
+      final long id = Long.parseLong(attributes.getNamedItem(ID2).getNodeValue());
+      final Version fwversion = Version.of(attributes.getNamedItem(FWVERSION2).getNodeValue());
       final String manufacturer = attributes.getNamedItem("manufacturer").getNodeValue();
       final String productname = attributes.getNamedItem("productname").getNodeValue();
-      final long fbm = Long.parseLong(attributes.getNamedItem("functionbitmask").getNodeValue());
+      final long fbm = Long.parseLong(attributes.getNamedItem(FUNCTIONBITMASK2).getNodeValue());
       final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
       for (int pos = 20; pos >= 0; --pos)
        {
@@ -2432,15 +3013,15 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           txbusy = "1".equals(child.getTextContent());
          }
-        else if ("name".equals(child.getNodeName()))
+        else if (NAME2.equals(child.getNodeName()))
          {
           name = child.getTextContent();
          }
-        else if ("batterylow".equals(child.getNodeName()))
+        else if (BATTERYLOW2.equals(child.getNodeName()))
          {
           batterylow = "1".equals(child.getTextContent());
          }
-        else if ("battery".equals(child.getNodeName()))
+        else if (BATTERY2.equals(child.getNodeName()))
          {
           battery = Percent.of(child.getTextContent());
          }
@@ -2454,7 +3035,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
-            if ("state".equals(subchild.getNodeName()))
+            if (STATE2.equals(subchild.getNodeName()))
              {
               state = Boolean.valueOf("1".equals(subchild.getTextContent()));
              }
@@ -2497,7 +3078,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
            }
           powermeter = Powermeter.of(voltage, power, energy);
          }
-        else if ("temperature".equals(child.getNodeName()))
+        else if (TEMPERATURE.equals(child.getNodeName()))
          {
           final NodeList subchilds = child.getChildNodes();
           TemperatureCelsius celsius = null;
@@ -2507,11 +3088,11 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
             final Node subchild = subchilds.item(subchildPos);
             if ("celsius".equals(subchild.getNodeName()))
              {
-              celsius = TemperatureCelsius.of(child.getTextContent());
+              celsius = TemperatureCelsius.of(subchild.getTextContent());
              }
             else if ("offset".equals(subchild.getNodeName()))
              {
-              offset = TemperatureCelsius.of(child.getTextContent());
+              offset = TemperatureCelsius.of(subchild.getTextContent());
              }
            }
           temperature = Temperature.of(celsius, offset);
@@ -2520,17 +3101,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final NodeList subchilds = child.getChildNodes();
           AlertState state = null;
-          UnixTimestamp lastalertchgtimestamp =  null;
+          UnixTimestamp lastalertchgtimestamp = null;
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
-            if ("state".equals(subchild.getNodeName()))
+            if (STATE2.equals(subchild.getNodeName()))
              {
-              state = AlertState.of(Integer.parseInt(child.getTextContent()));
+              state = AlertState.of(Integer.parseInt(subchild.getTextContent()));
              }
             else if ("lastalertchgtimestamp".equals(subchild.getNodeName()))
              {
-              lastalertchgtimestamp = UnixTimestamp.of(child.getTextContent());
+              lastalertchgtimestamp = UnixTimestamp.of(subchild.getTextContent());
              }
            }
           alert = Alert.of(state, lastalertchgtimestamp);
@@ -2540,12 +3121,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           AIN buttonIdentifier = null;
           long buttonId = 0;
           final NamedNodeMap attrs = child.getAttributes();
-          Node attr = attributes.getNamedItem("identifier");
+          Node attr = attributes.getNamedItem(IDENTIFIER);
           if (attr != null)
            {
             buttonIdentifier = AIN.of(attr.getNodeValue());
            }
-          attr = attributes.getNamedItem("id");
+          attr = attributes.getNamedItem(ID2);
           if (attr != null)
            {
             buttonId = Long.parseLong(attr.getNodeValue());
@@ -2561,7 +3142,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
              {
               lastpressedtimestamp = UnixTimestamp.of(subchild.getTextContent());
              }
-            else if ("name".equals(subchild.getNodeName()))
+            else if (NAME2.equals(subchild.getNodeName()))
              {
               buttonName = subchild.getTextContent();
              }
@@ -2569,7 +3150,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           final Button button = Button.of(buttonIdentifier, buttonId, buttonName, lastpressedtimestamp);
           buttons.add(button);
          }
-        else if ("humidity".equals(child.getNodeName()))
+        else if (HUMIDITY.equals(child.getNodeName()))
          {
           final NodeList subchilds = child.getChildNodes();
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
@@ -2585,22 +3166,22 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final NodeList subchilds = child.getChildNodes();
           long etsideviceid = 0;
-          HANFUNUnits unittype =  null;
+          HANFUNUnits unittype = null;
           final EnumSet<HANFUNInterfaces> interfaces = EnumSet.noneOf(HANFUNInterfaces.class);
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
             if ("etsideviceid".equals(subchild.getNodeName()))
              {
-              etsideviceid = Long.parseLong(child.getTextContent());
+              etsideviceid = Long.parseLong(subchild.getTextContent());
              }
             else if ("unittype".equals(subchild.getNodeName()))
              {
-              unittype = HANFUNUnits.of(Integer.parseInt(child.getTextContent()));
+              unittype = HANFUNUnits.of(Integer.parseInt(subchild.getTextContent()));
              }
             else if ("interfaces".equals(subchild.getNodeName()))
              {
-              final String[] inums = child.getTextContent().split(",");
+              final String[] inums = subchild.getTextContent().split(",");
               for (final String inum : inums)
                {
                 interfaces.add(HANFUNInterfaces.of(Integer.parseInt(inum)));
@@ -2615,7 +3196,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
-            if ("state".equals(subchild.getNodeName()))
+            if (STATE2.equals(subchild.getNodeName()))
              {
               simpleonoff = SimpleOnOff.of("1".equals(subchild.getTextContent()));
              }
@@ -2625,17 +3206,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final NodeList subchilds = child.getChildNodes();
           Level level = null;
-          Percent percent =  null;
+          Percent percent = null;
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
-            if ("level".equals(subchild.getNodeName()))
+            if (LEVEL2.equals(subchild.getNodeName()))
              {
               level = Level.of(child.getTextContent());
              }
             else if ("levelpercentage".equals(subchild.getNodeName()))
              {
-              percent = Percent.of(child.getTextContent());
+              percent = Percent.of(subchild.getTextContent());
              }
            }
           levelControl = LevelControl.of(level, percent);
@@ -2644,8 +3225,6 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final EnumSet<ColorModes> supportedModes = EnumSet.noneOf(ColorModes.class);
           final NamedNodeMap attrs = child.getAttributes();
-          // supported_modes="5"   (bitmask)
-          // supportedModes = attributes.getNamedItem("supported_modes").getNodeValue();
           final int modes = Integer.parseInt(attributes.getNamedItem("supported_modes").getNodeValue());
           if ((modes & 1) != 0)
            {
@@ -2668,25 +3247,25 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
-            if ("hue".equals(subchild.getNodeName()))
+            if (HUE2.equals(subchild.getNodeName()))
              {
-              hue = Hue.of(child.getTextContent());
+              hue = Hue.of(subchild.getTextContent());
              }
-            else if ("saturation".equals(subchild.getNodeName()))
+            else if (SATURATION2.equals(subchild.getNodeName()))
              {
-              saturation = Saturation.of(child.getTextContent());
+              saturation = Saturation.of(subchild.getTextContent());
              }
             else if ("unmapped_hue".equals(subchild.getNodeName()))
              {
-              unmappedHue = Hue.of(child.getTextContent());
+              unmappedHue = Hue.of(subchild.getTextContent());
              }
             else if ("unmapped_saturation".equals(subchild.getNodeName()))
              {
-              unmappedSaturation = Saturation.of(child.getTextContent());
+              unmappedSaturation = Saturation.of(subchild.getTextContent());
              }
-            else if ("temperature".equals(subchild.getNodeName()))
+            else if (TEMPERATURE.equals(subchild.getNodeName()))
              {
-              ccTemperature = TemperatureKelvin.of(child.getTextContent());
+              ccTemperature = TemperatureKelvin.of(subchild.getTextContent());
              }
            }
           colorControl = ColorControl.of(supportedModes, currentMode, fullcolorsupport, mapped, hue, saturation, unmappedHue, unmappedSaturation, ccTemperature);
@@ -2695,98 +3274,146 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final NodeList subchilds = child.getChildNodes();
           Boolean mode = null;
-          Boolean endpositionsset =  null;
+          Boolean endpositionsset = null;
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
             if ("mode".equals(subchild.getNodeName()))
              {
-              mode = Boolean.valueOf("auto".equals(child.getTextContent()));
+              mode = Boolean.valueOf("auto".equals(subchild.getTextContent()));
              }
             else if ("endpositionsset".equals(subchild.getNodeName()))
              {
-              endpositionsset =  Boolean.valueOf("1".equals(child.getTextContent()));
+              endpositionsset = Boolean.valueOf("1".equals(subchild.getTextContent()));
              }
            }
           blind = Blind.of(mode, endpositionsset);
          }
         else if ("hkr".equals(child.getNodeName()))
          {
-          final TemperatureCelsius tist = null;
-          final TemperatureCelsius tsoll = null;
-          final TemperatureCelsius absenk = null;
-          final TemperatureCelsius komfort = null;
-          final Boolean lock = null;
-          final Boolean devicelock = null;
-          final HkrErrorCodes errorcode = null;
-          final boolean windowsopenactive = false;
-          final UnixTimestamp windowopenactiveendtime = null;
-          final boolean boostactive = false;
-          final UnixTimestamp boostactiveendtime = null;
-          final boolean hkrBatterylow = false;
-          final Percent hkrBattery = null;
-          final HkrNextChange nextchange = null;
-          final boolean summeractive = false;
-          final boolean holidayactive = false;
-          final boolean adaptiveHeatingActive = false;
-          final boolean adaptiveHeatingRunning = false;
+          TemperatureCelsius tist = null;
+          TemperatureCelsius tsoll = null;
+          TemperatureCelsius absenk = null;
+          TemperatureCelsius komfort = null;
+          Boolean lock = null;
+          Boolean devicelock = null;
+          HkrErrorCodes errorcode = null;
+          boolean windowsopenactive = false;
+          UnixTimestamp windowopenactiveendtime = null;
+          boolean boostactive = false;
+          UnixTimestamp boostactiveendtime = null;
+          boolean hkrBatterylow = false;
+          Percent hkrBattery = null;
+          HkrNextChange nextchange = null;
+          boolean summeractive = false;
+          boolean holidayactive = false;
+          boolean adaptiveHeatingActive = false;
+          boolean adaptiveHeatingRunning = false;
           final NodeList subchilds = child.getChildNodes();
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
             if ("tist".equals(subchild.getNodeName()))
              {
+              final String ti = subchild.getTextContent();
+              tist = ti.isBlank() ? null : TemperatureCelsius.of(ti);
              }
             else if ("tsoll".equals(subchild.getNodeName()))
              {
+              final String ts = subchild.getTextContent();
+              tsoll = ts.isBlank() ? null : TemperatureCelsius.of(ts);
              }
             else if ("absenk".equals(subchild.getNodeName()))
              {
+              final String abs = subchild.getTextContent();
+              absenk = TemperatureCelsius.of(abs.isBlank() ? "0" : abs);
              }
             else if ("komfort".equals(subchild.getNodeName()))
              {
+              final String kom = subchild.getTextContent();
+              komfort = TemperatureCelsius.of(kom.isBlank() ? "0" : kom);
              }
             else if ("lock".equals(subchild.getNodeName()))
              {
+              lock = Boolean.parseBoolean(subchild.getTextContent());
              }
             else if ("devicelock".equals(subchild.getNodeName()))
              {
+              devicelock = Boolean.parseBoolean(subchild.getTextContent());
              }
             else if ("errorcode".equals(subchild.getNodeName()))
              {
+              errorcode = HkrErrorCodes.of(Integer.parseInt(subchild.getTextContent()));
              }
             else if ("windowopenactiv".equals(subchild.getNodeName()))
              {
+              windowsopenactive = Boolean.parseBoolean(subchild.getTextContent());
              }
             else if ("windowopenactiveendtime".equals(subchild.getNodeName()))
              {
+              final String uts = subchild.getTextContent();
+              if (!"-1".equals(uts))
+               {
+                windowopenactiveendtime = UnixTimestamp.of(uts);
+               }
              }
             else if ("boostactive".equals(subchild.getNodeName()))
              {
+              boostactive = Boolean.parseBoolean(subchild.getTextContent());
              }
             else if ("boostactiveendtime".equals(subchild.getNodeName()))
              {
+              boostactiveendtime = UnixTimestamp.of(subchild.getTextContent());
              }
-            else if ("batterylow".equals(subchild.getNodeName()))
+            else if (BATTERYLOW2.equals(subchild.getNodeName()))
              {
+              hkrBatterylow = Boolean.parseBoolean(subchild.getTextContent());
              }
-            else if ("battery".equals(subchild.getNodeName()))
+            else if (BATTERY2.equals(subchild.getNodeName()))
              {
+              hkrBattery = Percent.of(subchild.getTextContent());
              }
             else if ("nextchange".equals(subchild.getNodeName()))
              {
+              final NodeList subSubChildNodes = subchild.getChildNodes();
+              UnixTimestamp endperiod = null;
+              TemperatureCelsius tchange = null;
+              if (subSubChildNodes.getLength() > 0)
+               {
+                boolean state = false;
+                for (int subSubchildindex = 0; subSubchildindex < subSubChildNodes.getLength(); ++subSubchildindex)
+                 {
+                  final Node subSubChildNode = subSubChildNodes.item(subSubchildindex);
+                  switch (subSubChildNode.getNodeName())
+                   {
+                    case "endperiod":
+                      endperiod = UnixTimestamp.of(subSubChildNode.getTextContent());
+                      break;
+                    case "tchange":
+                      tchange = TemperatureCelsius.of(subSubChildNode.getTextContent());
+                      break;
+                    default:
+                      // TODO unsupported
+                   }
+                 }
+               }
+              nextchange = HkrNextChange.of(endperiod, tchange);
              }
             else if ("summeractive".equals(subchild.getNodeName()))
              {
+              summeractive = Boolean.parseBoolean(subchild.getTextContent());
              }
             else if ("holidayactive".equals(subchild.getNodeName()))
              {
+              holidayactive = Boolean.parseBoolean(subchild.getTextContent());
              }
             else if ("adaptiveHeatingActive".equals(subchild.getNodeName()))
              {
+              adaptiveHeatingActive = Boolean.parseBoolean(subchild.getTextContent());
              }
             else if ("adaptiveHeatingRunning".equals(subchild.getNodeName()))
              {
+              adaptiveHeatingRunning = Boolean.parseBoolean(subchild.getTextContent());
              }
            }
           hkr = HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, hkrBatterylow, hkrBattery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
@@ -2795,17 +3422,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final NodeList subchilds = child.getChildNodes();
           long masterdeviceid = 0;
-          final List<Long> members =  new ArrayList<>();
+          final List<Long> members = new ArrayList<>();
           for (int subchildPos = 0; subchildPos < subchilds.getLength(); ++subchildPos)
            {
             final Node subchild = subchilds.item(subchildPos);
             if ("masterdeviceid".equals(subchild.getNodeName()))
              {
-              masterdeviceid = Long.parseLong(child.getTextContent());
+              masterdeviceid = Long.parseLong(subchild.getTextContent());
              }
             else if ("members".equals(subchild.getNodeName()))
              {
-              final String[] memberList = child.getTextContent().split(",");
+              final String[] memberList = subchild.getTextContent().split(",");
               for (final String member : memberList)
                {
                 members.add(Long.parseLong(member));
@@ -2815,9 +3442,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           groupinfo = GroupInfo.of(masterdeviceid, members);
          }
        }
-      // device = Device.of(identifier, id, functionbitmask, fwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switchState, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelControl, colorControl, etsiunitinfo, alert, blind, groupinfo);
+      device = Device.of(identifier, id, functionbitmask, fwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switchState, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelControl, colorControl, etsiunitinfo, alert, blind, groupinfo);
      }
-    return doc;
+    return device;
    }
 
 
@@ -2899,61 +3526,16 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
  }
 
 /* TODO
-1.36: HANFUN IF OPEN_CLOSE, OPEN_CLOSE_CONFIG
-      Vorlagen Applymask erweitert(level, color, dialhelper)
-      <humidity> für FD440, getbasicdevicestats mit <humidity> Statistik
-      Switchcmd getdeviceinfos hinzugefügt
-      Info zu Berechtigungen hinzugefügt
-
-1.39: Vorlage mit autocreate-Flag und metadata-String,
-      <sub_templates>-Info für zugeordnete Unter-Vorlagen
-      Statistik mit datatime-Unix-Timestamp Attribute
-
-1.42: Vorlage applymask aktualisiert(timer_control, switch_master, http_request, tam_control, guest_wifi, main_wifi, sub_templates, sun_simulation)
-
 1.43: Vorlagen Beispiel mit sub_templates erweitert
-
-1.44: Neuer Vorlagen Typ: custom_notification
-
-1.45: Colorcontrol: fullcolorsupport, mapped, unmapped_hue und unmapped_saturation hinzugefügt
-      ausserdem: rel_humidity, blind mit mode und endpositionsset
-
-1.46: windowopenactiveendtime bei externem Fenstersensor: -1
-
-1.47: adaptiveHeatingActive und adaptiveHeatingActive Info
-
-1.49: Metadata-Info erweitert
-
-1.51: windowopenactiveendtime Zusatzinfo
-      Vorlagen und Szenarien Info
-
-1.52: Setname cmd unterstützt Vorlagen und Szenarien
-
-1.53: HKR <tist> und <tsoll> können leer sein, wenn die Temperatur unbekannt ist
-
-1.54: setname cmd unterstützt nicht vordefinierte Szenarien und Routinen
-      Info zu <windowopenactiv> und <windowopenactiveendtime> erweitert
-
-1.55: Hinweis auf proprietäre 0xf7.. HAN-FUN Interfaces, Name mit Länge 40 Bytes
-
-1.59: functionbitmask für AVM bits konkretisiert
-
-1.60: level und levelpercentage für Rollo konkretisiert
-
 */
 /*
-https://fritz.box/webservices/homeautoswitch.lua?ain=<ain>&switchcmd=<cmd>&sid=<sid>
-
 Der HTTPS-Port ist auf der FRITZ!Box konfigurierbar. Er kann über den X_AVM-DE_RemoteAccess TR-064-Service und der
 dazugehörigen GetInfo-Action mit der "NewPort"-Variable abgefragt werden. Siehe TR064-Specifikation in [1].
-
 
 Die AVM Home Automation Session benötigt immer die Smart-Home-Berechtigung. Ausserdem wird für einige
 Kommandos die "Eingeschränkte FRITZ!Box Einstellungen für Apps"-Berechtigung benötigt.
 Zu Berechtigungen siehe "Actions and User Rights" in der TR064-Specifikation in [1].
 
-Die HTTP Response enthält den zum Kommando zugehörigen Status als Text. Der Content-Type ist "text/plain;
-charset=utf-8".
-Ausnahme bei getdevicelistinfos, getsubscriptionstate und getbasicdevicestats: Die HTTP Response enthält den Inhalt als
-XML. Der Content-Type ist "text/xml; charset=utf-8".
+Die HTTP Response enthält den zum Kommando zugehörigen Status als Text. Der Content-Type ist "text/plain; charset=utf-8".
+Ausnahme bei getdevicelistinfos, getsubscriptionstate und getbasicdevicestats: Die HTTP Response enthält den Inhalt als XML. Der Content-Type ist "text/xml; charset=utf-8".
 */

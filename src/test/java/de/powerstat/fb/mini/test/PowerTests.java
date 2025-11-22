@@ -6,7 +6,6 @@ package de.powerstat.fb.mini.test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -39,27 +38,10 @@ final class PowerTests
    * @param power Power in mW
    */
   @ParameterizedTest
-  @ValueSource(longs = {0, 1, 10150})
+  @ValueSource(longs = {0, 1, 10150, -1})
   /* default */ void testIsPowerValue(final long power)
    {
     assertEquals(power, Power.of(power).longValue(), "Not a power value!"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Is not a power value.
-   *
-   * @param power Power in mW
-   */
-  @ParameterizedTest
-  @ValueSource(longs = {-1})
-  /* default */ void testIsNotAPowerValue(final long power)
-   {
-    assertThrows(IndexOutOfBoundsException.class, () ->
-     {
-      /* final Power power = */ Power.of(power);
-     }, "Index out of bounds exception expected" //$NON-NLS-1$
-    );
    }
 
 
@@ -77,7 +59,7 @@ final class PowerTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Power.class).verify();
    }

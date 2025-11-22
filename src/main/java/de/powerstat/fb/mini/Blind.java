@@ -13,12 +13,12 @@ import de.powerstat.validation.interfaces.IValueObject;
 public final class Blind implements Comparable<Blind>, IValueObject
  {
   /**
-   * false: manuel; true: auto; null: unknown or error.
+   * Mode; false: manuel; true: auto; null: unknown or error.
    */
   private final Boolean mode;
 
   /**
-   * false: not configured; true: configured; null: unknown
+   * End positions set; false: not configured; true: configured; null: unknown.
    */
   private final Boolean endpositionsset;
 
@@ -115,7 +115,7 @@ public final class Blind implements Comparable<Blind>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
+    final var builder = new StringBuilder(30);
     builder.append("Blind[mode=").append(mode).append(", endpositionsset=").append(endpositionsset).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

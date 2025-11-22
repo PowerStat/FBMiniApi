@@ -77,7 +77,7 @@ final class SaturationTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Saturation.class).verify();
    }

@@ -77,7 +77,7 @@ final class DurationMS100Tests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(DurationMS100.class).verify();
    }

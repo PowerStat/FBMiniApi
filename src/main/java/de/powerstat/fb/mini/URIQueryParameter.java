@@ -87,7 +87,7 @@ public final class URIQueryParameter implements Comparable<URIQueryParameter>, I
   @Override
   public String stringValue()
    {
-    return this.key + ((this.value == null) ? "" : ("=" + this.value));
+    return key + ((value == null) ? "" : ("=" + value));
    }
 
 
@@ -100,7 +100,7 @@ public final class URIQueryParameter implements Comparable<URIQueryParameter>, I
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.key, this.value);
+    return Objects.hash(key, value);
    }
 
 
@@ -136,10 +136,10 @@ public final class URIQueryParameter implements Comparable<URIQueryParameter>, I
      {
       return false;
      }
-    boolean result = this.key.equals(other.key);
+    boolean result = key.equals(other.key);
     if (result)
      {
-      result = equalField(this.value, other.value);
+      result = equalField(value, other.value);
      }
     return result;
    }
@@ -159,11 +159,11 @@ public final class URIQueryParameter implements Comparable<URIQueryParameter>, I
   public String toString()
    {
     // TODO uri decoding ?
-    final var builder = new StringBuilder();
-    builder.append("URIQueryParameter[key=").append(this.key);
-    if (this.value != null)
+    final var builder = new StringBuilder(31);
+    builder.append("URIQueryParameter[key=").append(key);
+    if (value != null)
      {
-      builder.append(", value=").append(this.value);
+      builder.append(", value=").append(value);
      }
     builder.append(']');
     return builder.toString();
@@ -195,10 +195,10 @@ public final class URIQueryParameter implements Comparable<URIQueryParameter>, I
   public int compareTo(final URIQueryParameter obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.key.compareTo(obj.key);
+    int result = key.compareTo(obj.key);
     if (result == 0)
      {
-      result = compareField(this.value, obj.value);
+      result = compareField(value, obj.value);
      }
     return result;
    }

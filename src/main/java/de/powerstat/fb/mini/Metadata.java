@@ -43,11 +43,11 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
      {
       throw new IndexOutOfBoundsException("icon < -1");
      }
-    if ((icon == -1) && ScenarioType.UNDEFINED.equals(type))
+    if ((icon == -1) && (ScenarioType.UNDEFINED == type))
      {
       throw new IllegalArgumentException("One of icon or type must be set");
      }
-    if ((icon >= -0) && !ScenarioType.UNDEFINED.equals(type))
+    if ((icon >= -0) && (ScenarioType.UNDEFINED != type))
      {
       throw new IllegalArgumentException("Only one of icon or type must be set");
      }
@@ -120,7 +120,7 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
     boolean result = (icon == other.icon);
     if (result) // && (icon == -1)
      {
-      result = type.equals(other.type);
+      result = (type == other.type);
      }
     return result;
    }
@@ -139,7 +139,7 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
+    final var builder = new StringBuilder(22);
     builder.append("Metadata[icon=").append(icon).append(", type=").append(type).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

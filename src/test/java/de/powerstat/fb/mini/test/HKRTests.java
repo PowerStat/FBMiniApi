@@ -31,6 +31,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class HKRTests
  {
   /**
+   * Null pointer exception expected.
+   */
+  private static final String NULL_POINTER_EXCEPTION_EXPECTED = "Null pointer exception expected"; //$NON-NLS-1$
+
+
+  /**
    * Default constructor.
    */
   /* default */ HKRTests()
@@ -95,7 +101,7 @@ final class HKRTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final HKR cleanHkr = */ HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -127,7 +133,7 @@ final class HKRTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final HKR cleanHkr = */ HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -159,7 +165,7 @@ final class HKRTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final HKR cleanHkr = */ HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -191,7 +197,7 @@ final class HKRTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final HKR cleanHkr = */ HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -223,7 +229,7 @@ final class HKRTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final HKR cleanHkr = */ HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -261,7 +267,7 @@ final class HKRTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(HKR.class).withNonnullFields("absenk", "komfort", "errorcode", "battery", "nextchange").verify();
    }

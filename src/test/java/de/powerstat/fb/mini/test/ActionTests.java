@@ -26,6 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class ActionTests
  {
   /**
+   * Get persistent data.
+   */
+  private static final String GET_PERSISTENT_DATA = "GetPersistentData";
+
+
+  /**
    * Default constructor.
    */
   /* default */ ActionTests()
@@ -40,7 +46,7 @@ final class ActionTests
    * @param action Action
    */
   @ParameterizedTest
-  @ValueSource(strings = {"GetPersistentData", "abcdef", "abcdefghijklmnopqrstuvwxyzabcdef"})
+  @ValueSource(strings = {GET_PERSISTENT_DATA, "abcdef", "abcdefghijklmnopqrstuvwxyzabcdef"})
   /* default */ void testActionCorrect(final String action)
    {
     final Action cleanAction = Action.of(action);
@@ -88,8 +94,8 @@ final class ActionTests
   @Test
   /* default */ void testStringValue()
    {
-    final Action action = Action.of("GetPersistentData");
-    assertEquals("GetPersistentData", action.stringValue(), "Action not as expected"); //$NON-NLS-1$
+    final Action action = Action.of(GET_PERSISTENT_DATA);
+    assertEquals(GET_PERSISTENT_DATA, action.stringValue(), "Action not as expected"); //$NON-NLS-1$
    }
 
 
@@ -97,7 +103,7 @@ final class ActionTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Action.class).withNonnullFields("action").verify();
    }
@@ -109,7 +115,7 @@ final class ActionTests
   @Test
   /* default */ void testToString()
    {
-    final Action action = Action.of("GetPersistentData");
+    final Action action = Action.of(GET_PERSISTENT_DATA);
     assertEquals("Action[action=GetPersistentData]", action.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -121,11 +127,11 @@ final class ActionTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final Action action1 = Action.of("GetPersistentData");
-    final Action action2 = Action.of("GetPersistentData");
+    final Action action1 = Action.of(GET_PERSISTENT_DATA);
+    final Action action2 = Action.of(GET_PERSISTENT_DATA);
     final Action action3 = Action.of("OtherPersistentData"); //$NON-NLS-1$
     final Action action4 = Action.of("PersistentData"); //$NON-NLS-1$
-    final Action action5 = Action.of("GetPersistentData");
+    final Action action5 = Action.of(GET_PERSISTENT_DATA);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(action1.compareTo(action2) == -action2.compareTo(action1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(action1.compareTo(action3) == -action3.compareTo(action1), "reflexive2"), //$NON-NLS-1$

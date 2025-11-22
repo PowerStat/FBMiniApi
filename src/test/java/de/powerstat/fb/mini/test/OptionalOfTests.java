@@ -19,8 +19,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * OptionalOf tests.
  */
 @SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO", "EC_NULL_ARG", "SPP_USE_ZERO_WITH_COMPARATOR", "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"})
-public class OptionalOfTests
+final class OptionalOfTests
  {
+  /**
+   * toString not equal.
+   */
+  private static final String TO_STRING_NOT_EQUAL = "toString not equal";
+
+
   /**
    * Default constructor.
    */
@@ -37,7 +43,7 @@ public class OptionalOfTests
   /* default */ void testToString1()
    {
     final OptionalOf<Level> level = new OptionalOf<>(Level.of(1));
-    assertEquals("OptionalOf<>[value=Level[level=1]]", level.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("OptionalOf<>[value=Level[level=1]]", level.toString(), TO_STRING_NOT_EQUAL); //$NON-NLS-1$
    }
 
 
@@ -47,7 +53,7 @@ public class OptionalOfTests
   @Test
   /* default */ void testStringValue1()
    {
-    assertEquals("50", new OptionalOf<>(Level.of(50)).stringValue(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("50", new OptionalOf<>(Level.of(50)).stringValue(), TO_STRING_NOT_EQUAL); //$NON-NLS-1$
    }
 
 
@@ -75,7 +81,7 @@ public class OptionalOfTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(OptionalOf.class).withNonnullFields("value").verify();
    }
@@ -88,7 +94,7 @@ public class OptionalOfTests
   /* default */ void testToString()
    {
     final OptionalOf<Level> level = new OptionalOf<>(Level.of(1));
-    assertEquals("OptionalOf<>[value=Level[level=1]]", level.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("OptionalOf<>[value=Level[level=1]]", level.toString(), TO_STRING_NOT_EQUAL); //$NON-NLS-1$
    }
 
  }

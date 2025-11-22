@@ -58,7 +58,7 @@ public final class Button implements Comparable<Button>, IValueObject
     this.identifier = identifier;
     this.id = id;
     this.name = name;
-    this.lastpressedtimestamp = lastpressed;
+    lastpressedtimestamp = lastpressed;
    }
 
 
@@ -86,7 +86,7 @@ public final class Button implements Comparable<Button>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.name;
+    return name;
    }
 
 
@@ -97,7 +97,7 @@ public final class Button implements Comparable<Button>, IValueObject
    */
   public AIN getIdentifier()
    {
-    return this.identifier;
+    return identifier;
    }
 
 
@@ -108,7 +108,7 @@ public final class Button implements Comparable<Button>, IValueObject
    */
   public long getId()
    {
-    return this.id;
+    return id;
    }
 
 
@@ -119,7 +119,7 @@ public final class Button implements Comparable<Button>, IValueObject
    */
   public String getName()
    {
-    return this.name;
+    return name;
    }
 
 
@@ -130,7 +130,7 @@ public final class Button implements Comparable<Button>, IValueObject
    */
   public UnixTimestamp getLastPressedTimestamp()
    {
-    return this.lastpressedtimestamp;
+    return lastpressedtimestamp;
    }
 
 
@@ -143,7 +143,7 @@ public final class Button implements Comparable<Button>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.identifier, this.id, this.name, this.lastpressedtimestamp);
+    return Objects.hash(identifier, id, name, lastpressedtimestamp);
    }
 
 
@@ -165,16 +165,16 @@ public final class Button implements Comparable<Button>, IValueObject
      {
       return false;
      }
-    boolean result = this.identifier.equals(other.identifier);
+    boolean result = identifier.equals(other.identifier);
     if (result)
      {
-      result = (this.id == other.id);
+      result = (id == other.id);
       if (result)
        {
-        result = this.name.equals(other.name);
+        result = name.equals(other.name);
         if (result)
          {
-          result = this.lastpressedtimestamp.equals(other.lastpressedtimestamp);
+          result = lastpressedtimestamp.equals(other.lastpressedtimestamp);
          }
        }
      }
@@ -195,11 +195,11 @@ public final class Button implements Comparable<Button>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("Button[identifier=").append(this.identifier)
-      .append(", id=").append(this.id)
-      .append(", name=").append(this.name)
-      .append(" ,lastpressedtimestamp=").append(this.lastpressedtimestamp)
+    final var builder = new StringBuilder(54);
+    builder.append("Button[identifier=").append(identifier)
+      .append(", id=").append(id)
+      .append(", name=").append(name)
+      .append(" ,lastpressedtimestamp=").append(lastpressedtimestamp)
       .append(']');
     return builder.toString();
    }
@@ -216,16 +216,16 @@ public final class Button implements Comparable<Button>, IValueObject
   public int compareTo(final Button obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.identifier.compareTo(obj.identifier);
+    int result = identifier.compareTo(obj.identifier);
     if (result == 0)
      {
-      result = Long.compare(this.id, obj.id);
+      result = Long.compare(id, obj.id);
       if (result == 0)
        {
-        result = this.name.compareTo(obj.name);
+        result = name.compareTo(obj.name);
         if (result == 0)
          {
-          result = this.lastpressedtimestamp.compareTo(obj.lastpressedtimestamp);
+          result = lastpressedtimestamp.compareTo(obj.lastpressedtimestamp);
          }
        }
      }

@@ -110,7 +110,7 @@ public final class Hs implements Comparable<Hs>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.index, this.nameEnum, this.name, this.colors);
+    return Objects.hash(index, nameEnum, name, colors);
    }
 
 
@@ -132,16 +132,16 @@ public final class Hs implements Comparable<Hs>, IValueObject
      {
       return false;
      }
-    boolean result = (this.index == other.index);
+    boolean result = (index == other.index);
     if (result)
      {
-      result = (this.nameEnum == other.nameEnum);
+      result = (nameEnum == other.nameEnum);
       if (result)
        {
-        result = this.name.equals(other.name);
+        result = name.equals(other.name);
         if (result)
          {
-          result = this.colors.equals(other.colors);
+          result = colors.equals(other.colors);
          }
        }
      }
@@ -162,8 +162,8 @@ public final class Hs implements Comparable<Hs>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("Hs[index=").append(this.index).append(", nameEnum=").append(this.nameEnum).append(", name=").append(this.name).append(", colors=").append(this.colors).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(37);
+    builder.append("Hs[index=").append(index).append(", nameEnum=").append(nameEnum).append(", name=").append(name).append(", colors=").append(colors).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -179,13 +179,13 @@ public final class Hs implements Comparable<Hs>, IValueObject
   public int compareTo(final Hs obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = Integer.compare(this.index, obj.index);
+    int result = Integer.compare(index, obj.index);
     if (result == 0)
      {
-      result = Integer.compare(this.nameEnum, obj.nameEnum);
+      result = Integer.compare(nameEnum, obj.nameEnum);
       if (result == 0)
        {
-        result = this.name.compareTo(obj.name);
+        result = name.compareTo(obj.name);
         if (result == 0)
          {
           // result = this.colors.compareTo(obj.colors); // TODO

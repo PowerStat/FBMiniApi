@@ -17,6 +17,7 @@ public final class Level implements Comparable<Level>, IValueObject
   /**
    * Level 0-255.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final int level;
 
 
@@ -71,7 +72,7 @@ public final class Level implements Comparable<Level>, IValueObject
    */
   public int intValue()
    {
-    return this.level;
+    return level;
    }
 
 
@@ -83,7 +84,7 @@ public final class Level implements Comparable<Level>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.level);
+    return String.valueOf(level);
    }
 
 
@@ -96,7 +97,7 @@ public final class Level implements Comparable<Level>, IValueObject
   @Override
   public int hashCode()
    {
-    return Integer.hashCode(this.level);
+    return Integer.hashCode(level);
    }
 
 
@@ -118,7 +119,7 @@ public final class Level implements Comparable<Level>, IValueObject
      {
       return false;
      }
-    return this.level == other.level;
+    return level == other.level;
    }
 
 
@@ -136,7 +137,7 @@ public final class Level implements Comparable<Level>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Level[level=").append(this.level).append(']'); //$NON-NLS-1$
+    builder.append("Level[level=").append(level).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -152,7 +153,7 @@ public final class Level implements Comparable<Level>, IValueObject
   public int compareTo(final Level obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Integer.compare(this.level, obj.level);
+    return Integer.compare(level, obj.level);
    }
 
 

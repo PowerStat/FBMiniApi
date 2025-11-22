@@ -87,7 +87,6 @@ public final class OptionalOf<T extends IValueObject> // extends Hue & Saturatio
       return true;
      }
     if (!(obj instanceof final OptionalOf<?> other))
-    // if ((obj == null) || (this.getClass() != obj.getClass()))
      {
       return false;
      }
@@ -108,10 +107,8 @@ public final class OptionalOf<T extends IValueObject> // extends Hue & Saturatio
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("OptionalOf<>[value="); //$NON-NLS-1$
-    builder.append(value);
-    builder.append(']');
+    final var builder = new StringBuilder(20);
+    builder.append("OptionalOf<>[value=").append(value).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 

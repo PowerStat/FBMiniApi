@@ -27,7 +27,7 @@ final class TemperatureCelsiusTests
   /**
    * Default constructor.
    */
-  TemperatureCelsiusTests()
+  /* default */ TemperatureCelsiusTests()
    {
     super();
    }
@@ -77,7 +77,7 @@ final class TemperatureCelsiusTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(TemperatureCelsius.class).verify();
    }
@@ -124,7 +124,7 @@ final class TemperatureCelsiusTests
    {
     final TemperatureCelsius temperature1 = TemperatureCelsius.of(200);
     final TemperatureCelsius temperature2 = TemperatureCelsius.of(100);
-    TemperatureCelsius newTemperature = temperature1.add(temperature2);
+    final TemperatureCelsius newTemperature = temperature1.add(temperature2);
     assertEquals(300, newTemperature.longValue(), "add not equal"); //$NON-NLS-1$
    }
 
@@ -137,7 +137,7 @@ final class TemperatureCelsiusTests
    {
     final TemperatureCelsius temperature1 = TemperatureCelsius.of(200);
     final TemperatureCelsius temperature2 = TemperatureCelsius.of(100);
-    TemperatureCelsius newTemperature = temperature1.subtract(temperature2);
+    final TemperatureCelsius newTemperature = temperature1.subtract(temperature2);
     assertEquals(100, newTemperature.longValue(), "subtract not equal"); //$NON-NLS-1$
    }
 

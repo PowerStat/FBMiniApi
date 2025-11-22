@@ -26,6 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class PowermeterTests
  {
   /**
+   * Null pointer exception expected.
+   */
+  private static final String NULL_POINTER_EXCEPTION_EXPECTED = "Null pointer exception expected"; //$NON-NLS-1$
+
+
+  /**
    * Default constructor.
    */
   /* default */ PowermeterTests()
@@ -42,9 +48,9 @@ final class PowermeterTests
    {
     final Powermeter cleanPowermeter = Powermeter.of(Voltage.of(0), Power.of(0), Energy.of(0));
     assertAll("testPowermeterCorrect", //$NON-NLS-1$
-      () -> assertEquals(0, cleanPowermeter.getVoltage().longValue(), "Powermeter not as expected"), //$NON-NLS-1$
-      () -> assertEquals(0, cleanPowermeter.getPower().longValue(), "Powermeter not as expected"), //$NON-NLS-1$
-      () -> assertEquals(0, cleanPowermeter.getEnergy().longValue(), "Powermeter not as expected") //$NON-NLS-1$
+      () -> assertEquals(0, cleanPowermeter.getVoltage().longValue(), "Voltage not as expected"), //$NON-NLS-1$
+      () -> assertEquals(0, cleanPowermeter.getPower().longValue(), "Power not as expected"), //$NON-NLS-1$
+      () -> assertEquals(0, cleanPowermeter.getEnergy().longValue(), "Energy not as expected") //$NON-NLS-1$
     );
    }
 
@@ -58,7 +64,7 @@ final class PowermeterTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final Powermeter cleanPowermeter = */ Powermeter.of(null, Power.of(0), Energy.of(0));
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -72,7 +78,7 @@ final class PowermeterTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final Powermeter cleanPowermeter = */ Powermeter.of(Voltage.of(0), null, Energy.of(0));
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -86,7 +92,7 @@ final class PowermeterTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final Powermeter cleanPowermeter = */ Powermeter.of(Voltage.of(0), Power.of(0), null);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -106,7 +112,7 @@ final class PowermeterTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Powermeter.class).withNonnullFields("voltage", "power", "energy").verify();
    }

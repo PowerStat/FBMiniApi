@@ -13,7 +13,7 @@ import de.powerstat.validation.values.Seconds;
 /**
  * Unix timestamp &gt; 0.
  */
-public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueObject
+public final class UnixTimestamp implements Comparable<UnixTimestamp>, IValueObject
  {
   /**
    * Seconds since 1970-01-01T00:00:00.
@@ -146,7 +146,7 @@ public final class UnixTimestamp  implements Comparable<UnixTimestamp>, IValueOb
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder(17);
+    final var builder = new StringBuilder(23);
     builder.append("UnixTimestamp[seconds=").append(seconds).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

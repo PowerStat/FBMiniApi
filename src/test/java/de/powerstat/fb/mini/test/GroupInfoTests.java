@@ -109,7 +109,7 @@ final class GroupInfoTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(GroupInfo.class).withNonnullFields("members").verify();
    }

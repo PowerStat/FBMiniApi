@@ -259,7 +259,7 @@ public final class ColorControl implements Comparable<ColorControl>, IValueObjec
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
+    final var builder = new StringBuilder(139);
     builder.append("ColorControl[supportedModes=").append(supportedModes)
       .append(", currentMode=").append(currentMode)
       .append(", fullcolorsupport=").append(fullcolorsupport)

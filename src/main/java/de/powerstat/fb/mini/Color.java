@@ -98,7 +98,7 @@ public final class Color implements Comparable<Color>, IValueObject
    */
   public int intValue()
    {
-    return this.index;
+    return index;
    }
 
 
@@ -109,7 +109,7 @@ public final class Color implements Comparable<Color>, IValueObject
    */
   public Hue hueValue()
    {
-    return this.hue;
+    return hue;
    }
 
 
@@ -120,7 +120,7 @@ public final class Color implements Comparable<Color>, IValueObject
    */
   public Saturation saturationValue()
    {
-    return this.saturation;
+    return saturation;
    }
 
 
@@ -131,7 +131,7 @@ public final class Color implements Comparable<Color>, IValueObject
    */
   public Value valueValue()
    {
-    return this.value;
+    return value;
    }
 
 
@@ -144,7 +144,7 @@ public final class Color implements Comparable<Color>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.index, this.hue, this.saturation, this.value);
+    return Objects.hash(index, hue, saturation, value);
    }
 
 
@@ -166,16 +166,16 @@ public final class Color implements Comparable<Color>, IValueObject
      {
       return false;
      }
-    boolean result = (this.index == other.index);
+    boolean result = (index == other.index);
     if (result)
      {
-      result = this.hue.equals(other.hue);
+      result = hue.equals(other.hue);
       if (result)
        {
-        result = this.saturation.equals(other.saturation);
+        result = saturation.equals(other.saturation);
         if (result)
          {
-          result = this.value.equals(other.value);
+          result = value.equals(other.value);
          }
        }
      }
@@ -196,8 +196,8 @@ public final class Color implements Comparable<Color>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("Color[index=").append(this.index).append(", hue=").append(this.hue).append(", saturation=").append(this.saturation).append(", value=").append(this.value).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(40);
+    builder.append("Color[index=").append(index).append(", hue=").append(hue).append(", saturation=").append(saturation).append(", value=").append(value).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -213,16 +213,16 @@ public final class Color implements Comparable<Color>, IValueObject
   public int compareTo(final Color obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = Integer.compare(this.index, obj.index);
+    int result = Integer.compare(index, obj.index);
     if (result == 0)
      {
-      result =  this.hue.compareTo(obj.hue);
+      result = hue.compareTo(obj.hue);
       if (result == 0)
        {
-        result = this.saturation.compareTo(obj.saturation);
+        result = saturation.compareTo(obj.saturation);
         if (result == 0)
          {
-          result = this.value.compareTo(obj.value);
+          result = value.compareTo(obj.value);
          }
        }
      }

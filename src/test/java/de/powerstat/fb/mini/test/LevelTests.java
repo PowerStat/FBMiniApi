@@ -77,7 +77,7 @@ final class LevelTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Level.class).verify();
    }

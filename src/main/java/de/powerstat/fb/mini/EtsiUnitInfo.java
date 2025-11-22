@@ -79,7 +79,7 @@ public final class EtsiUnitInfo implements Comparable<EtsiUnitInfo>, IValueObjec
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.etsideviceid);
+    return String.valueOf(etsideviceid);
    }
 
 
@@ -92,7 +92,7 @@ public final class EtsiUnitInfo implements Comparable<EtsiUnitInfo>, IValueObjec
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.etsideviceid, this.unittype, this.interfaces);
+    return Objects.hash(etsideviceid, unittype, interfaces);
    }
 
 
@@ -114,13 +114,13 @@ public final class EtsiUnitInfo implements Comparable<EtsiUnitInfo>, IValueObjec
      {
       return false;
      }
-    boolean result = this.etsideviceid == other.etsideviceid;
+    boolean result = etsideviceid == other.etsideviceid;
     if (result)
      {
-      result = this.unittype.equals(other.unittype);
+      result = (unittype == other.unittype);
       if (result)
        {
-        result = this.interfaces.equals(other.interfaces);
+        result = interfaces.equals(other.interfaces);
        }
      }
     return result;
@@ -140,10 +140,10 @@ public final class EtsiUnitInfo implements Comparable<EtsiUnitInfo>, IValueObjec
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("EtsiUnitInfo[etsideviceid=").append(this.etsideviceid)
-      .append(", unittype=").append(this.unittype)
-      .append(", interfaces=").append(this.interfaces)
+    final var builder = new StringBuilder(51);
+    builder.append("EtsiUnitInfo[etsideviceid=").append(etsideviceid)
+      .append(", unittype=").append(unittype)
+      .append(", interfaces=").append(interfaces)
       .append(']');
     return builder.toString();
    }
@@ -160,10 +160,10 @@ public final class EtsiUnitInfo implements Comparable<EtsiUnitInfo>, IValueObjec
   public int compareTo(final EtsiUnitInfo obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = Long.compare(this.etsideviceid, obj.etsideviceid);
+    int result = Long.compare(etsideviceid, obj.etsideviceid);
     if (result == 0)
      {
-      result = this.unittype.compareTo(obj.unittype);
+      result = unittype.compareTo(obj.unittype);
       if (result == 0)
        {
         // this.interfaces.compareTo(obj.interfaces);

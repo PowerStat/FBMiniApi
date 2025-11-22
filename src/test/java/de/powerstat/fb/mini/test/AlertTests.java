@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import de.powerstat.fb.mini.AIN;
 import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Alert.AlertState;
 import de.powerstat.fb.mini.UnixTimestamp;
@@ -26,6 +25,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings({"RV_NEGATING_RESULT_OF_COMPARETO", "EC_NULL_ARG", "SPP_USE_ZERO_WITH_COMPARATOR"})
 final class AlertTests
  {
+  /**
+   * Alert not as expected.
+   */
+  private static final String ALERT_NOT_AS_EXPECTED = "Alert not as expected";
+
+  /**
+   * No error.
+   */
+  private static final String NO_ERROR = "NO_ERROR";
+
+
   /**
    * Default constructor.
    */
@@ -42,7 +52,7 @@ final class AlertTests
   /* default */ void testAlertCorrect1()
    {
     final Alert cleanAlert = Alert.of(Alert.AlertState.NO_ERROR, UnixTimestamp.of(Seconds.of(0)));
-    assertEquals("NO_ERROR", cleanAlert.stringValue(), "Alert not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(NO_ERROR, cleanAlert.stringValue(), ALERT_NOT_AS_EXPECTED);
    }
 
 
@@ -52,8 +62,8 @@ final class AlertTests
   @Test
   /* default */ void testAlertCorrect2()
    {
-    final Alert cleanAlert = Alert.of(AlertState.of("NO_ERROR"), UnixTimestamp.of(Seconds.of(0)));
-    assertEquals("NO_ERROR", cleanAlert.stringValue(), "Alert not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    final Alert cleanAlert = Alert.of(AlertState.of(NO_ERROR), UnixTimestamp.of(Seconds.of(0)));
+    assertEquals(NO_ERROR, cleanAlert.stringValue(), ALERT_NOT_AS_EXPECTED);
    }
 
 
@@ -64,7 +74,7 @@ final class AlertTests
   /* default */ void testAlertCorrect3()
    {
     final Alert cleanAlert = Alert.of(AlertState.of(1), UnixTimestamp.of(Seconds.of(0)));
-    assertEquals("BARRIER", cleanAlert.stringValue(), "Alert not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("BARRIER", cleanAlert.stringValue(), ALERT_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -85,8 +95,8 @@ final class AlertTests
   @Test
   /* default */ void testAlertState2()
    {
-    final AlertState state = AlertState.of("NO_ERROR");
-    assertEquals("NO_ERROR", state.stringValue(), "AlertState action not as expected"); //$NON-NLS-1$
+    final AlertState state = AlertState.of(NO_ERROR);
+    assertEquals(NO_ERROR, state.stringValue(), "AlertState action not as expected"); //$NON-NLS-1$
    }
 
 
@@ -111,7 +121,7 @@ final class AlertTests
   /* default */ void testStringValue()
    {
     final Alert alert = Alert.of(Alert.AlertState.NO_ERROR, UnixTimestamp.of(Seconds.of(0)));
-    assertEquals("NO_ERROR", alert.stringValue(), "Alert not as expected"); //$NON-NLS-1$
+    assertEquals(NO_ERROR, alert.stringValue(), ALERT_NOT_AS_EXPECTED);
    }
 
 
@@ -119,7 +129,7 @@ final class AlertTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Alert.class).withNonnullFields("state", "lastalertchgtimestamp").verify();
    }

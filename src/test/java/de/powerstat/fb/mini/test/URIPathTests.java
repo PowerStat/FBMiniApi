@@ -23,6 +23,32 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class URIPathTests
  {
   /**
+   * Path separator.
+   */
+  private static final String PATH_SEPARATOR = "/";
+
+  /**
+   * Abc path.
+   */
+  private static final String ABC_PATH = "/abc";
+
+  /**
+   * Hello world path.
+   */
+  private static final String HELLO_WORLD_PATH = "/hello/world";
+
+  /**
+   * Hello path.
+   */
+  private static final String HELLO_PATH = "/hello";
+
+  /**
+   * Not a uri path parameter.
+   */
+  private static final String NOT_A_URI_PATH_PARAMETER = "Not a uri path parameter!";
+
+
+  /**
    * Default constructor.
    */
   /* default */ URIPathTests()
@@ -37,7 +63,7 @@ final class URIPathTests
   @Test
   /* default */ void testConstructor1()
    {
-    assertEquals("/", URIPath.of("").stringValue(), "Not a uri path parameter!"); //$NON-NLS-1$
+    assertEquals(PATH_SEPARATOR, URIPath.of("").stringValue(), NOT_A_URI_PATH_PARAMETER); //$NON-NLS-1$
    }
 
 
@@ -47,7 +73,7 @@ final class URIPathTests
   @Test
   /* default */ void testConstructor2()
    {
-    assertEquals("/", URIPath.of("/").stringValue(), "Not a uri path parameter!"); //$NON-NLS-1$
+    assertEquals(PATH_SEPARATOR, URIPath.of(PATH_SEPARATOR).stringValue(), NOT_A_URI_PATH_PARAMETER);
    }
 
 
@@ -57,7 +83,7 @@ final class URIPathTests
   @Test
   /* default */ void testConstructor3()
    {
-    assertEquals("/hello", URIPath.of("/hello").stringValue(), "Not a uri path parameter!"); //$NON-NLS-1$
+    assertEquals(HELLO_PATH, URIPath.of(HELLO_PATH).stringValue(), NOT_A_URI_PATH_PARAMETER);
    }
 
 
@@ -67,7 +93,7 @@ final class URIPathTests
   @Test
   /* default */ void testConstructor4()
    {
-    assertEquals("/hello", URIPath.of("hello").stringValue(), "Not a uri path parameter!"); //$NON-NLS-1$
+    assertEquals(HELLO_PATH, URIPath.of("hello").stringValue(), NOT_A_URI_PATH_PARAMETER); //$NON-NLS-1$
    }
 
 
@@ -77,7 +103,7 @@ final class URIPathTests
   @Test
   /* default */ void testConstructor5()
    {
-    assertEquals("/hello/world", URIPath.of("/hello/world").stringValue(), "Not a uri path parameter!"); //$NON-NLS-1$
+    assertEquals(HELLO_WORLD_PATH, URIPath.of(HELLO_WORLD_PATH).stringValue(), NOT_A_URI_PATH_PARAMETER);
    }
 
 
@@ -87,7 +113,7 @@ final class URIPathTests
   @Test
   /* default */ void testGetParent1()
    {
-    assertEquals(URIPath.of("/hello"), URIPath.of("/hello/world").getParent(), "Not a uri path parameter!"); //$NON-NLS-1$
+    assertEquals(URIPath.of(HELLO_PATH), URIPath.of(HELLO_WORLD_PATH).getParent(), NOT_A_URI_PATH_PARAMETER);
    }
 
 
@@ -109,7 +135,7 @@ final class URIPathTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(URIPath.class).verify();
    }
@@ -121,7 +147,7 @@ final class URIPathTests
   @Test
   /* default */ void testToString()
    {
-    final URIPath param = URIPath.of("/abc");
+    final URIPath param = URIPath.of(ABC_PATH);
     assertEquals("URIPath[path=/abc]", param.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -133,11 +159,11 @@ final class URIPathTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final URIPath param1 = URIPath.of("/abc");
-    final URIPath param2 = URIPath.of("/abc");
+    final URIPath param1 = URIPath.of(ABC_PATH);
+    final URIPath param2 = URIPath.of(ABC_PATH);
     final URIPath param3 = URIPath.of("/bcd");
     final URIPath param4 = URIPath.of("/cde");
-    final URIPath param5 = URIPath.of("/abc");
+    final URIPath param5 = URIPath.of(ABC_PATH);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(param1.compareTo(param2) == -param2.compareTo(param1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(param1.compareTo(param3) == -param3.compareTo(param1), "reflexive2"), //$NON-NLS-1$

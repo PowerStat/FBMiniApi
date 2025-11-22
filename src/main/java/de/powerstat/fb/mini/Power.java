@@ -23,26 +23,26 @@ public final class Power implements Comparable<Power>, IValueObject
   /**
    * Constructor.
    *
-   * @param power Power in mW. (must be &gt;= 0)
-   * @throws IndexOutOfBoundsException If power is less than zero
+   * @param power Power in mW.
    */
   private Power(final long power)
    {
     super();
-    if (power < 0)
+    /*
+    if (power < 0) // Only for consumers - Producers will become negative
      {
       throw new IndexOutOfBoundsException("power must be >= 0"); //$NON-NLS-1$
      }
-    this.powerMW = power;
+    */
+    powerMW = power;
    }
 
 
   /**
    * Power factory.
    *
-   * @param power Power in mW. (must be &gt;= 0)
+   * @param power Power in mW.
    * @return Power object
-   * @throws IndexOutOfBoundsException If power is less than zero
    */
   public static Power of(final long power)
    {
@@ -53,9 +53,8 @@ public final class Power implements Comparable<Power>, IValueObject
   /**
    * Power factory.
    *
-   * @param power Power in mW. (must be &gt;= 0)
+   * @param power Power in mW.
    * @return Power object
-   * @throws IndexOutOfBoundsException If power is less than zero
    * @throws NumberFormatException If power does not contain a parsable long.
    */
   public static Power of(final String power)
@@ -71,7 +70,7 @@ public final class Power implements Comparable<Power>, IValueObject
    */
   public long longValue()
    {
-    return this.powerMW;
+    return powerMW;
    }
 
 
@@ -83,7 +82,7 @@ public final class Power implements Comparable<Power>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.powerMW);
+    return String.valueOf(powerMW);
    }
 
 
@@ -94,7 +93,7 @@ public final class Power implements Comparable<Power>, IValueObject
    */
   public long getPowerWatt()
    {
-    return this.powerMW / 1000;
+    return powerMW / 1000;
    }
 
 
@@ -107,7 +106,7 @@ public final class Power implements Comparable<Power>, IValueObject
   @Override
   public int hashCode()
    {
-    return Long.hashCode(this.powerMW);
+    return Long.hashCode(powerMW);
    }
 
 
@@ -125,12 +124,11 @@ public final class Power implements Comparable<Power>, IValueObject
      {
       return true;
      }
-    if (!(obj instanceof Power))
+    if (!(obj instanceof final Power other))
      {
       return false;
      }
-    final Power other = (Power)obj;
-    return this.powerMW == other.powerMW;
+    return powerMW == other.powerMW;
    }
 
 
@@ -148,7 +146,7 @@ public final class Power implements Comparable<Power>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Power[power=").append(this.powerMW).append(']'); //$NON-NLS-1$
+    builder.append("Power[power=").append(powerMW).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -164,7 +162,7 @@ public final class Power implements Comparable<Power>, IValueObject
   public int compareTo(final Power obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Long.compare(this.powerMW, obj.powerMW);
+    return Long.compare(powerMW, obj.powerMW);
    }
 
  }

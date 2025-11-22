@@ -28,6 +28,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class ColorTests
  {
   /**
+   * Null pointer exception expected.
+   */
+  private static final String NULL_POINTER_EXCEPTION_EXPECTED = "Null pointer exception expected"; //$NON-NLS-1$
+
+
+  /**
    * Default constructor.
    */
   /* default */ ColorTests()
@@ -86,7 +92,7 @@ final class ColorTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final Color cleanColor = */ Color.of(1, null, saturation, value);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -102,7 +108,7 @@ final class ColorTests
      assertThrows(NullPointerException.class, () ->
       {
        /* final Color cleanColor = */ Color.of(1, hue, null, value);
-      }, "Null pointer exception expected" //$NON-NLS-1$
+      }, NULL_POINTER_EXCEPTION_EXPECTED
      );
     }
 
@@ -118,7 +124,7 @@ final class ColorTests
       assertThrows(NullPointerException.class, () ->
        {
         /* final Color cleanColor = */ Color.of(1, hue, saturation, null);
-       }, "Null pointer exception expected" //$NON-NLS-1$
+       }, NULL_POINTER_EXCEPTION_EXPECTED
       );
      }
 
@@ -138,7 +144,7 @@ final class ColorTests
     * Equalsverifier.
     */
    @Test
-   public void equalsContract()
+   /* default */ void testEqualsContract()
     {
      EqualsVerifier.forClass(Color.class).withNonnullFields("hue", "saturation", "value").verify();
     }

@@ -88,7 +88,7 @@ public final class Version implements Comparable<Version>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.major + "." + this.minor;
+    return major + "." + minor;
    }
 
 
@@ -101,7 +101,7 @@ public final class Version implements Comparable<Version>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.major, this.minor);
+    return Objects.hash(major, minor);
    }
 
 
@@ -123,10 +123,10 @@ public final class Version implements Comparable<Version>, IValueObject
      {
       return false;
      }
-    boolean result = this.major == other.major;
+    boolean result = major == other.major;
     if (result)
      {
-      result = this.minor == other.minor;
+      result = minor == other.minor;
      }
     return result;
    }
@@ -145,8 +145,8 @@ public final class Version implements Comparable<Version>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("Version[major=").append(this.major).append(", minor=").append(this.minor).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(23);
+    builder.append("Version[major=").append(major).append(", minor=").append(minor).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -162,10 +162,10 @@ public final class Version implements Comparable<Version>, IValueObject
   public int compareTo(final Version obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = Integer.compare(this.major, obj.major);
+    int result = Integer.compare(major, obj.major);
     if (result == 0)
      {
-      result = Integer.compare(this.minor, obj.minor);
+      result = Integer.compare(minor, obj.minor);
      }
     return result;
    }

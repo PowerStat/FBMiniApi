@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import de.powerstat.fb.mini.Alert;
 import de.powerstat.fb.mini.Blind;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -57,7 +56,7 @@ final class BlindTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Blind.class).withNonnullFields("mode", "endpositionsset").verify();
    }

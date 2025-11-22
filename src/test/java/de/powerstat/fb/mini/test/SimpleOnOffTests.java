@@ -61,7 +61,7 @@ final class SimpleOnOffTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(SimpleOnOff.class).verify();
    }
@@ -88,7 +88,7 @@ final class SimpleOnOffTests
     final SimpleOnOff state1 = SimpleOnOff.of(false);
     final SimpleOnOff state2 = SimpleOnOff.of(false);
     final SimpleOnOff state3 = SimpleOnOff.of(true);
-    final SimpleOnOff state4 = SimpleOnOff.of(true);
+    // final SimpleOnOff state4 = SimpleOnOff.of(true);
     final SimpleOnOff state5 = SimpleOnOff.of(false);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(state1.compareTo(state2) == -state2.compareTo(state1), "reflexive1"), //$NON-NLS-1$

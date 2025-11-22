@@ -26,6 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class EndTimestampTests
  {
   /**
+   * Not an end timestamp.
+   */
+  private static final String NOT_AN_END_TIMESTAMP = "Not an EndTimestamp!";
+
+
+  /**
    * Default constructor.
    */
   /* default */ EndTimestampTests()
@@ -40,7 +46,7 @@ final class EndTimestampTests
   @Test
   /* default */ void testIsEndTimestamp0()
    {
-    assertEquals(0, EndTimestamp.of(Seconds.of(0)).longValue(), "Not an EndTimestamp!"); //$NON-NLS-1$
+    assertEquals(0, EndTimestamp.of(Seconds.of(0)).longValue(), NOT_AN_END_TIMESTAMP);
    }
 
 
@@ -51,7 +57,7 @@ final class EndTimestampTests
   /* default */ void testIsEndTimestampNow10()
    {
     final long now = Instant.now().getEpochSecond() + 10;
-    assertEquals(now, EndTimestamp.of(Seconds.of(now)).longValue(), "Not an EndTimestamp!"); //$NON-NLS-1$
+    assertEquals(now, EndTimestamp.of(Seconds.of(now)).longValue(), NOT_AN_END_TIMESTAMP);
    }
 
 
@@ -62,7 +68,7 @@ final class EndTimestampTests
   /* default */ void testIsEndTimestampNow86400()
    {
     final long then = Instant.now().getEpochSecond() + 86400;
-    assertEquals(then, EndTimestamp.of(Seconds.of(then)).longValue(), "Not an EndTimestamp!"); //$NON-NLS-1$
+    assertEquals(then, EndTimestamp.of(Seconds.of(then)).longValue(), NOT_AN_END_TIMESTAMP);
    }
 
 
@@ -114,7 +120,7 @@ final class EndTimestampTests
   /* default */ void testSecondsValue()
    {
     final long now = Instant.now().getEpochSecond() + 10;
-    Seconds secs = Seconds.of(now);
+    final Seconds secs = Seconds.of(now);
     final EndTimestamp timestamp = EndTimestamp.of(String.valueOf(now));
     assertEquals(secs, timestamp.secondsValue(), "Not an EndTimestamp value!"); //$NON-NLS-1$
    }
@@ -124,7 +130,7 @@ final class EndTimestampTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(EndTimestamp.class).withNonnullFields("seconds").verify();
    }

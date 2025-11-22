@@ -17,6 +17,7 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
   /**
    * Voltage in 0,001V.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final long voltage;
 
 
@@ -71,7 +72,7 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
    */
   public long longValue()
    {
-    return this.voltage;
+    return voltage;
    }
 
 
@@ -83,7 +84,7 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.voltage);
+    return String.valueOf(voltage);
    }
 
 
@@ -94,7 +95,7 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
    */
   public long getVoltageVolt()
    {
-    return this.voltage / 1000;
+    return voltage / 1000;
    }
 
 
@@ -107,7 +108,7 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
   @Override
   public int hashCode()
    {
-    return Long.hashCode(this.voltage);
+    return Long.hashCode(voltage);
    }
 
 
@@ -129,7 +130,7 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
      {
       return false;
      }
-    return this.voltage == other.voltage;
+    return voltage == other.voltage;
    }
 
 
@@ -146,8 +147,8 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("Voltage[voltage=").append(this.voltage).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(17);
+    builder.append("Voltage[voltage=").append(voltage).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -163,7 +164,7 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
   public int compareTo(final Voltage obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Long.compare(this.voltage, obj.voltage);
+    return Long.compare(voltage, obj.voltage);
    }
 
  }

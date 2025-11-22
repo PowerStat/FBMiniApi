@@ -74,7 +74,7 @@ final class EtsiUnitInfoTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(EtsiUnitInfo.class).withNonnullFields("unittype", "interfaces").verify();
    }

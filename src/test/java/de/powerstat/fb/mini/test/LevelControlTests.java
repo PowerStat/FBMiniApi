@@ -58,7 +58,7 @@ final class LevelControlTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(LevelControl.class).withNonnullFields("level", "levelpercentage").verify();
    }

@@ -47,6 +47,11 @@ public final class Alert implements Comparable<Alert>, IValueObject
 
 
     /**
+     * No error.
+     */
+    private static final String NO_ERROR_STR = "NO_ERROR";
+
+    /**
      * Action number.
      */
     private final int action;
@@ -101,7 +106,7 @@ public final class Alert implements Comparable<Alert>, IValueObject
      */
     public int getAction()
      {
-      return this.action;
+      return action;
      }
 
 
@@ -130,12 +135,12 @@ public final class Alert implements Comparable<Alert>, IValueObject
     @Override
     public String toString()
      {
-      return switch (this.action)
+      return switch (action)
        {
-       case 0 -> "NO_ERROR"; //$NON-NLS-1$
+       case 0 -> NO_ERROR_STR;
        case 1 -> "BARRIER"; //$NON-NLS-1$
        case 2 -> "OVERHEAT"; //$NON-NLS-1$
-       default -> "NO_ERROR"; //$NON-NLS-1$
+       default -> NO_ERROR_STR;
        };
      }
 
@@ -177,7 +182,7 @@ public final class Alert implements Comparable<Alert>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.state.toString();
+    return state.toString();
    }
 
 
@@ -190,7 +195,7 @@ public final class Alert implements Comparable<Alert>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.state, this.lastalertchgtimestamp);
+    return Objects.hash(state, lastalertchgtimestamp);
    }
 
 
@@ -212,10 +217,10 @@ public final class Alert implements Comparable<Alert>, IValueObject
      {
       return false;
      }
-    boolean result = this.state.equals(other.state);
+    boolean result = (state == other.state);
     if (result)
      {
-      result = this.lastalertchgtimestamp.equals(other.lastalertchgtimestamp);
+      result = lastalertchgtimestamp.equals(other.lastalertchgtimestamp);
      }
     return result;
    }
@@ -234,8 +239,8 @@ public final class Alert implements Comparable<Alert>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("Alert[state=").append(this.state).append(", lastalertchgtimestamp=").append(this.lastalertchgtimestamp).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(37);
+    builder.append("Alert[state=").append(state).append(", lastalertchgtimestamp=").append(lastalertchgtimestamp).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -251,10 +256,10 @@ public final class Alert implements Comparable<Alert>, IValueObject
   public int compareTo(final Alert obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.state.compareTo(obj.state);
+    int result = state.compareTo(obj.state);
     if (result == 0)
      {
-      result = this.lastalertchgtimestamp.compareTo(obj.lastalertchgtimestamp);
+      result = lastalertchgtimestamp.compareTo(obj.lastalertchgtimestamp);
      }
     return result;
    }

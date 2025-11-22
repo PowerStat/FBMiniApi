@@ -64,7 +64,7 @@ public final class HkrNextChange implements Comparable<HkrNextChange>, IValueObj
   @Override
   public String stringValue()
    {
-    return this.endperiod.stringValue();
+    return endperiod.stringValue();
    }
 
 
@@ -77,7 +77,7 @@ public final class HkrNextChange implements Comparable<HkrNextChange>, IValueObj
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.endperiod, this.tchange);
+    return Objects.hash(endperiod, tchange);
    }
 
 
@@ -99,10 +99,10 @@ public final class HkrNextChange implements Comparable<HkrNextChange>, IValueObj
      {
       return false;
      }
-    boolean result = this.endperiod.equals(other.endperiod);
+    boolean result = endperiod.equals(other.endperiod);
     if (result)
      {
-      result = this.tchange.equals(other.tchange);
+      result = tchange.equals(other.tchange);
      }
     return result;
    }
@@ -121,8 +121,8 @@ public final class HkrNextChange implements Comparable<HkrNextChange>, IValueObj
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("HkrNextChange[endperiod=").append(this.endperiod).append(", tchange=").append(this.tchange).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(35);
+    builder.append("HkrNextChange[endperiod=").append(endperiod).append(", tchange=").append(tchange).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -138,10 +138,10 @@ public final class HkrNextChange implements Comparable<HkrNextChange>, IValueObj
   public int compareTo(final HkrNextChange obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.endperiod.compareTo(obj.endperiod);
+    int result = endperiod.compareTo(obj.endperiod);
     if (result == 0)
      {
-      result = this.tchange.compareTo(obj.tchange);
+      result = tchange.compareTo(obj.tchange);
      }
     return result;
    }

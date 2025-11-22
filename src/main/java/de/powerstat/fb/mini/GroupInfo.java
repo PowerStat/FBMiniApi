@@ -76,7 +76,7 @@ public final class GroupInfo implements Comparable<GroupInfo>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.masterdeviceid);
+    return String.valueOf(masterdeviceid);
    }
 
 
@@ -89,7 +89,7 @@ public final class GroupInfo implements Comparable<GroupInfo>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.masterdeviceid, this.members);
+    return Objects.hash(masterdeviceid, members);
    }
 
 
@@ -111,10 +111,10 @@ public final class GroupInfo implements Comparable<GroupInfo>, IValueObject
      {
       return false;
      }
-    boolean result = this.masterdeviceid == other.masterdeviceid;
+    boolean result = masterdeviceid == other.masterdeviceid;
     if (result)
      {
-      result = this.members.equals(other.members);
+      result = members.equals(other.members);
      }
     return result;
    }
@@ -133,8 +133,8 @@ public final class GroupInfo implements Comparable<GroupInfo>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("GroupInfo[masterdeviceid=").append(this.masterdeviceid).append(", members=").append(Arrays.toString(this.members.toArray())).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(36);
+    builder.append("GroupInfo[masterdeviceid=").append(masterdeviceid).append(", members=").append(Arrays.toString(members.toArray())).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -150,7 +150,7 @@ public final class GroupInfo implements Comparable<GroupInfo>, IValueObject
   public int compareTo(final GroupInfo obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    final int result = Long.compare(this.masterdeviceid, obj.masterdeviceid);
+    final int result = Long.compare(masterdeviceid, obj.masterdeviceid);
     /*
     if (result == 0)
      {

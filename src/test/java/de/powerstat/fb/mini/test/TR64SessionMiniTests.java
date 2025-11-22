@@ -61,6 +61,26 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class TR64SessionMiniTests
  {
   /**
+   * Device info.
+   */
+  private static final String DEVICEINFO = "/upnp/control/deviceinfo";
+
+  /**
+   * Doc to string result not as expected.
+   */
+  private static final String DOC_TO_STRING_RESULT_NOT_AS_EXPECTED = "docToString result not as expected";
+
+  /**
+   * XML test.
+   */
+  private static final String XML_TEST_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<test>abc</test>\n";
+
+  /**
+   * XML feature url.
+   */
+  private static final String FEATURE_URL = "http://apache.org/xml/features/disallow-doctype-decl";
+
+  /**
    * Logger.
    */
   private static final Logger LOGGER = LogManager.getLogger(TR64SessionMiniTests.class);
@@ -174,14 +194,14 @@ final class TR64SessionMiniTests
 
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+    factory.setFeature(FEATURE_URL, true);
     final DocumentBuilder docBuilder = factory.newDocumentBuilder();
     when(mockHttpclient.execute(ArgumentMatchers.any(HttpGet.class))).thenReturn(mockCloseableHttpResponse);
     when(mockCloseableHttpResponse.getStatusLine()).thenReturn(null);
     when(mockCloseableHttpResponse.getEntity()).thenReturn(mockHttpEntity);
     when(mockHttpEntity.isStreaming()).thenReturn(false);
 
-    final String testDoc = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<test>abc</test>\n"; //$NON-NLS-1$
+    final String testDoc = XML_TEST_1;
     when(mockHttpEntity.getContentType()).thenReturn(null);
     when(mockHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(testDoc.getBytes(StandardCharsets.UTF_8)));
     when(mockHttpEntity.getContentLength()).thenReturn((long)testDoc.length());
@@ -193,14 +213,14 @@ final class TR64SessionMiniTests
     final String xml = TR64SessionMini.docToString(doc);
     if (LOGGER.isInfoEnabled())
      {
-      LOGGER.info("doc: " + xml); //$NON-NLS-1$
+      LOGGER.info("doc: {}", xml); //$NON-NLS-1$
 
       LOGGER.info(String.format(CONST_072X, new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8))));
       LOGGER.info(String.format(CONST_072X, new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8))));
      }
     assertAll(
       () -> assertNotNull(doc, "getDoc failed!"), //$NON-NLS-1$
-      () -> assertEquals(testDoc, xml.replace("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replace("\r", ""), DOC_TO_STRING_RESULT_NOT_AS_EXPECTED) //$NON-NLS-1$
     );
    }
 
@@ -223,10 +243,10 @@ final class TR64SessionMiniTests
     final CloseableHttpResponse mockCloseableHttpResponse = mock(CloseableHttpResponse.class);
     final HttpEntity mockHttpEntity = mock(HttpEntity.class);
 
-    when(mockHttpclient.execute(ArgumentMatchers.argThat(new HttpPostMatcher("/upnp/control/deviceinfo")))).thenReturn(mockCloseableHttpResponse); //$NON-NLS-1$
+    when(mockHttpclient.execute(ArgumentMatchers.argThat(new HttpPostMatcher(DEVICEINFO)))).thenReturn(mockCloseableHttpResponse);
     when(mockCloseableHttpResponse.getEntity()).thenReturn(mockHttpEntity);
 
-    final String testDoc = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<test>abc</test>\n"; //$NON-NLS-1$
+    final String testDoc = XML_TEST_1;
     when(mockHttpEntity.isStreaming()).thenReturn(false);
     when(mockHttpEntity.getContentType()).thenReturn(null);
     when(mockHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(testDoc.getBytes(StandardCharsets.UTF_8)));
@@ -234,27 +254,27 @@ final class TR64SessionMiniTests
 
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+    factory.setFeature(FEATURE_URL, true);
     final DocumentBuilder docBuilder = factory.newDocumentBuilder();
 
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
     final Map<String, String> parameters = new ConcurrentHashMap<>();
     parameters.put("test", "value"); //$NON-NLS-1$ //$NON-NLS-2$
-    final Document doc = tr64session.doSOAPRequest(URIPath.of("/upnp/control/deviceinfo"), ServiceType.of("urn:dslforum-org:service:DeviceInfo:1"), Action.of("GetInfo"), parameters); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final Document doc = tr64session.doSOAPRequest(URIPath.of(DEVICEINFO), ServiceType.of("urn:dslforum-org:service:DeviceInfo:1"), Action.of("GetInfo"), parameters); //$NON-NLS-1$ //$NON-NLS-2$
     final String xml = TR64SessionMini.docToString(doc);
 
     // verify(mockHttpclient).
 
     if (LOGGER.isInfoEnabled())
      {
-      LOGGER.info("doc: " + xml); //$NON-NLS-1$
+      LOGGER.info("doc: {}", xml); //$NON-NLS-1$
 
       LOGGER.info(String.format(CONST_072X, new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8))));
       LOGGER.info(String.format(CONST_072X, new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8))));
      }
     assertAll(
       () -> assertNotNull(doc, "doSOAPRequest failed!"), //$NON-NLS-1$
-      () -> assertEquals(testDoc, xml.replace("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replace("\r", ""), DOC_TO_STRING_RESULT_NOT_AS_EXPECTED) //$NON-NLS-1$
     );
    }
 
@@ -280,7 +300,7 @@ final class TR64SessionMiniTests
     when(mockHttpclient.execute(ArgumentMatchers.any(HttpPost.class))).thenReturn(mockCloseableHttpResponse);
     when(mockCloseableHttpResponse.getEntity()).thenReturn(mockHttpEntity);
 
-    final String testDoc = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<test>abc</test>\n"; //$NON-NLS-1$
+    final String testDoc = XML_TEST_1;
     when(mockHttpEntity.isStreaming()).thenReturn(false);
     when(mockHttpEntity.getContentType()).thenReturn(null);
     when(mockHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(testDoc.getBytes(StandardCharsets.UTF_8)));
@@ -288,25 +308,25 @@ final class TR64SessionMiniTests
 
     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+    factory.setFeature(FEATURE_URL, true);
     final DocumentBuilder docBuilder = factory.newDocumentBuilder();
 
     final TR64SessionMini tr64session = TR64SessionMini.newInstance(mockHttpclient, docBuilder, Hostname.of(FBHOSTNAME), Port.of(49443));
-    final Document doc = tr64session.doSOAPRequest(URIPath.of("/upnp/control/deviceinfo"), ServiceType.of("urn:dslforum-org:service:DeviceInfo:1"), Action.of("GetInfo"), null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    final Document doc = tr64session.doSOAPRequest(URIPath.of(DEVICEINFO), ServiceType.of("urn:dslforum-org:service:DeviceInfo:1"), Action.of("GetInfo"), null); //$NON-NLS-1$ //$NON-NLS-2$
     final String xml = TR64SessionMini.docToString(doc);
 
     // verify(mockHttpclient).
 
     if (LOGGER.isInfoEnabled())
      {
-      LOGGER.info("doc: " + xml); //$NON-NLS-1$
+      LOGGER.info("doc: {}", xml); //$NON-NLS-1$
 
       LOGGER.info(String.format(CONST_072X, new BigInteger(1, testDoc.getBytes(StandardCharsets.UTF_8))));
       LOGGER.info(String.format(CONST_072X, new BigInteger(1, xml.getBytes(StandardCharsets.UTF_8))));
      }
     assertAll(
       () -> assertNotNull(doc, "doSOAPRequest failed!"), //$NON-NLS-1$
-      () -> assertEquals(testDoc, xml.replace("\r", ""), "docToString result not as expected") //$NON-NLS-1$
+      () -> assertEquals(testDoc, xml.replace("\r", ""), DOC_TO_STRING_RESULT_NOT_AS_EXPECTED) //$NON-NLS-1$
     );
    }
 
@@ -315,12 +335,12 @@ final class TR64SessionMiniTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
-    Hostname hostname1 = Hostname.of("fritz.box");
-    Hostname hostname2 = Hostname.of("fritz2.box");
-    Port port1 = Port.of(443);
-    Port port2 = Port.of(80);
+    final Hostname hostname1 = Hostname.of("fritz.box");
+    final Hostname hostname2 = Hostname.of("fritz2.box");
+    final Port port1 = Port.of(443);
+    final Port port2 = Port.of(80);
     EqualsVerifier.simple().forClass(TR64SessionMini.class).set(Mode.skipMockito()).withNonnullFields("hostname", "port").withIgnoredFields("httpclient", "docBuilder").withPrefabValues(Hostname.class, hostname1, hostname2).withPrefabValues(Port.class, port1, port2).verify();
    }
 
@@ -402,7 +422,7 @@ final class TR64SessionMiniTests
        }
       if (LOGGER.isDebugEnabled())
        {
-        LOGGER.debug("rpath: " + rpath); //$NON-NLS-1$
+        LOGGER.debug("rpath: {}", rpath); //$NON-NLS-1$
        }
       return path.equals(rpath) && right.containsHeader("SoapAction") && right.containsHeader("USER-AGENT") && right.containsHeader("Content-Type") && (right.getEntity() != null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
      }

@@ -88,7 +88,7 @@ final class HkrNextChangeTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(HkrNextChange.class).withNonnullFields("endperiod", "tchange").verify();
    }

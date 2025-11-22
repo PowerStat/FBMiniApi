@@ -17,6 +17,7 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
   /**
    * Temperature in deci celsius.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final long temperatureCelsius;
 
 
@@ -33,7 +34,7 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
      {
       throw new IndexOutOfBoundsException("temperature must be >= -2732"); //$NON-NLS-1$
      }
-    this.temperatureCelsius = temperature;
+    temperatureCelsius = temperature;
    }
 
 
@@ -71,7 +72,7 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
    */
   public long longValue()
    {
-    return this.temperatureCelsius;
+    return temperatureCelsius;
    }
 
 
@@ -83,7 +84,7 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.temperatureCelsius);
+    return String.valueOf(temperatureCelsius);
    }
 
 
@@ -94,7 +95,7 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
    */
   public long getTemperatureCelsius()
    {
-    return this.temperatureCelsius / 10;
+    return temperatureCelsius / 10;
    }
 
 
@@ -107,7 +108,7 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
   @Override
   public int hashCode()
    {
-    return Long.hashCode(this.temperatureCelsius);
+    return Long.hashCode(temperatureCelsius);
    }
 
 
@@ -129,7 +130,7 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
      {
       return false;
      }
-    return this.temperatureCelsius == other.temperatureCelsius;
+    return temperatureCelsius == other.temperatureCelsius;
    }
 
 
@@ -146,8 +147,8 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder(25);
-    builder.append("TemperatureCelsius[temperature=").append(this.temperatureCelsius).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(32);
+    builder.append("TemperatureCelsius[temperature=").append(temperatureCelsius).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -163,7 +164,7 @@ public final class TemperatureCelsius implements Comparable<TemperatureCelsius>,
   public int compareTo(final TemperatureCelsius obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Long.compare(this.temperatureCelsius, obj.temperatureCelsius);
+    return Long.compare(temperatureCelsius, obj.temperatureCelsius);
    }
 
 

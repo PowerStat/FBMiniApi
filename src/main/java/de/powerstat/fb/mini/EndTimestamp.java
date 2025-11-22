@@ -151,7 +151,7 @@ public final class EndTimestamp implements Comparable<EndTimestamp>, IValueObjec
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder(17);
+    final var builder = new StringBuilder(22);
     builder.append("EndTimestamp[seconds=").append(seconds).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

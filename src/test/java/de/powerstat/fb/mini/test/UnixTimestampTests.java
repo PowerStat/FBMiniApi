@@ -25,6 +25,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class UnixTimestampTests
  {
   /**
+   * Not an unix timestamp.
+   */
+  private static final String NOT_AN_UNIX_TIMESTAMP = "Not an UnixTimestamp!";
+
+
+  /**
    * Default constructor.
    */
   /* default */ UnixTimestampTests()
@@ -39,7 +45,7 @@ final class UnixTimestampTests
   @Test
   /* default */ void testIsUnixTimestamp0()
    {
-    assertEquals(0, UnixTimestamp.of(Seconds.of(0)).longValue(), "Not an UnixTimestamp!"); //$NON-NLS-1$
+    assertEquals(0, UnixTimestamp.of(Seconds.of(0)).longValue(), NOT_AN_UNIX_TIMESTAMP);
    }
 
 
@@ -50,7 +56,7 @@ final class UnixTimestampTests
   /* default */ void testIsUnixTimestampNow10()
    {
     final long now = Instant.now().getEpochSecond() + 10;
-    assertEquals(now, UnixTimestamp.of(Seconds.of(now)).longValue(), "Not an UnixTimestamp!"); //$NON-NLS-1$
+    assertEquals(now, UnixTimestamp.of(Seconds.of(now)).longValue(), NOT_AN_UNIX_TIMESTAMP);
    }
 
 
@@ -61,7 +67,7 @@ final class UnixTimestampTests
   /* default */ void testIsUnixTimestampNow86400()
    {
     final long then = Instant.now().getEpochSecond() + 86400;
-    assertEquals(then, UnixTimestamp.of(Seconds.of(then)).longValue(), "Not an UnixTimestamp!"); //$NON-NLS-1$
+    assertEquals(then, UnixTimestamp.of(Seconds.of(then)).longValue(), NOT_AN_UNIX_TIMESTAMP);
    }
 
 
@@ -83,7 +89,7 @@ final class UnixTimestampTests
   /* default */ void testUnixTimestampSecondsValue()
    {
     final long now = Instant.now().getEpochSecond() + 10;
-    Seconds secs = Seconds.of(now);
+    final Seconds secs = Seconds.of(now);
     assertEquals(secs, UnixTimestamp.of(String.valueOf(now)).secondsValue(), "Result not as expected!"); //$NON-NLS-1$
    }
 
@@ -92,7 +98,7 @@ final class UnixTimestampTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(UnixTimestamp.class).withNonnullFields("seconds").verify();
    }

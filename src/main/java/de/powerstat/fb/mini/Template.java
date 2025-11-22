@@ -103,7 +103,7 @@ public final class Template implements Comparable<Template>, IValueObject
       throw new IllegalArgumentException("applymaskField must be >= 0");
      }
     Objects.requireNonNull(name, "name"); //$NON-NLS-1$
-    if ((name.length() < 1) || (name.length() > 40))
+    if (name.isEmpty() || (name.length() > 40))
      {
       throw new IllegalArgumentException("name is smaller than 1 or larger than 40 characters");
      }
@@ -369,7 +369,7 @@ public final class Template implements Comparable<Template>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
+    final var builder = new StringBuilder(140);
     builder.append("Template[identifier=").append(identifier)
       .append(", id=").append(id)
       .append(", functionbitmask=").append(functionbitmask)

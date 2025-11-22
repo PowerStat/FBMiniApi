@@ -195,7 +195,7 @@ public final class HKR implements Comparable<HKR>, IValueObject
   @Override
   public String stringValue()
    {
-    return (this.tist == null) ? "" : this.tist.stringValue();
+    return (tist == null) ? "" : tist.stringValue();
    }
 
 
@@ -208,7 +208,7 @@ public final class HKR implements Comparable<HKR>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.tist, this.tsoll, this.absenk, this.komfort, this.lock, this.devicelock, this.errorcode, this.windowsopenactive, this.windowopenactiveendtime, this.boostactive, this.boostactiveendtime, this.batterylow, this.battery, this.nextchange, this.summeractive, this.holidayactive, this.adaptiveHeatingActive, this.adaptiveHeatingRunning);
+    return Objects.hash(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
    }
 
 
@@ -233,6 +233,7 @@ public final class HKR implements Comparable<HKR>, IValueObject
    * @return true when equal, false otherwise
    * @see java.lang.Object#equals(java.lang.Object)
    */
+  @SuppressWarnings({"NestedIfDepth", "PMD.AvoidDeeplyNestedIfStmts"})
   @Override
   public boolean equals(final Object obj)
    {
@@ -244,58 +245,58 @@ public final class HKR implements Comparable<HKR>, IValueObject
      {
       return false;
      }
-    boolean result = equalField(this.tist, other.tist);
+    boolean result = equalField(tist, other.tist);
     if (result)
      {
-      result = equalField(this.tsoll, other.tsoll);
+      result = equalField(tsoll, other.tsoll);
       if (result)
        {
-        result = this.absenk.equals(other.absenk);
+        result = absenk.equals(other.absenk);
         if (result)
          {
-          result = this.komfort.equals(other.komfort);
+          result = komfort.equals(other.komfort);
           if (result)
            {
-            result = equalField(this.lock, other.lock);
+            result = equalField(lock, other.lock);
             if (result)
              {
-              result = equalField(this.devicelock, other.devicelock);
+              result = equalField(devicelock, other.devicelock);
               if (result)
                {
-                result = this.errorcode.equals(other.errorcode);
+                result = (errorcode == other.errorcode);
                 if (result)
                  {
-                  result = this.windowsopenactive == other.windowsopenactive;
+                  result = windowsopenactive == other.windowsopenactive;
                   if (result)
                    {
-                    result = equalField(this.windowopenactiveendtime, other.windowopenactiveendtime);
+                    result = equalField(windowopenactiveendtime, other.windowopenactiveendtime);
                     if (result)
                      {
-                      result = this.boostactive == other.boostactive;
+                      result = boostactive == other.boostactive;
                       if (result)
                        {
-                        result = equalField(this.boostactiveendtime, other.boostactiveendtime);
+                        result = equalField(boostactiveendtime, other.boostactiveendtime);
                         if (result)
                          {
-                          result = this.batterylow == other.batterylow;
+                          result = batterylow == other.batterylow;
                           if (result)
                            {
-                            result = this.battery.equals(other.battery);
+                            result = battery.equals(other.battery);
                             if (result)
                              {
-                              result = this.nextchange.equals(other.nextchange);
+                              result = nextchange.equals(other.nextchange);
                               if (result)
                                {
-                                result = this.summeractive == other.summeractive;
+                                result = summeractive == other.summeractive;
                                 if (result)
                                  {
-                                  result = this.holidayactive == other.holidayactive;
+                                  result = holidayactive == other.holidayactive;
                                   if (result)
                                    {
-                                    result = this.adaptiveHeatingActive == other.adaptiveHeatingActive;
+                                    result = adaptiveHeatingActive == other.adaptiveHeatingActive;
                                     if (result)
                                      {
-                                      result = this.adaptiveHeatingRunning == other.adaptiveHeatingRunning;
+                                      result = adaptiveHeatingRunning == other.adaptiveHeatingRunning;
                                      }
                                    }
                                  }
@@ -330,25 +331,25 @@ public final class HKR implements Comparable<HKR>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("HKR[tist=").append(this.tist)
-      .append(", tsoll=").append(this.tsoll)
-      .append(", absenk=").append(this.absenk)
-      .append(", komfort=").append(this.komfort)
-      .append(", lock=").append(this.lock)
-      .append(", devicelock=").append(this.devicelock)
-      .append(", errorcode=").append(this.errorcode)
-      .append(", windowsopenactive=").append(this.windowsopenactive)
-      .append(", windowopenactiveendtime=").append(this.windowopenactiveendtime)
-      .append(", boostactive=").append(this.boostactive)
-      .append(", boostactiveendtime=").append(this.boostactiveendtime)
-      .append(", batterylow=").append(this.batterylow)
-      .append(", battery=").append(this.battery)
-      .append(", nextchange=").append(this.nextchange)
-      .append(", summeractive=").append(this.summeractive)
-      .append(", holidayactive=").append(this.holidayactive)
-      .append(", adaptiveHeatingActive=").append(this.adaptiveHeatingActive)
-      .append(", adaptiveHeatingRunning=").append(this.adaptiveHeatingRunning)
+    final var builder = new StringBuilder(266);
+    builder.append("HKR[tist=").append(tist)
+      .append(", tsoll=").append(tsoll)
+      .append(", absenk=").append(absenk)
+      .append(", komfort=").append(komfort)
+      .append(", lock=").append(lock)
+      .append(", devicelock=").append(devicelock)
+      .append(", errorcode=").append(errorcode)
+      .append(", windowsopenactive=").append(windowsopenactive)
+      .append(", windowopenactiveendtime=").append(windowopenactiveendtime)
+      .append(", boostactive=").append(boostactive)
+      .append(", boostactiveendtime=").append(boostactiveendtime)
+      .append(", batterylow=").append(batterylow)
+      .append(", battery=").append(battery)
+      .append(", nextchange=").append(nextchange)
+      .append(", summeractive=").append(summeractive)
+      .append(", holidayactive=").append(holidayactive)
+      .append(", adaptiveHeatingActive=").append(adaptiveHeatingActive)
+      .append(", adaptiveHeatingRunning=").append(adaptiveHeatingRunning)
       .append(']');
     return builder.toString();
    }
@@ -375,62 +376,63 @@ public final class HKR implements Comparable<HKR>, IValueObject
    * @return 0: equal; 1: greater; -1: smaller
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
+  @SuppressWarnings({"NestedIfDepth", "PMD.AvoidDeeplyNestedIfStmts"})
   @Override
   public int compareTo(final HKR obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = compareField(this.tist, obj.tist);
+    int result = compareField(tist, obj.tist);
     if (result == 0)
      {
-      result = compareField(this.tsoll, obj.tsoll);
+      result = compareField(tsoll, obj.tsoll);
       if (result == 0)
        {
-        result = this.absenk.compareTo(obj.absenk);
+        result = absenk.compareTo(obj.absenk);
         if (result == 0)
          {
-          result = this.komfort.compareTo(obj.komfort);
+          result = komfort.compareTo(obj.komfort);
           if (result == 0)
            {
-            result = compareField(this.lock, obj.lock);
+            result = compareField(lock, obj.lock);
             if (result == 0)
              {
-              result = compareField(this.devicelock, obj.devicelock);
+              result = compareField(devicelock, obj.devicelock);
               if (result == 0)
                {
-                result = this.errorcode.compareTo(obj.errorcode);
+                result = errorcode.compareTo(obj.errorcode);
                 if (result == 0)
                  {
-                  result = Boolean.compare(this.windowsopenactive, obj.windowsopenactive);
+                  result = Boolean.compare(windowsopenactive, obj.windowsopenactive);
                   if (result == 0)
                    {
-                    result = compareField(this.windowopenactiveendtime, obj.windowopenactiveendtime);
+                    result = compareField(windowopenactiveendtime, obj.windowopenactiveendtime);
                     if (result == 0)
                      {
-                      result = Boolean.compare(this.boostactive, obj.boostactive);
+                      result = Boolean.compare(boostactive, obj.boostactive);
                       if (result == 0)
                        {
-                        result = compareField(this.boostactiveendtime, obj.boostactiveendtime);
+                        result = compareField(boostactiveendtime, obj.boostactiveendtime);
                         if (result == 0)
                          {
-                          result = Boolean.compare(this.batterylow, obj.batterylow);
+                          result = Boolean.compare(batterylow, obj.batterylow);
                           if (result == 0)
                            {
-                            result = this.battery.compareTo(obj.battery);
+                            result = battery.compareTo(obj.battery);
                             if (result == 0)
                              {
-                              result = this.nextchange.compareTo(obj.nextchange);
+                              result = nextchange.compareTo(obj.nextchange);
                               if (result == 0)
                                {
-                                result = Boolean.compare(this.summeractive, obj.summeractive);
+                                result = Boolean.compare(summeractive, obj.summeractive);
                                 if (result == 0)
                                  {
-                                  result = Boolean.compare(this.holidayactive, obj.holidayactive);
+                                  result = Boolean.compare(holidayactive, obj.holidayactive);
                                   if (result == 0)
                                    {
-                                    result = Boolean.compare(this.adaptiveHeatingActive, obj.adaptiveHeatingActive);
+                                    result = Boolean.compare(adaptiveHeatingActive, obj.adaptiveHeatingActive);
                                     if (result == 0)
                                      {
-                                      result = Boolean.compare(this.adaptiveHeatingRunning, obj.adaptiveHeatingRunning);
+                                      result = Boolean.compare(adaptiveHeatingRunning, obj.adaptiveHeatingRunning);
                                      }
                                    }
                                  }

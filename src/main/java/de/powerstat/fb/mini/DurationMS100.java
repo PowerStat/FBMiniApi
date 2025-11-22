@@ -71,7 +71,7 @@ public final class DurationMS100 implements Comparable<DurationMS100>, IValueObj
    */
   public int intValue()
    {
-    return this.duration;
+    return duration;
    }
 
 
@@ -83,7 +83,7 @@ public final class DurationMS100 implements Comparable<DurationMS100>, IValueObj
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.duration);
+    return String.valueOf(duration);
    }
 
 
@@ -96,7 +96,7 @@ public final class DurationMS100 implements Comparable<DurationMS100>, IValueObj
   @Override
   public int hashCode()
    {
-    return Integer.hashCode(this.duration);
+    return Integer.hashCode(duration);
    }
 
 
@@ -118,7 +118,7 @@ public final class DurationMS100 implements Comparable<DurationMS100>, IValueObj
      {
       return false;
      }
-    return this.duration == other.duration;
+    return duration == other.duration;
    }
 
 
@@ -135,8 +135,8 @@ public final class DurationMS100 implements Comparable<DurationMS100>, IValueObj
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("DurationMS100[duration=").append(this.duration).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(24);
+    builder.append("DurationMS100[duration=").append(duration).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -152,7 +152,7 @@ public final class DurationMS100 implements Comparable<DurationMS100>, IValueObj
   public int compareTo(final DurationMS100 obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Integer.compare(this.duration, obj.duration);
+    return Integer.compare(duration, obj.duration);
    }
 
  }

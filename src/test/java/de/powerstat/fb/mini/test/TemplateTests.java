@@ -35,6 +35,37 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class TemplateTests
  {
   /**
+   * AIN one.
+   */
+  private static final String AIN_ONE = "000000000001";
+
+  /**
+   * Null pointer exception expected.
+   */
+  private static final String NULL_POINTER_EXCEPTION_EXPECTED = "Null pointer exception expected"; //$NON-NLS-1$
+
+  /**
+   * Illegal argument exception expected.
+   */
+  private static final String ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED = "Illegal argument exception expected"; //$NON-NLS-1$
+
+  /**
+   * Template not as expected.
+   */
+  private static final String TEMPLATE_NOT_AS_EXPECTED = "Template not as expected";
+
+  /**
+   * Test.
+   */
+  private static final String TEST = "test";
+
+  /**
+   * AIN zero.
+   */
+  private static final String AIN_ZERO = "000000000000";
+
+
+  /**
    * Default constructor.
    */
   /* default */ TemplateTests()
@@ -49,19 +80,19 @@ final class TemplateTests
   @Test
   /* default */ void testTemplateCorrect1()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(0, ScenarioType.UNDEFINED);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
     final List<AIN> subtemplates = null;
     final EnumSet<ApplyMask> applymask = null;
     final Template cleanTemplate = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-    assertEquals("000000000000", cleanTemplate.stringValue(), "Template not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(AIN_ZERO, cleanTemplate.stringValue(), TEMPLATE_NOT_AS_EXPECTED);
    }
 
 
@@ -71,19 +102,19 @@ final class TemplateTests
   @Test
   /* default */ void testTemplateCorrect2()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = EnumSet.allOf(Functions.class);
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = new ArrayList<>();
     final List<AIN> triggers = new ArrayList<>();
     final List<AIN> subtemplates = new ArrayList<>();
     final EnumSet<ApplyMask> applymask = EnumSet.allOf(ApplyMask.class);
     final Template cleanTemplate = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-    assertEquals("000000000000", cleanTemplate.stringValue(), "Template not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(AIN_ZERO, cleanTemplate.stringValue(), TEMPLATE_NOT_AS_EXPECTED);
    }
 
 
@@ -96,7 +127,7 @@ final class TemplateTests
   @ValueSource(strings = {"1", "1234567890123456789012345678901234567890"})
   /* default */ void testTemplateNameLength1(final String name)
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
@@ -107,7 +138,7 @@ final class TemplateTests
     final List<AIN> subtemplates = null;
     final EnumSet<ApplyMask> applymask = null;
     final Template cleanTemplate = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-    assertEquals("000000000000", cleanTemplate.stringValue(), "Template not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(AIN_ZERO, cleanTemplate.stringValue(), TEMPLATE_NOT_AS_EXPECTED);
    }
 
 
@@ -120,7 +151,7 @@ final class TemplateTests
   @ValueSource(strings = {"", "12345678901234567890123456789012345678901"})
   /* default */ void testTemplateNameLength2(final String name)
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
@@ -133,7 +164,7 @@ final class TemplateTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final Template cleanTemplate = */ Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -149,7 +180,7 @@ final class TemplateTests
     final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = new ArrayList<>();
     final List<AIN> triggers = new ArrayList<>();
@@ -158,7 +189,7 @@ final class TemplateTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final Template cleanTemplate = */ Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -169,12 +200,12 @@ final class TemplateTests
   @Test
   /* default */ void testTemplateWrong2()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = -1;
     final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = new ArrayList<>();
     final List<AIN> triggers = new ArrayList<>();
@@ -183,7 +214,7 @@ final class TemplateTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final Template cleanTemplate = */ Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -194,12 +225,12 @@ final class TemplateTests
   @Test
   /* default */ void testTemplateWrong3()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
     final boolean autocreate = false;
     final long applymaskField = -1;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = new ArrayList<>();
     final List<AIN> triggers = new ArrayList<>();
@@ -208,7 +239,7 @@ final class TemplateTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final Template cleanTemplate = */ Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -219,7 +250,7 @@ final class TemplateTests
   @Test
   /* default */ void testTemplateWrong4()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
     final boolean autocreate = false;
@@ -233,7 +264,7 @@ final class TemplateTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final Template cleanTemplate = */ Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -244,12 +275,12 @@ final class TemplateTests
   @Test
   /* default */ void testTemplateWrong5()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = null;
     final List<AIN> devices = new ArrayList<>();
     final List<AIN> triggers = new ArrayList<>();
@@ -258,7 +289,7 @@ final class TemplateTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final Template cleanTemplate = */ Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -269,19 +300,19 @@ final class TemplateTests
   @Test
   /* default */ void testStringValue()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
     final List<AIN> subtemplates = null;
     final EnumSet<ApplyMask> applymask = null;
     final Template template = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-    assertEquals("000000000000", template.stringValue(), "Template not as expected"); //$NON-NLS-1$
+    assertEquals(AIN_ZERO, template.stringValue(), TEMPLATE_NOT_AS_EXPECTED);
    }
 
 
@@ -291,19 +322,19 @@ final class TemplateTests
   @Test
   /* default */ void testGetIdentifier()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
     final List<AIN> subtemplates = null;
     final EnumSet<ApplyMask> applymask = null;
     final Template template = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-    assertEquals("000000000000", template.getIdentifier().stringValue(), "Identifier not as expected"); //$NON-NLS-1$
+    assertEquals(AIN_ZERO, template.getIdentifier().stringValue(), "Identifier not as expected"); //$NON-NLS-1$
    }
 
 
@@ -313,12 +344,12 @@ final class TemplateTests
   @Test
   /* default */ void testGetId()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 1;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
@@ -335,12 +366,12 @@ final class TemplateTests
   @Test
   /* default */ void testGetFunctionbitmask()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
@@ -353,16 +384,18 @@ final class TemplateTests
 
   /**
    * Test getAutocreate.
+   *
+   * @param autocreate Auto create
    */
   @ParameterizedTest
   @ValueSource(booleans = {false, true})
-  /* default */ void testGetAutocreate(boolean autocreate)
+  /* default */ void testGetAutocreate(final boolean autocreate)
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
@@ -379,12 +412,12 @@ final class TemplateTests
   @Test
   /* default */ void testGetApplymaskField()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 1;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
@@ -401,19 +434,19 @@ final class TemplateTests
   @Test
   /* default */ void testGetName()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
     final List<AIN> subtemplates = null;
     final EnumSet<ApplyMask> applymask = null;
     final Template template = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-    assertEquals("test", template.getName(), "Name not as expected"); //$NON-NLS-1$
+    assertEquals(TEST, template.getName(), "Name not as expected"); //$NON-NLS-1$
    }
 
 
@@ -423,12 +456,12 @@ final class TemplateTests
   @Test
   /* default */ void testGetMetadata()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
@@ -445,15 +478,15 @@ final class TemplateTests
   @Test
   /* default */ void testGetDevices()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = new ArrayList<>();
-    final AIN identifier2 = AIN.of("000000000001");
+    final AIN identifier2 = AIN.of(AIN_ONE);
     devices.add(identifier2);
     final List<AIN> triggers = null;
     final List<AIN> subtemplates = null;
@@ -469,16 +502,16 @@ final class TemplateTests
   @Test
   /* default */ void testGetTriggers()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = new ArrayList<>();
-    final AIN identifier2 = AIN.of("000000000001");
+    final AIN identifier2 = AIN.of(AIN_ONE);
     triggers.add(identifier2);
     final List<AIN> subtemplates = null;
     final EnumSet<ApplyMask> applymask = null;
@@ -493,17 +526,17 @@ final class TemplateTests
   @Test
   /* default */ void testGetSubtemplates()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
     final List<AIN> subtemplates = new ArrayList<>();
-    final AIN identifier2 = AIN.of("000000000001");
+    final AIN identifier2 = AIN.of(AIN_ONE);
     subtemplates.add(identifier2);
     final EnumSet<ApplyMask> applymask = null;
     final Template template = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
@@ -517,12 +550,12 @@ final class TemplateTests
   @Test
   /* default */ void testGetApplymask()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
@@ -537,7 +570,7 @@ final class TemplateTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Template.class).set(Mode.skipMockito()).withNonnullFields("identifier", "functionbitmask", "name", "metadata", "devices", "triggers", "subtemplates", "applymask").verify();
    }
@@ -549,12 +582,12 @@ final class TemplateTests
   @Test
   /* default */ void testToString()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
@@ -572,12 +605,12 @@ final class TemplateTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final boolean autocreate = false;
     final long applymaskField = 0;
-    final String name = "test";
+    final String name = TEST;
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     final List<AIN> devices = null;
     final List<AIN> triggers = null;
@@ -586,7 +619,7 @@ final class TemplateTests
 
     final Template template1 = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
     final Template template2 = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
-    final Template template3 = Template.of(AIN.of("000000000001"), id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask); //$NON-NLS-1$
+    final Template template3 = Template.of(AIN.of(AIN_ONE), id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
     final Template template4 = Template.of(AIN.of("000000000002"), id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask); //$NON-NLS-1$
     final Template template5 = Template.of(identifier, id, functionbitmask, autocreate, applymaskField, name, metadata, devices, triggers, subtemplates, applymask);
     assertAll("testCompareTo", //$NON-NLS-1$

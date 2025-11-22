@@ -62,7 +62,7 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
   @Override
   public String stringValue()
    {
-    return this.code.stringValue();
+    return code.stringValue();
    }
 
 
@@ -73,7 +73,7 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
    */
   public SubscriptionCode subscriptionCodeValue()
    {
-    return this.code;
+    return code;
    }
 
 
@@ -84,7 +84,7 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
    */
   public AIN ainValue()
    {
-    return this.latestain;
+    return latestain;
    }
 
 
@@ -97,7 +97,7 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.code, this.latestain);
+    return Objects.hash(code, latestain);
    }
 
 
@@ -119,10 +119,10 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
      {
       return false;
      }
-    boolean result = this.code.equals(other.code);
+    boolean result = (code == other.code);
     if (result)
      {
-      result = this.latestain.equals(other.latestain);
+      result = latestain.equals(other.latestain);
      }
     return result;
    }
@@ -141,8 +141,8 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("SubscriptionState[code=").append(this.code).append(", ").append(this.latestain).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(26);
+    builder.append("SubscriptionState[code=").append(code).append(", ").append(latestain).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -158,10 +158,10 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
   public int compareTo(final SubscriptionState obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.code.compareTo(obj.code);
+    int result = code.compareTo(obj.code);
     if (result == 0)
      {
-      result = this.latestain.compareTo(obj.latestain);
+      result = latestain.compareTo(obj.latestain);
      }
     return result;
    }

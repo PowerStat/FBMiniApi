@@ -23,6 +23,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class VersionTests
  {
   /**
+   * Version not as expected.
+   */
+  private static final String VERSION_NOT_AS_EXPECTED = "Version not as expected";
+
+  /**
+   * Version 1.0.
+   */
+  private static final String VERSION_1_0 = "1.0";
+
+
+  /**
    * Default constructor.
    */
   /* default */ VersionTests()
@@ -38,7 +49,7 @@ final class VersionTests
   /* default */ void testVersionCorrect1()
    {
     final Version cleanVersion = Version.of(1, 0);
-    assertEquals("1.0", cleanVersion.stringValue(), "Version not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(VERSION_1_0, cleanVersion.stringValue(), VERSION_NOT_AS_EXPECTED);
    }
 
 
@@ -48,8 +59,8 @@ final class VersionTests
   @Test
   /* default */ void testVersionCorrect2()
    {
-    final Version cleanVersion = Version.of("1.0");
-    assertEquals("1.0", cleanVersion.stringValue(), "Version not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    final Version cleanVersion = Version.of(VERSION_1_0);
+    assertEquals(VERSION_1_0, cleanVersion.stringValue(), VERSION_NOT_AS_EXPECTED);
    }
 
 
@@ -130,7 +141,7 @@ final class VersionTests
   /* default */ void testStringValue()
    {
     final Version version = Version.of(1, 0);
-    assertEquals("1.0", version.stringValue(), "Version not as expected"); //$NON-NLS-1$
+    assertEquals(VERSION_1_0, version.stringValue(), VERSION_NOT_AS_EXPECTED);
    }
 
 
@@ -138,7 +149,7 @@ final class VersionTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Version.class).verify();
    }

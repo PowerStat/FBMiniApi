@@ -16,6 +16,11 @@ import de.powerstat.validation.interfaces.IValueObject;
 public final class SID implements Comparable<SID>, IValueObject
  {
   /**
+   * SID zero.
+   */
+  private static final String SID_ZERO = "0000000000000000";
+
+  /**
    * SID regexp.
    */
   private static final Pattern SID_REGEXP = Pattern.compile("^[0-9a-f]{16}$"); //$NON-NLS-1$
@@ -23,7 +28,7 @@ public final class SID implements Comparable<SID>, IValueObject
   /**
    * Invalid session identifier.
    */
-  private static final SID INVALID = new SID("0000000000000000"); //$NON-NLS-1$
+  private static final SID INVALID = new SID(SID_ZERO);
 
 
   /**
@@ -49,7 +54,7 @@ public final class SID implements Comparable<SID>, IValueObject
      {
       throw new IllegalArgumentException("sessionid with wrong format"); //$NON-NLS-1$
      }
-    this.sessionId = sid;
+    sessionId = sid;
    }
 
 
@@ -84,7 +89,7 @@ public final class SID implements Comparable<SID>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.sessionId;
+    return sessionId;
    }
 
 
@@ -95,7 +100,7 @@ public final class SID implements Comparable<SID>, IValueObject
    */
   public boolean isValidSession()
    {
-    return !"0000000000000000".equals(this.sessionId); //$NON-NLS-1$
+    return !SID_ZERO.equals(sessionId);
    }
 
 
@@ -108,7 +113,7 @@ public final class SID implements Comparable<SID>, IValueObject
   @Override
   public int hashCode()
    {
-    return this.sessionId.hashCode();
+    return sessionId.hashCode();
    }
 
 
@@ -126,12 +131,11 @@ public final class SID implements Comparable<SID>, IValueObject
      {
       return true;
      }
-    if (!(obj instanceof SID))
+    if (!(obj instanceof final SID other))
      {
       return false;
      }
-    final SID other = (SID)obj;
-    return this.sessionId.equals(other.sessionId);
+    return sessionId.equals(other.sessionId);
    }
 
 
@@ -149,7 +153,7 @@ public final class SID implements Comparable<SID>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("SID[sid=").append(this.sessionId).append(']'); //$NON-NLS-1$
+    builder.append("SID[sid=").append(sessionId).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -165,7 +169,7 @@ public final class SID implements Comparable<SID>, IValueObject
   public int compareTo(final SID obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return this.sessionId.compareTo(obj.sessionId);
+    return sessionId.compareTo(obj.sessionId);
    }
 
  }

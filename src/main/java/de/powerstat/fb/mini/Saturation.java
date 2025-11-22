@@ -17,6 +17,7 @@ public final class Saturation implements Comparable<Saturation>, IValueObject
   /**
    * Saturation 0-255.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final int saturation;
 
 
@@ -71,7 +72,7 @@ public final class Saturation implements Comparable<Saturation>, IValueObject
    */
   public int intValue()
    {
-    return this.saturation;
+    return saturation;
    }
 
 
@@ -83,7 +84,7 @@ public final class Saturation implements Comparable<Saturation>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.saturation);
+    return String.valueOf(saturation);
    }
 
 
@@ -96,7 +97,7 @@ public final class Saturation implements Comparable<Saturation>, IValueObject
   @Override
   public int hashCode()
    {
-    return Integer.hashCode(this.saturation);
+    return Integer.hashCode(saturation);
    }
 
 
@@ -118,7 +119,7 @@ public final class Saturation implements Comparable<Saturation>, IValueObject
      {
       return false;
      }
-    return this.saturation == other.saturation;
+    return saturation == other.saturation;
    }
 
 
@@ -135,8 +136,8 @@ public final class Saturation implements Comparable<Saturation>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("Saturation[saturation=").append(this.saturation).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(23);
+    builder.append("Saturation[saturation=").append(saturation).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -152,7 +153,7 @@ public final class Saturation implements Comparable<Saturation>, IValueObject
   public int compareTo(final Saturation obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Integer.compare(this.saturation, obj.saturation);
+    return Integer.compare(saturation, obj.saturation);
    }
 
 

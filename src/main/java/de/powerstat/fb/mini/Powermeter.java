@@ -167,7 +167,7 @@ public final class Powermeter implements Comparable<Powermeter>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
+    final var builder = new StringBuilder(37);
     builder.append("Powermeter[voltage=").append(voltage)
       .append(", power=").append(power)
       .append(", energy=").append(energy)

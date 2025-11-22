@@ -17,6 +17,7 @@ public final class Temperature implements Comparable<Temperature>, IValueObject
   /**
    * Temperature in deci celsius.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final TemperatureCelsius temperature;
 
   /**
@@ -154,7 +155,7 @@ public final class Temperature implements Comparable<Temperature>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
+    final var builder = new StringBuilder(34);
     builder.append("Temperature[temperature=").append(temperature).append(", offset=").append(offset).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

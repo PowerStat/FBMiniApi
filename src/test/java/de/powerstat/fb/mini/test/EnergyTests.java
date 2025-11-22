@@ -25,6 +25,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class EnergyTests
  {
   /**
+   * Energy.
+   */
+  private static final String ENERGY_75519 = "75519";
+
+  /**
+   * Not an energy value.
+   */
+  private static final String NOT_AN_ENERGY_VALUE = "Not an energy value!";
+
+
+  /**
    * Default constructor.
    */
   /* default */ EnergyTests()
@@ -42,7 +53,7 @@ final class EnergyTests
   @ValueSource(longs = {0, 1, 75519})
   /* default */ void testIsEnergyValue(final long energy)
    {
-    assertEquals(energy, Energy.of(energy).longValue(), "Not an energy value!"); //$NON-NLS-1$
+    assertEquals(energy, Energy.of(energy).longValue(), NOT_AN_ENERGY_VALUE);
    }
 
 
@@ -69,7 +80,7 @@ final class EnergyTests
   @Test
   /* default */ void testGetKiloWattHours()
    {
-    assertEquals(75, Energy.of("75519").getEnergyKiloWattHours(), "Not an energy value!"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(75, Energy.of(ENERGY_75519).getEnergyKiloWattHours(), NOT_AN_ENERGY_VALUE);
    }
 
 
@@ -77,9 +88,9 @@ final class EnergyTests
    * Is an energy string value.
    */
   @Test
-  /* default */ void teststringValue()
+  /* default */ void testStringValue()
    {
-    assertEquals("75519", Energy.of("75519").stringValue(), "Not an energy value!"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(ENERGY_75519, Energy.of(ENERGY_75519).stringValue(), NOT_AN_ENERGY_VALUE);
    }
 
 
@@ -87,7 +98,7 @@ final class EnergyTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Energy.class).verify();
    }

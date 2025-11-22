@@ -25,6 +25,7 @@ public final class Action implements Comparable<Action>, IValueObject
   /**
    * Action.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final String action;
 
 
@@ -71,7 +72,7 @@ public final class Action implements Comparable<Action>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.action;
+    return action;
    }
 
 
@@ -84,7 +85,7 @@ public final class Action implements Comparable<Action>, IValueObject
   @Override
   public int hashCode()
    {
-    return this.action.hashCode();
+    return action.hashCode();
    }
 
 
@@ -95,6 +96,7 @@ public final class Action implements Comparable<Action>, IValueObject
    * @return true when equal, false otherwise
    * @see java.lang.Object#equals(java.lang.Object)
    */
+  @SuppressWarnings("PMD.SimplifyBooleanReturns")
   @Override
   public boolean equals(final Object obj)
    {
@@ -106,7 +108,7 @@ public final class Action implements Comparable<Action>, IValueObject
      {
       return false;
      }
-    return this.action.equals(other.action);
+    return action.equals(other.action);
    }
 
 
@@ -124,7 +126,7 @@ public final class Action implements Comparable<Action>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Action[action=").append(this.action).append(']'); //$NON-NLS-1$
+    builder.append("Action[action=").append(action).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -140,7 +142,7 @@ public final class Action implements Comparable<Action>, IValueObject
   public int compareTo(final Action obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return this.action.compareTo(obj.action);
+    return action.compareTo(obj.action);
    }
 
  }

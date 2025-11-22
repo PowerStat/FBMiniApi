@@ -14,7 +14,7 @@ import java.util.TreeSet;
 /**
  * URI query.
  *
- * @param T Parameter type
+ * @param <T> Parameter type
  */
 public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
  {
@@ -46,8 +46,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
     final int initLength = builder.length();
     for (final T entry : queries)
      {
-      builder.append(entry.stringValue());
-      builder.append('&');
+      builder.append(entry.stringValue()).append('&');
      }
     if (builder.length() > initLength)
      {
@@ -121,8 +120,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
     final int initLength = builder.length();
     for (final T entry : queries)
      {
-      builder.append(entry.stringValue());
-      builder.append("&"); //$NON-NLS-1$
+      builder.append(entry.stringValue()).append('&');
      }
     if (builder.length() > initLength)
      {

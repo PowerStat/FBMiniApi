@@ -17,6 +17,7 @@ public final class Hue implements Comparable<Hue>, IValueObject
   /**
    * Hue 0-359.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final int hue;
 
 
@@ -71,7 +72,7 @@ public final class Hue implements Comparable<Hue>, IValueObject
    */
   public int intValue()
    {
-    return this.hue;
+    return hue;
    }
 
 
@@ -83,7 +84,7 @@ public final class Hue implements Comparable<Hue>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.hue);
+    return String.valueOf(hue);
    }
 
 
@@ -96,7 +97,7 @@ public final class Hue implements Comparable<Hue>, IValueObject
   @Override
   public int hashCode()
    {
-    return Integer.hashCode(this.hue);
+    return Integer.hashCode(hue);
    }
 
 
@@ -118,7 +119,7 @@ public final class Hue implements Comparable<Hue>, IValueObject
      {
       return false;
      }
-    return this.hue == other.hue;
+    return hue == other.hue;
    }
 
 
@@ -136,7 +137,7 @@ public final class Hue implements Comparable<Hue>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Hue[hue=").append(this.hue).append(']'); //$NON-NLS-1$
+    builder.append("Hue[hue=").append(hue).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -152,7 +153,7 @@ public final class Hue implements Comparable<Hue>, IValueObject
   public int compareTo(final Hue obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Integer.compare(this.hue, obj.hue);
+    return Integer.compare(hue, obj.hue);
    }
 
  }

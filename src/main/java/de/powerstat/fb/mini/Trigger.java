@@ -42,7 +42,7 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
     super();
     Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
     Objects.requireNonNull(name, "name"); //$NON-NLS-1$
-    if ((name.length() < 1) || (name.length() > 40))
+    if (name.isEmpty() || (name.length() > 40))
      {
       throw new IllegalArgumentException("name with wrong length: " + name.length()); //$NON-NLS-1$
      }
@@ -158,7 +158,7 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
+    final var builder = new StringBuilder(29);
     builder.append("Trigger[ain=").append(ain).append(", name=").append(name).append(", active=").append(active).append(']'); //$NON-NLS-1$
     return builder.toString();
    }

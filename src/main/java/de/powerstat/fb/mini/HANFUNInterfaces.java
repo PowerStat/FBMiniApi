@@ -57,6 +57,8 @@ public enum HANFUNInterfaces implements IValueObject
    */
   SUOTA_UPDATE(1024);
 
+  // TODO 0xf7.. properitary
+
 
   /**
    * Action number.
@@ -113,7 +115,7 @@ public enum HANFUNInterfaces implements IValueObject
    */
   public int getAction()
    {
-    return this.action;
+    return action;
    }
 
 

@@ -23,6 +23,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class TemperatureTests
  {
   /**
+   * Temperature not as expected.
+   */
+  private static final String TEMPERATURE_NOT_AS_EXPECTED = "Temperature not as expected";
+
+
+  /**
    * Default constructor.
    */
   /* default */ TemperatureTests()
@@ -38,7 +44,7 @@ final class TemperatureTests
   /* default */ void testTemperatureCorrect1()
    {
     final Temperature cleanTemperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(0));
-    assertEquals(200, cleanTemperature.temperatureValue().longValue(), "Temperature not as expected"); //$NON-NLS-1$
+    assertEquals(200, cleanTemperature.temperatureValue().longValue(), TEMPERATURE_NOT_AS_EXPECTED);
    }
 
 
@@ -49,7 +55,7 @@ final class TemperatureTests
   /* default */ void testTemperatureCorrect2()
    {
     final Temperature cleanTemperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(10));
-    assertEquals(210, cleanTemperature.temperatureValue().longValue(), "Temperature not as expected"); //$NON-NLS-1$
+    assertEquals(210, cleanTemperature.temperatureValue().longValue(), TEMPERATURE_NOT_AS_EXPECTED);
    }
 
 
@@ -82,7 +88,7 @@ final class TemperatureTests
   /* default */ void testStringValue()
    {
     final Temperature cleanTemperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(0));
-    assertEquals("200", cleanTemperature.stringValue(), "Temperature not as expected"); //$NON-NLS-1$
+    assertEquals("200", cleanTemperature.stringValue(), TEMPERATURE_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -90,7 +96,7 @@ final class TemperatureTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Temperature.class).withNonnullFields("temperature", "offset").verify();
    }

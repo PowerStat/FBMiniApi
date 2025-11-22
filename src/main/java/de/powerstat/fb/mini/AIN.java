@@ -18,6 +18,16 @@ import de.powerstat.validation.interfaces.IValueObject;
 public final class AIN implements Comparable<AIN>, IValueObject
  {
   /**
+   * Tmp.
+   */
+  private static final String TMP = "tmp";
+
+  /**
+   * AIN with wrong length.
+   */
+  private static final String AIN_WITH_WRONG_LENGTH = "AIN with wrong length: ";
+
+  /**
    * AIN regexp.
    *
    * HANFUN: Gerät: 13077 0000258; Unit : 13077 0000258-1
@@ -52,12 +62,12 @@ public final class AIN implements Comparable<AIN>, IValueObject
     Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
     if ((ain.length() < 12) || (ain.length() > 19))
      {
-      throw new IllegalArgumentException("AIN with wrong length: " + ain.length()); //$NON-NLS-1$
+      throw new IllegalArgumentException(AIN_WITH_WRONG_LENGTH + ain.length());
      }
     final var intAIN = AIN.SPACE_REGEXP.matcher(ain).replaceAll(""); //$NON-NLS-1$
-    if ((intAIN.length() != 12) && (intAIN.length() != 14) && (intAIN.length() != 17) && (intAIN.length() != 19) && (!intAIN.startsWith("tmp")))
+    if ((intAIN.length() != 12) && (intAIN.length() != 14) && (intAIN.length() != 17) && (intAIN.length() != 19) && (!intAIN.startsWith(TMP)))
      {
-      throw new IllegalArgumentException("AIN with wrong length: " + ain.length()); //$NON-NLS-1$
+      throw new IllegalArgumentException(AIN_WITH_WRONG_LENGTH + ain.length());
      }
     if (!AIN.AIN_REGEXP.matcher(intAIN).matches())
      {
@@ -98,7 +108,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
    */
   public boolean isTemplate()
    {
-    return (aiNr.startsWith("tmp"));
+    return (aiNr.startsWith(TMP));
    }
 
 
@@ -144,6 +154,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
    * @return true when equal, false otherwise
    * @see java.lang.Object#equals(java.lang.Object)
    */
+  @SuppressWarnings("PMD.SimplifyBooleanReturns")
   @Override
   public boolean equals(final Object obj)
    {

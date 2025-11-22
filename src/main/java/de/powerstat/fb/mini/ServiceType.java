@@ -27,6 +27,7 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
   /**
    * Service type.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final String serviceType;
 
 
@@ -49,7 +50,7 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
      {
       throw new IllegalArgumentException("type with wrong format"); //$NON-NLS-1$
      }
-    this.serviceType = type;
+    serviceType = type;
    }
 
 
@@ -73,7 +74,7 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
   @Override
   public String stringValue()
    {
-    return this.serviceType;
+    return serviceType;
    }
 
 
@@ -86,7 +87,7 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
   @Override
   public int hashCode()
    {
-    return this.serviceType.hashCode();
+    return serviceType.hashCode();
    }
 
 
@@ -108,7 +109,7 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
      {
       return false;
      }
-    return this.serviceType.equals(other.serviceType);
+    return serviceType.equals(other.serviceType);
    }
 
 
@@ -125,8 +126,8 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("ServiceType[serviceType=").append(this.serviceType).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(25);
+    builder.append("ServiceType[serviceType=").append(serviceType).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -142,7 +143,7 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
   public int compareTo(final ServiceType obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return this.serviceType.compareTo(obj.serviceType);
+    return serviceType.compareTo(obj.serviceType);
    }
 
  }

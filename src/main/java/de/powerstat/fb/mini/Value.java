@@ -17,6 +17,7 @@ public final class Value implements Comparable<Value>, IValueObject
   /**
    * Value 0-255.
    */
+  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
   private final int value;
 
 
@@ -71,7 +72,7 @@ public final class Value implements Comparable<Value>, IValueObject
    */
   public int intValue()
    {
-    return this.value;
+    return value;
    }
 
 
@@ -83,7 +84,7 @@ public final class Value implements Comparable<Value>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.value);
+    return String.valueOf(value);
    }
 
 
@@ -96,7 +97,7 @@ public final class Value implements Comparable<Value>, IValueObject
   @Override
   public int hashCode()
    {
-    return Integer.hashCode(this.value);
+    return Integer.hashCode(value);
    }
 
 
@@ -118,7 +119,7 @@ public final class Value implements Comparable<Value>, IValueObject
      {
       return false;
      }
-    return this.value == other.value;
+    return value == other.value;
    }
 
 
@@ -136,7 +137,7 @@ public final class Value implements Comparable<Value>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Value[value=").append(this.value).append(']'); //$NON-NLS-1$
+    builder.append("Value[value=").append(value).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -152,7 +153,7 @@ public final class Value implements Comparable<Value>, IValueObject
   public int compareTo(final Value obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Integer.compare(this.value, obj.value);
+    return Integer.compare(value, obj.value);
    }
 
 

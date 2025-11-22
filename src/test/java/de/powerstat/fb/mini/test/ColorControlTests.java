@@ -29,6 +29,22 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class ColorControlTests
  {
   /**
+   * Illegal argument exception expected.
+   */
+  private static final String ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED = "Illegal argument exception expected"; //$NON-NLS-1$
+
+  /**
+   * Null pointer exception expected.
+   */
+  private static final String NULL_POINTER_EXCEPTION_EXPECTED = "Null pointer exception expected"; //$NON-NLS-1$
+
+  /**
+   * Color control not as expected.
+   */
+  private static final String COLOR_CONTROL_NOT_AS_EXPECTED = "ColorControl not as expected";
+
+
+  /**
    * Default constructor.
    */
   /* default */ ColorControlTests()
@@ -47,7 +63,7 @@ final class ColorControlTests
     final Hue hue = Hue.of(0);
     final Saturation saturation = Saturation.of(0);
     final ColorControl cleanColorControl = ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, saturation, hue, saturation, null);
-    assertEquals("", cleanColorControl.stringValue(), "ColorControl not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("", cleanColorControl.stringValue(), COLOR_CONTROL_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -61,7 +77,7 @@ final class ColorControlTests
     final Hue hue = Hue.of(0);
     final Saturation saturation = Saturation.of(0);
     final ColorControl cleanColorControl = ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, true, hue, saturation, hue, saturation, null);
-    assertEquals("", cleanColorControl.stringValue(), "ColorControl not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("", cleanColorControl.stringValue(), COLOR_CONTROL_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -73,7 +89,7 @@ final class ColorControlTests
    {
     final EnumSet<ColorModes> supportedModes = EnumSet.allOf(ColorModes.class);
     final ColorControl cleanColorControl = ColorControl.of(supportedModes, ColorModes.COLOR_TEMPERATURE, false, false, null, null, null, null, TemperatureKelvin.of(2700));
-    assertEquals("", cleanColorControl.stringValue(), "ColorControl not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("", cleanColorControl.stringValue(), COLOR_CONTROL_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -86,7 +102,7 @@ final class ColorControlTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(null, ColorModes.COLOR_TEMPERATURE, false, false, null, null, null, null, TemperatureKelvin.of(2700));
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -101,7 +117,7 @@ final class ColorControlTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.COLOR_TEMPERATURE, false, false, null, null, null, null, TemperatureKelvin.of(2700));
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -118,7 +134,7 @@ final class ColorControlTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, null, saturation, hue, saturation, null);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -135,7 +151,7 @@ final class ColorControlTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, null, hue, saturation, null);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -152,7 +168,7 @@ final class ColorControlTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, saturation, null, saturation, null);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -169,7 +185,7 @@ final class ColorControlTests
     assertThrows(NullPointerException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, saturation, hue, null, null);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -186,7 +202,7 @@ final class ColorControlTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, saturation, hue, saturation, TemperatureKelvin.of(2700));
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -203,7 +219,7 @@ final class ColorControlTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, saturation, Hue.of(1), saturation, null);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -220,7 +236,7 @@ final class ColorControlTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, saturation, hue, Saturation.of(1), null);
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -232,12 +248,10 @@ final class ColorControlTests
   /* default */ void testColorControlWrong10()
    {
     final EnumSet<ColorModes> supportedModes = EnumSet.allOf(ColorModes.class);
-    final Hue hue = Hue.of(0);
-    final Saturation saturation = Saturation.of(0);
     assertThrows(NullPointerException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.COLOR_TEMPERATURE, false, false, null, null, null, null, null);
-     }, "Null pointer exception expected" //$NON-NLS-1$
+     }, NULL_POINTER_EXCEPTION_EXPECTED
     );
    }
 
@@ -252,7 +266,7 @@ final class ColorControlTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.COLOR_TEMPERATURE, false, false, Hue.of(0), null, null, null, TemperatureKelvin.of(2700));
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -267,7 +281,7 @@ final class ColorControlTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.COLOR_TEMPERATURE, false, false, null, Saturation.of(0), null, null, TemperatureKelvin.of(2700));
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -282,7 +296,7 @@ final class ColorControlTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.COLOR_TEMPERATURE, false, false, null, null, Hue.of(0), null, TemperatureKelvin.of(2700));
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -297,7 +311,7 @@ final class ColorControlTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final ColorControl cleanColorControl = */ ColorControl.of(supportedModes, ColorModes.COLOR_TEMPERATURE, false, false, null, null, null, Saturation.of(0), TemperatureKelvin.of(2700));
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -312,7 +326,7 @@ final class ColorControlTests
     final Hue hue = Hue.of(0);
     final Saturation saturation = Saturation.of(0);
     final ColorControl cleanColorControl = ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, saturation, hue, saturation, null);
-    assertEquals("", cleanColorControl.stringValue(), "ColorControl not as expected"); //$NON-NLS-1$
+    assertEquals("", cleanColorControl.stringValue(), COLOR_CONTROL_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -320,7 +334,7 @@ final class ColorControlTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(ColorControl.class).verify();
    }

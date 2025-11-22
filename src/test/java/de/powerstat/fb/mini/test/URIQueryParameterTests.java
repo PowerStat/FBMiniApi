@@ -23,6 +23,32 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class URIQueryParameterTests
  {
   /**
+   * Illegal argument exception expected.
+   */
+  private static final String ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED = "Illegal argument exception expected"; //$NON-NLS-1$
+
+  /**
+   * Not a uri query parameter.
+   */
+  private static final String NOT_A_URI_QUERY_PARAMETER = "Not a uri query parameter!";
+
+  /**
+   * 123.
+   */
+  private static final String VALUE_123 = "123";
+
+  /**
+   * Abc.
+   */
+  private static final String ABC = "abc";
+
+  /**
+   * ABC = 123.
+   */
+  private static final String ABC_123 = "abc=123";
+
+
+  /**
    * Default constructor.
    */
   /* default */ URIQueryParameterTests()
@@ -37,7 +63,7 @@ final class URIQueryParameterTests
   @Test
   /* default */ void testConstructor1()
    {
-    assertEquals("abc=123", URIQueryParameter.of("abc", "123").stringValue(), "Not a uri query parameter!"); //$NON-NLS-1$
+    assertEquals(ABC_123, URIQueryParameter.of(ABC, VALUE_123).stringValue(), NOT_A_URI_QUERY_PARAMETER);
    }
 
 
@@ -47,7 +73,7 @@ final class URIQueryParameterTests
   @Test
   /* default */ void testConstructor2()
    {
-    assertEquals("abc=", URIQueryParameter.of("abc", "").stringValue(), "Not a uri query parameter!"); //$NON-NLS-1$
+    assertEquals("abc=", URIQueryParameter.of(ABC, "").stringValue(), NOT_A_URI_QUERY_PARAMETER); //$NON-NLS-1$
    }
 
 
@@ -57,7 +83,7 @@ final class URIQueryParameterTests
   @Test
   /* default */ void testConstructor3()
    {
-    assertEquals("abc", URIQueryParameter.of("abc", null).stringValue(), "Not a uri query parameter!"); //$NON-NLS-1$
+    assertEquals(ABC, URIQueryParameter.of(ABC, null).stringValue(), NOT_A_URI_QUERY_PARAMETER);
    }
 
 
@@ -67,7 +93,7 @@ final class URIQueryParameterTests
   @Test
   /* default */ void testConstructor4()
    {
-    assertEquals("abc=123", URIQueryParameter.of("abc=123").stringValue(), "Not a uri query parameter!"); //$NON-NLS-1$
+    assertEquals(ABC_123, URIQueryParameter.of(ABC_123).stringValue(), NOT_A_URI_QUERY_PARAMETER);
    }
 
 
@@ -93,8 +119,8 @@ final class URIQueryParameterTests
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final URIQueryParameter param = */ URIQueryParameter.of("abc");
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      /* final URIQueryParameter param = */ URIQueryParameter.of(ABC);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -108,7 +134,7 @@ final class URIQueryParameterTests
     assertThrows(IllegalArgumentException.class, () ->
      {
       /* final URIQueryParameter param = */ URIQueryParameter.of("abc=123=def");
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -121,8 +147,8 @@ final class URIQueryParameterTests
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final URIQueryParameter param = */ URIQueryParameter.of("", "123");
-     }, "Illegal argument exception expected" //$NON-NLS-1$
+      /* final URIQueryParameter param = */ URIQueryParameter.of("", VALUE_123);
+     }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
    }
 
@@ -131,7 +157,7 @@ final class URIQueryParameterTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(URIQueryParameter.class).withNonnullFields("key").verify();
    }
@@ -143,7 +169,7 @@ final class URIQueryParameterTests
   @Test
   /* default */ void testToString()
    {
-    final URIQueryParameter param = URIQueryParameter.of("abc", "123");
+    final URIQueryParameter param = URIQueryParameter.of(ABC, VALUE_123);
     assertEquals("URIQueryParameter[key=abc, value=123]", param.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -155,11 +181,11 @@ final class URIQueryParameterTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final URIQueryParameter param1 = URIQueryParameter.of("abc", "123");
-    final URIQueryParameter param2 = URIQueryParameter.of("abc", "123");
+    final URIQueryParameter param1 = URIQueryParameter.of(ABC, VALUE_123);
+    final URIQueryParameter param2 = URIQueryParameter.of(ABC, VALUE_123);
     final URIQueryParameter param3 = URIQueryParameter.of("bcd", "234");
     final URIQueryParameter param4 = URIQueryParameter.of("cde", "345");
-    final URIQueryParameter param5 = URIQueryParameter.of("abc", "123");
+    final URIQueryParameter param5 = URIQueryParameter.of(ABC, VALUE_123);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(param1.compareTo(param2) == -param2.compareTo(param1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(param1.compareTo(param3) == -param3.compareTo(param1), "reflexive2"), //$NON-NLS-1$

@@ -51,7 +51,7 @@ public final class SimpleOnOff implements Comparable<SimpleOnOff>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.state);
+    return String.valueOf(state);
    }
 
 
@@ -62,7 +62,7 @@ public final class SimpleOnOff implements Comparable<SimpleOnOff>, IValueObject
    */
   public boolean booleanValue()
    {
-    return this.state;
+    return state;
    }
 
 
@@ -75,7 +75,7 @@ public final class SimpleOnOff implements Comparable<SimpleOnOff>, IValueObject
   @Override
   public int hashCode()
    {
-    return Boolean.hashCode(this.state);
+    return Boolean.hashCode(state);
    }
 
 
@@ -97,7 +97,7 @@ public final class SimpleOnOff implements Comparable<SimpleOnOff>, IValueObject
      {
       return false;
      }
-    return this.state == other.state;
+    return state == other.state;
    }
 
 
@@ -114,8 +114,8 @@ public final class SimpleOnOff implements Comparable<SimpleOnOff>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("SimpleOnOff[state=").append(this.state).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(19);
+    builder.append("SimpleOnOff[state=").append(state).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -131,7 +131,7 @@ public final class SimpleOnOff implements Comparable<SimpleOnOff>, IValueObject
   public int compareTo(final SimpleOnOff obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Boolean.compare(this.state, obj.state);
+    return Boolean.compare(state, obj.state);
    }
 
  }

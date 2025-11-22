@@ -32,6 +32,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class HsTests
  {
   /**
+   * HS not as expected.
+   */
+  private static final String HS_NOT_AS_EXPECTED = "Hs not as expected";
+
+  /**
+   * Red.
+   */
+  private static final String ROT = "Rot";
+
+
+  /**
    * Default constructor.
    */
   /* default */ HsTests()
@@ -53,8 +64,8 @@ final class HsTests
     colors.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
-    final Hs cleanHs = Hs.of(index, 5569, "Rot", colors);
-    assertEquals("", cleanHs.stringValue(), "Hs not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    final Hs cleanHs = Hs.of(index, 5569, ROT, colors);
+    assertEquals("", cleanHs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -68,8 +79,8 @@ final class HsTests
     colors.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
-    final Hs cleanHs = Hs.of(1, 0, "Rot", colors);
-    assertEquals("", cleanHs.stringValue(), "Hs not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    final Hs cleanHs = Hs.of(1, 0, ROT, colors);
+    assertEquals("", cleanHs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -88,7 +99,7 @@ final class HsTests
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
-      /* final Hs cleanHs = */ Hs.of(index, 5569, "Rot", colors);
+      /* final Hs cleanHs = */ Hs.of(index, 5569, ROT, colors);
      }, "Index out of bounds exception expected" //$NON-NLS-1$
     );
    }
@@ -106,7 +117,7 @@ final class HsTests
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
     assertThrows(IndexOutOfBoundsException.class, () ->
      {
-      /* final Hs cleanHs = */ Hs.of(1, -1, "Rot", colors);
+      /* final Hs cleanHs = */ Hs.of(1, -1, ROT, colors);
      }, "Index out of bounds exception expected" //$NON-NLS-1$
     );
    }
@@ -138,7 +149,7 @@ final class HsTests
    {
     assertThrows(NullPointerException.class, () ->
      {
-      /* final Hs cleanHs = */ Hs.of(1, 5569, "Rot", null);
+      /* final Hs cleanHs = */ Hs.of(1, 5569, ROT, null);
      }, "Null pointer exception expected" //$NON-NLS-1$
     );
    }
@@ -155,7 +166,7 @@ final class HsTests
     colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final Hs cleanHs = */ Hs.of(1, 5569, "Rot", colors);
+      /* final Hs cleanHs = */ Hs.of(1, 5569, ROT, colors);
      }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
@@ -171,8 +182,8 @@ final class HsTests
     colors.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
-    final Hs hs = Hs.of(1, 5569, "Rot", colors);
-    assertEquals("", hs.stringValue(), "Hs not as expected"); //$NON-NLS-1$
+    final Hs hs = Hs.of(1, 5569, ROT, colors);
+    assertEquals("", hs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -180,7 +191,7 @@ final class HsTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Hs.class).withNonnullFields("name", "colors").verify();
    }
@@ -196,7 +207,7 @@ final class HsTests
     colors1.add(Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors1.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors1.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
-    final Hs hs = Hs.of(1, 5569, "Rot", colors1);
+    final Hs hs = Hs.of(1, 5569, ROT, colors1);
    assertEquals("Hs[index=1, nameEnum=5569, name=Rot, colors=[Color[index=1, hue=Hue[hue=0], saturation=Saturation[saturation=0], value=Value[value=0]], Color[index=2, hue=Hue[hue=0], saturation=Saturation[saturation=0], value=Value[value=0]], Color[index=3, hue=Hue[hue=0], saturation=Saturation[saturation=0], value=Value[value=0]]]]", hs.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -220,11 +231,11 @@ final class HsTests
     colors3.add(Color.of(1, Hue.of(2), Saturation.of(2), Value.of(2)));
     colors3.add(Color.of(2, Hue.of(2), Saturation.of(2), Value.of(2)));
     colors3.add(Color.of(3, Hue.of(2), Saturation.of(2), Value.of(2)));
-    final Hs hs1 = Hs.of(1, 5569, "Rot", colors1);
-    final Hs hs2 = Hs.of(1, 5569, "Rot", colors1);
+    final Hs hs1 = Hs.of(1, 5569, ROT, colors1);
+    final Hs hs2 = Hs.of(1, 5569, ROT, colors1);
     final Hs hs3 = Hs.of(2, 5570, "Grün", colors2); //$NON-NLS-1$
     final Hs hs4 = Hs.of(3, 5571, "Blau", colors3); //$NON-NLS-1$
-    final Hs hs5 = Hs.of(1, 5569, "Rot", colors1);
+    final Hs hs5 = Hs.of(1, 5569, ROT, colors1);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(hs1.compareTo(hs2) == -hs2.compareTo(hs1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(hs1.compareTo(hs3) == -hs3.compareTo(hs1), "reflexive2"), //$NON-NLS-1$

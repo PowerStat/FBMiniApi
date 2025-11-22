@@ -67,6 +67,21 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
 public class TR64SessionMini implements Comparable<TR64SessionMini>
  {
   /**
+   * https.
+   */
+  private static final String HTTPS = "https://";
+
+  /**
+   * Port.
+   */
+  private static final String PORT_STR = "port";
+
+  /**
+   * Hostname.
+   */
+  private static final String HOSTNAME_STR = "hostname";
+
+  /**
    * Logger.
    */
   private static final Logger LOGGER = LogManager.getLogger(TR64SessionMini.class);
@@ -112,8 +127,8 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     super();
     this.httpclient = Objects.requireNonNull(httpclient, "httpclient"); //$NON-NLS-1$
     this.docBuilder = Objects.requireNonNull(docBuilder, "docBuilder"); //$NON-NLS-1$
-    this.hostname = Objects.requireNonNull(hostname, "hostname"); //$NON-NLS-1$
-    this.port = Objects.requireNonNull(port, "port"); //$NON-NLS-1$
+    this.hostname = Objects.requireNonNull(hostname, HOSTNAME_STR);
+    this.port = Objects.requireNonNull(port, PORT_STR);
    }
 
 
@@ -160,8 +175,8 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   @SuppressWarnings("PMD.CloseResource")
   public static TR64SessionMini newInstance(final Hostname hostname, final Port port, final Username username, final Password password) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, ParserConfigurationException
    {
-    Objects.requireNonNull(hostname, "hostname"); //$NON-NLS-1$
-    Objects.requireNonNull(port, "port"); //$NON-NLS-1$
+    Objects.requireNonNull(hostname, HOSTNAME_STR);
+    Objects.requireNonNull(port, PORT_STR);
     Objects.requireNonNull(username, "username"); //$NON-NLS-1$
     Objects.requireNonNull(password, "password"); //$NON-NLS-1$
     final CredentialsProvider credsProvider = new BasicCredentialsProvider();
@@ -182,7 +197,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
        {
         httpclient.close();
        }
-      catch (final IOException e1)
+      catch (final IOException ex)
        {
         // ignore
        }
@@ -276,7 +291,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   public final Document getDoc(final URIPath urlPath) throws IOException, SAXException
    {
     Objects.requireNonNull(urlPath, "urlPath"); //$NON-NLS-1$
-    try (CloseableHttpResponse response = this.httpclient.execute(new HttpGet("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + urlPath.stringValue()))) //$NON-NLS-1$ //$NON-NLS-2$
+    try (CloseableHttpResponse response = httpclient.execute(new HttpGet(HTTPS + hostname.stringValue() + ":" + port.intValue() + urlPath.stringValue()))) //$NON-NLS-1$
      {
       if (LOGGER.isDebugEnabled())
        {
@@ -287,7 +302,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
        {
         LOGGER.debug(entity.getContentType());
        }
-      final var doc = this.docBuilder.parse(new InputSource(new ByteArrayInputStream(EntityUtils.toString(entity).getBytes(StandardCharsets.UTF_8))));
+      final var doc = docBuilder.parse(new InputSource(new ByteArrayInputStream(EntityUtils.toString(entity).getBytes(StandardCharsets.UTF_8))));
       EntityUtils.consume(entity);
       return doc;
      }
@@ -315,29 +330,29 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     Objects.requireNonNull(serviceType, "serviceType"); //$NON-NLS-1$
     Objects.requireNonNull(action, "action"); //$NON-NLS-1$
     final var requestBuffer = new StringBuilder(243);
-    requestBuffer.append("<?xml version=\"1.0\" encoding=\"utf-8\"?><s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">  <s:Body>    <u:" + action + " xmlns:u=\"" + serviceType + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    requestBuffer.append("<?xml version=\"1.0\" encoding=\"utf-8\"?><s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">  <s:Body>    <u:").append(action).append(" xmlns:u=\"").append(serviceType).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     if (parameters != null)
      {
       for (final Entry<String, String> parameter : parameters.entrySet())
        {
-        requestBuffer.append("    <" + parameter.getKey() + ">" + parameter.getValue() + "</" + parameter.getKey() + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        requestBuffer.append("    <").append(parameter.getKey()).append('>').append(parameter.getValue()).append("</").append(parameter.getKey()).append('>'); //$NON-NLS-1$ //$NON-NLS-2$
        }
      }
-    requestBuffer.append("    </u:" + action.stringValue() + ">  </s:Body></s:Envelope>"); //$NON-NLS-1$ //$NON-NLS-2$
+    requestBuffer.append("    </u:").append(action.stringValue()).append(">  </s:Body></s:Envelope>"); //$NON-NLS-1$ //$NON-NLS-2$
     // LOGGER.info(sb.toString());
 
-    final var httpPost = new HttpPost("https://" + this.hostname.stringValue() + ":" + this.port.intValue() + controlURL.stringValue()); //$NON-NLS-1$ //$NON-NLS-2$
+    final var httpPost = new HttpPost(HTTPS + hostname.stringValue() + ":" + port.intValue() + controlURL.stringValue()); //$NON-NLS-1$
     httpPost.setHeader("SoapAction", "\"" + serviceType.stringValue() + "#" + action.stringValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     httpPost.setHeader("USER-AGENT", "PowerStats FB TR64 mini client"); //$NON-NLS-1$ //$NON-NLS-2$
     httpPost.setHeader("Content-Type", "text/xml; charset=utf-8"); //$NON-NLS-1$ //$NON-NLS-2$
 
     httpPost.setEntity(new StringEntity(requestBuffer.toString()));
-    try (CloseableHttpResponse response = this.httpclient.execute(httpPost))
+    try (CloseableHttpResponse response = httpclient.execute(httpPost))
      {
       // LOGGER.info(response.getStatusLine());
       final var entity = response.getEntity();
       // LOGGER.info(entity.getContentType());
-      final var doc = this.docBuilder.parse(new InputSource(new ByteArrayInputStream(EntityUtils.toString(entity).getBytes(StandardCharsets.UTF_8))));
+      final var doc = docBuilder.parse(new InputSource(new ByteArrayInputStream(EntityUtils.toString(entity).getBytes(StandardCharsets.UTF_8))));
       EntityUtils.consume(entity);
       return doc;
      }
@@ -355,7 +370,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.hostname, this.port);
+    return Objects.hash(hostname, port);
    }
 
 
@@ -381,7 +396,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
       return false;
      }
     final TR64SessionMini other = (TR64SessionMini)obj;
-    return (this.hostname.equals(other.hostname) && this.port.equals(other.port));
+    return (hostname.equals(other.hostname) && port.equals(other.port));
    }
 
 
@@ -398,7 +413,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   @Override
   public String toString()
    {
-    return new StringBuilder().append("TR64SessionMini[hostname=").append(this.hostname.stringValue()).append(", port=").append(this.port.intValue()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    return new StringBuilder().append("TR64SessionMini[hostname=").append(hostname.stringValue()).append(", port=").append(port.intValue()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -415,10 +430,10 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   public int compareTo(final TR64SessionMini tr64SessionMiniObj)
    {
     Objects.requireNonNull(tr64SessionMiniObj, "obj"); //$NON-NLS-1$
-    int result = this.hostname.compareTo(tr64SessionMiniObj.hostname);
+    int result = hostname.compareTo(tr64SessionMiniObj.hostname);
     if (result == 0)
      {
-      result = this.port.compareTo(tr64SessionMiniObj.port);
+      result = port.compareTo(tr64SessionMiniObj.port);
      }
     return result;
    }

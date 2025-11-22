@@ -65,7 +65,7 @@ public final class LevelControl implements Comparable<LevelControl>, IValueObjec
   @Override
   public String stringValue()
    {
-    return this.level.stringValue();
+    return level.stringValue();
    }
 
 
@@ -78,7 +78,7 @@ public final class LevelControl implements Comparable<LevelControl>, IValueObjec
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.level, this.levelpercentage);
+    return Objects.hash(level, levelpercentage);
    }
 
 
@@ -100,10 +100,10 @@ public final class LevelControl implements Comparable<LevelControl>, IValueObjec
      {
       return false;
      }
-    boolean result = this.level.equals(other.level);
+    boolean result = level.equals(other.level);
     if (result)
      {
-      result = this.levelpercentage.equals(other.levelpercentage);
+      result = levelpercentage.equals(other.levelpercentage);
      }
     return result;
    }
@@ -122,8 +122,8 @@ public final class LevelControl implements Comparable<LevelControl>, IValueObjec
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("LevelControl[level=").append(this.level).append(", levelpercentage=").append(this.levelpercentage).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(38);
+    builder.append("LevelControl[level=").append(level).append(", levelpercentage=").append(levelpercentage).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -139,10 +139,10 @@ public final class LevelControl implements Comparable<LevelControl>, IValueObjec
   public int compareTo(final LevelControl obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = this.level.compareTo(obj.level);
+    int result = level.compareTo(obj.level);
     if (result == 0)
      {
-      result = this.levelpercentage.compareTo(obj.levelpercentage);
+      result = levelpercentage.compareTo(obj.levelpercentage);
      }
     return result;
    }

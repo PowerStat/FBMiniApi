@@ -25,6 +25,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class ServiceTypeTests
  {
   /**
+   * URN.
+   */
+  private static final String URN = "urn:dslforum-org:service:DeviceConfig:1";
+
+
+  /**
    * Default constructor.
    */
   /* default */ ServiceTypeTests()
@@ -39,7 +45,7 @@ final class ServiceTypeTests
    * @param type ServiceType
    */
   @ParameterizedTest
-  @ValueSource(strings = {"urn:dslforum-org:service:DeviceConfig:1", "urn:dslforum-org:service:a:1", "urn:dslforum-org:service:1234567890123456789012345678901234567:1"})
+  @ValueSource(strings = {URN, "urn:dslforum-org:service:a:1", "urn:dslforum-org:service:1234567890123456789012345678901234567:1"})
   /* default */ void testServiceTypeCorrect(final String type)
    {
     final ServiceType cleanType = ServiceType.of(type);
@@ -87,8 +93,8 @@ final class ServiceTypeTests
   @Test
   /* default */ void testStringValue()
    {
-    final ServiceType type = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
-    assertEquals("urn:dslforum-org:service:DeviceConfig:1", type.stringValue(), "ServiceType not as expected"); //$NON-NLS-1$
+    final ServiceType type = ServiceType.of(URN);
+    assertEquals(URN, type.stringValue(), "ServiceType not as expected"); //$NON-NLS-1$
    }
 
 
@@ -96,7 +102,7 @@ final class ServiceTypeTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(ServiceType.class).withNonnullFields("serviceType").verify();
    }
@@ -108,7 +114,7 @@ final class ServiceTypeTests
   @Test
   /* default */ void testToString()
    {
-    final ServiceType type = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
+    final ServiceType type = ServiceType.of(URN);
     assertEquals("ServiceType[serviceType=urn:dslforum-org:service:DeviceConfig:1]", type.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -120,11 +126,11 @@ final class ServiceTypeTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final ServiceType type1 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
-    final ServiceType type2 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
+    final ServiceType type1 = ServiceType.of(URN);
+    final ServiceType type2 = ServiceType.of(URN);
     final ServiceType type3 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:2"); //$NON-NLS-1$
     final ServiceType type4 = ServiceType.of("urn:dslforum-org:service:OtherConfig:1"); //$NON-NLS-1$
-    final ServiceType type5 = ServiceType.of("urn:dslforum-org:service:DeviceConfig:1");
+    final ServiceType type5 = ServiceType.of(URN);
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(type1.compareTo(type2) == -type2.compareTo(type1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(type1.compareTo(type3) == -type3.compareTo(type1), "reflexive2"), //$NON-NLS-1$

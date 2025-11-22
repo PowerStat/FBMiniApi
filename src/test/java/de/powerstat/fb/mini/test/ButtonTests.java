@@ -26,6 +26,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class ButtonTests
  {
   /**
+   * Test.
+   */
+  private static final String TEST = "Test";
+
+  /**
+   * AIN zero.
+   */
+  private static final String AIN_ZERO = "000000000000";
+
+
+  /**
    * Default constructor.
    */
   /* default */ ButtonTests()
@@ -40,7 +51,7 @@ final class ButtonTests
   @Test
   /* default */ void testButtonCorrect1()
    {
-    final Button cleanButton = Button.of(AIN.of("000000000000"), 0L, "1234567890123456789012345678901234567890", UnixTimestamp.of(Seconds.of(0L)));
+    final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, "1234567890123456789012345678901234567890", UnixTimestamp.of(Seconds.of(0L)));
     assertEquals("1234567890123456789012345678901234567890", cleanButton.stringValue(), "Button not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -51,7 +62,7 @@ final class ButtonTests
   @Test
   /* default */ void testButtonCorrect2()
    {
-    final Button cleanButton = Button.of(AIN.of("000000000000"), 0L, null, UnixTimestamp.of(Seconds.of(0L)));
+    final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, null, UnixTimestamp.of(Seconds.of(0L)));
     assertEquals(null, cleanButton.stringValue(), "Button not as expected"); //$NON-NLS-1$
    }
 
@@ -64,7 +75,7 @@ final class ButtonTests
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final Button cleanButton = */ Button.of(AIN.of("000000000000"), -1L, "Test", UnixTimestamp.of(Seconds.of(0L)));
+      /* final Button cleanButton = */ Button.of(AIN.of(AIN_ZERO), -1L, TEST, UnixTimestamp.of(Seconds.of(0L)));
      }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
@@ -78,7 +89,7 @@ final class ButtonTests
    {
     assertThrows(IllegalArgumentException.class, () ->
      {
-      /* final Button cleanButton = */ Button.of(AIN.of("000000000000"), 0L, "12345678901234567890123456789012345678901", UnixTimestamp.of(Seconds.of(0L)));
+      /* final Button cleanButton = */ Button.of(AIN.of(AIN_ZERO), 0L, "12345678901234567890123456789012345678901", UnixTimestamp.of(Seconds.of(0L)));
      }, "Illegal argument exception expected" //$NON-NLS-1$
     );
    }
@@ -90,8 +101,8 @@ final class ButtonTests
   @Test
   /* default */ void testGetIdentifier()
    {
-    final Button cleanButton = Button.of(AIN.of("000000000000"), 0L, "Test", UnixTimestamp.of(Seconds.of(0L)));
-    assertEquals("000000000000", cleanButton.getIdentifier().stringValue(), "getIdentifier not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
+    assertEquals(AIN_ZERO, cleanButton.getIdentifier().stringValue(), "getIdentifier not as expected"); //$NON-NLS-1$
    }
 
 
@@ -101,7 +112,7 @@ final class ButtonTests
   @Test
   /* default */ void testGetId()
    {
-    final Button cleanButton = Button.of(AIN.of("000000000000"), 1L, "Test", UnixTimestamp.of(Seconds.of(0L)));
+    final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 1L, TEST, UnixTimestamp.of(Seconds.of(0L)));
     assertEquals(1L, cleanButton.getId(), "getId not as expected"); //$NON-NLS-1$
    }
 
@@ -112,8 +123,8 @@ final class ButtonTests
   @Test
   /* default */ void testGetName()
    {
-    final Button cleanButton = Button.of(AIN.of("000000000000"), 0L, "Test", UnixTimestamp.of(Seconds.of(0L)));
-    assertEquals("Test", cleanButton.getName(), "getName not as expected"); //$NON-NLS-1$
+    final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
+    assertEquals(TEST, cleanButton.getName(), "getName not as expected"); //$NON-NLS-1$
    }
 
 
@@ -123,7 +134,7 @@ final class ButtonTests
   @Test
   /* default */ void testGetLastPressedTimestamp()
    {
-    final Button cleanButton = Button.of(AIN.of("000000000000"), 0L, "Test", UnixTimestamp.of(Seconds.of(0L)));
+    final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
     assertEquals(0L, cleanButton.getLastPressedTimestamp().longValue(), "getLastPressedTimestamp not as expected"); //$NON-NLS-1$
    }
 
@@ -134,8 +145,8 @@ final class ButtonTests
   @Test
   /* default */ void testStringValue()
    {
-    final Button cleanButton = Button.of(AIN.of("000000000000"), 0L, "Test", UnixTimestamp.of(Seconds.of(0L)));
-    assertEquals("Test", cleanButton.stringValue(), "sringValue not as expected"); //$NON-NLS-1$
+    final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
+    assertEquals(TEST, cleanButton.stringValue(), "sringValue not as expected"); //$NON-NLS-1$
    }
 
 
@@ -143,7 +154,7 @@ final class ButtonTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Button.class).withNonnullFields("identifier", "name", "lastpressedtimestamp").verify();
    }
@@ -155,7 +166,7 @@ final class ButtonTests
   @Test
   /* default */ void testToString()
    {
-    final Button button = Button.of(AIN.of("000000000000"), 0L, "Test", UnixTimestamp.of(Seconds.of(0L)));
+    final Button button = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
     assertEquals("Button[identifier=AIN[ain=000000000000], id=0, name=Test ,lastpressedtimestamp=UnixTimestamp[seconds=Seconds[seconds=0]]]", button.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -167,11 +178,11 @@ final class ButtonTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final Button button1 = Button.of(AIN.of("000000000000"), 0L, "Test", UnixTimestamp.of(Seconds.of(0L)));
-    final Button button2 = Button.of(AIN.of("000000000000"), 0L, "Test", UnixTimestamp.of(Seconds.of(0L)));
+    final Button button1 = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
+    final Button button2 = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
     final Button button3 = Button.of(AIN.of("000000000001"), 1L, "Test2", UnixTimestamp.of(Seconds.of(1L))); //$NON-NLS-1$
     final Button button4 = Button.of(AIN.of("000000000002"), 2L, "Test3", UnixTimestamp.of(Seconds.of(2L))); //$NON-NLS-1$
-    final Button button5 = Button.of(AIN.of("000000000000"), 0L, "Test", UnixTimestamp.of(Seconds.of(0L)));
+    final Button button5 = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(button1.compareTo(button2) == -button2.compareTo(button1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(button1.compareTo(button3) == -button3.compareTo(button1), "reflexive2"), //$NON-NLS-1$

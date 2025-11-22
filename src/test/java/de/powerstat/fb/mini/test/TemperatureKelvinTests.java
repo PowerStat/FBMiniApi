@@ -77,7 +77,7 @@ final class TemperatureKelvinTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(TemperatureKelvin.class).verify();
    }

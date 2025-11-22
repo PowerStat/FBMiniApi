@@ -133,7 +133,7 @@ final class SIDTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(SID.class).withNonnullFields("sessionId").verify();
    }

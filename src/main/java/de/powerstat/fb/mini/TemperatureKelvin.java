@@ -71,7 +71,7 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
    */
   public int intValue()
    {
-    return this.temperature;
+    return temperature;
    }
 
 
@@ -83,7 +83,7 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.temperature);
+    return String.valueOf(temperature);
    }
 
 
@@ -96,7 +96,7 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
   @Override
   public int hashCode()
    {
-    return Integer.hashCode(this.temperature);
+    return Integer.hashCode(temperature);
    }
 
 
@@ -118,7 +118,7 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
      {
       return false;
      }
-    return this.temperature == other.temperature;
+    return temperature == other.temperature;
    }
 
 
@@ -135,8 +135,8 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("TemperatureKelvin[temperature=").append(this.temperature).append(']'); //$NON-NLS-1$
+    final var builder = new StringBuilder(31);
+    builder.append("TemperatureKelvin[temperature=").append(temperature).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -152,7 +152,7 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
   public int compareTo(final TemperatureKelvin obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Integer.compare(this.temperature, obj.temperature);
+    return Integer.compare(temperature, obj.temperature);
    }
 
  }

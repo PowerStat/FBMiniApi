@@ -30,7 +30,7 @@ public final class URIPath implements Comparable<URIPath>, IValueObject
    {
     // TODO length
     // TODO Regexp
-    this.pathparts = path.split("/"); // TODO null/empty as first entry?
+    pathparts = path.split("/"); // TODO null/empty as first entry?
    }
 
 
@@ -55,12 +55,11 @@ public final class URIPath implements Comparable<URIPath>, IValueObject
   public String stringValue()
    {
     final var builder = new StringBuilder();
-    for (final String part : this.pathparts)
+    for (final String part : pathparts)
      {
       if (!part.isBlank())
        {
-        builder.append('/');
-        builder.append(part);
+        builder.append('/').append(part);
        }
      }
     if (builder.isEmpty())
@@ -93,7 +92,7 @@ public final class URIPath implements Comparable<URIPath>, IValueObject
   @Override
   public int hashCode()
    {
-    return Arrays.hashCode(this.pathparts);
+    return Arrays.hashCode(pathparts);
    }
 
 
@@ -115,7 +114,7 @@ public final class URIPath implements Comparable<URIPath>, IValueObject
      {
       return false;
      }
-    return Arrays.equals(this.pathparts, other.pathparts);
+    return Arrays.equals(pathparts, other.pathparts);
    }
 
 
@@ -133,8 +132,7 @@ public final class URIPath implements Comparable<URIPath>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("URIPath[path=").append(stringValue());
-    builder.append(']');
+    builder.append("URIPath[path=").append(stringValue()).append(']');
     return builder.toString();
    }
 
@@ -150,7 +148,7 @@ public final class URIPath implements Comparable<URIPath>, IValueObject
   public int compareTo(final URIPath obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    final int result = Arrays.compare(this.pathparts, obj.pathparts);
+    final int result = Arrays.compare(pathparts, obj.pathparts);
     return result;
    }
 

@@ -24,6 +24,17 @@ import de.powerstat.fb.mini.SubscriptionState;
 final class SubscriptionStateTests
  {
   /**
+   * Subcription state not as expected.
+   */
+  private static final String SUBSCRIPTION_STATE_NOT_AS_EXPECTED = "SubscriptionState not as expected";
+
+  /**
+   * AIN zero.
+   */
+  private static final String AIN_ZERO = "000000000000";
+
+
+  /**
    * Default constructor.
    */
   /* default */ SubscriptionStateTests()
@@ -38,7 +49,7 @@ final class SubscriptionStateTests
   @Test
   /* default */ void testFactory1()
    {
-    assertNotNull(SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000")), "SubscriptionState not as expected");
+    assertNotNull(SubscriptionState.of(SubscriptionCode.of(0), AIN.of(AIN_ZERO)), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
    }
 
 
@@ -48,7 +59,7 @@ final class SubscriptionStateTests
   @Test
   /* default */ void testFactory2()
    {
-    assertNotNull(SubscriptionState.of(SubscriptionCode.of(0), null), "SubscriptionState not as expected");
+    assertNotNull(SubscriptionState.of(SubscriptionCode.of(0), null), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
    }
 
 
@@ -60,7 +71,7 @@ final class SubscriptionStateTests
    {
     assertThrows(NullPointerException.class, () ->
      {
-      /* final SubscriptionState cleanState = */ SubscriptionState.of(null, AIN.of("000000000000"));
+      /* final SubscriptionState cleanState = */ SubscriptionState.of(null, AIN.of(AIN_ZERO));
      }, "Null pointer exception expected" //$NON-NLS-1$
     );
    }
@@ -72,7 +83,7 @@ final class SubscriptionStateTests
   @Test
   /* default */ void testStringValue()
    {
-    assertEquals("NO_PROGRESS", SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000")).stringValue(), "SubscriptionState not as expected");
+    assertEquals("NO_PROGRESS", SubscriptionState.of(SubscriptionCode.of(0), AIN.of(AIN_ZERO)).stringValue(), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
    }
 
 
@@ -83,7 +94,7 @@ final class SubscriptionStateTests
   /* default */ void testCodeValue()
    {
     final SubscriptionCode code = SubscriptionCode.of(0);
-    assertEquals(code, SubscriptionState.of(code, AIN.of("000000000000")).subscriptionCodeValue(), "SubscriptionState not as expected");
+    assertEquals(code, SubscriptionState.of(code, AIN.of(AIN_ZERO)).subscriptionCodeValue(), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
    }
 
 
@@ -93,8 +104,8 @@ final class SubscriptionStateTests
   @Test
   /* default */ void testAINValue()
    {
-    final AIN ain = AIN.of("000000000000");
-    assertEquals(ain, SubscriptionState.of(SubscriptionCode.of(0), ain).ainValue(), "SubscriptionState not as expected");
+    final AIN ain = AIN.of(AIN_ZERO);
+    assertEquals(ain, SubscriptionState.of(SubscriptionCode.of(0), ain).ainValue(), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
    }
 
 
@@ -102,7 +113,7 @@ final class SubscriptionStateTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(SubscriptionState.class).withNonnullFields("code", "latestain").verify();
    }
@@ -114,7 +125,7 @@ final class SubscriptionStateTests
   @Test
   /* default */ void testToString()
    {
-    final SubscriptionState state = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000"));
+    final SubscriptionState state = SubscriptionState.of(SubscriptionCode.of(0), AIN.of(AIN_ZERO));
     assertEquals("SubscriptionState[code=NO_PROGRESS, AIN[ain=000000000000]]", state.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
@@ -126,11 +137,11 @@ final class SubscriptionStateTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final SubscriptionState state1 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000")); //$NON-NLS-1$
-    final SubscriptionState state2 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000")); //$NON-NLS-1$
+    final SubscriptionState state1 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of(AIN_ZERO));
+    final SubscriptionState state2 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of(AIN_ZERO));
     final SubscriptionState state3 = SubscriptionState.of(SubscriptionCode.of(1), AIN.of("000000000001")); //$NON-NLS-1$
     final SubscriptionState state4 = SubscriptionState.of(SubscriptionCode.of(2), AIN.of("000000000002")); //$NON-NLS-1$
-    final SubscriptionState state5 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of("000000000000")); //$NON-NLS-1$
+    final SubscriptionState state5 = SubscriptionState.of(SubscriptionCode.of(0), AIN.of(AIN_ZERO));
     assertAll("testCompareTo", //$NON-NLS-1$
       () -> assertTrue(state1.compareTo(state2) == -state2.compareTo(state1), "reflexive1"), //$NON-NLS-1$
       () -> assertTrue(state1.compareTo(state3) == -state3.compareTo(state1), "reflexive2"), //$NON-NLS-1$

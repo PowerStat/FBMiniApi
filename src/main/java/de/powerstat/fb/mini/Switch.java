@@ -76,7 +76,7 @@ public final class Switch implements Comparable<Switch>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.state);
+    return String.valueOf(state);
    }
 
 
@@ -87,7 +87,7 @@ public final class Switch implements Comparable<Switch>, IValueObject
    */
   public Boolean getState()
    {
-    return this.state;
+    return state;
    }
 
 
@@ -98,7 +98,7 @@ public final class Switch implements Comparable<Switch>, IValueObject
    */
   public Boolean getMode()
    {
-    return this.mode;
+    return mode;
    }
 
 
@@ -109,7 +109,7 @@ public final class Switch implements Comparable<Switch>, IValueObject
    */
   public Boolean getLock()
    {
-    return this.lock;
+    return lock;
    }
 
 
@@ -120,7 +120,7 @@ public final class Switch implements Comparable<Switch>, IValueObject
    */
   public Boolean getDevicelock()
    {
-    return this.devicelock;
+    return devicelock;
    }
 
 
@@ -133,7 +133,7 @@ public final class Switch implements Comparable<Switch>, IValueObject
   @Override
   public int hashCode()
    {
-    return Objects.hash(this.state, this.mode, this.lock, this.devicelock);
+    return Objects.hash(state, mode, lock, devicelock);
    }
 
 
@@ -155,16 +155,16 @@ public final class Switch implements Comparable<Switch>, IValueObject
      {
       return false;
      }
-    boolean result = this.state == other.state;
+    boolean result = state == other.state;
     if (result)
      {
-      result = this.mode == other.mode;
+      result = mode == other.mode;
       if (result)
        {
-        result = this.lock == other.lock;
+        result = lock == other.lock;
         if (result)
          {
-          result = this.devicelock == other.devicelock;
+          result = devicelock == other.devicelock;
          }
        }
      }
@@ -185,11 +185,11 @@ public final class Switch implements Comparable<Switch>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
-    builder.append("Switch[state=").append(this.state)
-      .append(", mode=").append(this.mode)
-      .append(", lock=").append(this.lock)
-      .append(", devicelock=").append(this.devicelock)
+    final var builder = new StringBuilder(41);
+    builder.append("Switch[state=").append(state)
+      .append(", mode=").append(mode)
+      .append(", lock=").append(lock)
+      .append(", devicelock=").append(devicelock)
       .append(']');
     return builder.toString();
    }
@@ -206,16 +206,16 @@ public final class Switch implements Comparable<Switch>, IValueObject
   public int compareTo(final Switch obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    int result = Boolean.compare(this.state, obj.state);
+    int result = Boolean.compare(state, obj.state);
     if (result == 0)
      {
-      result = Boolean.compare(this.mode, obj.mode);
+      result = Boolean.compare(mode, obj.mode);
       if (result == 0)
        {
-        result = Boolean.compare(this.lock, obj.lock);
+        result = Boolean.compare(lock, obj.lock);
         if (result == 0)
          {
-          result = Boolean.compare(this.devicelock, obj.devicelock);
+          result = Boolean.compare(devicelock, obj.devicelock);
          }
        }
      }

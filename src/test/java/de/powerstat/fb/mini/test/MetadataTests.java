@@ -24,6 +24,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class MetadataTests
  {
   /**
+   * Metadata not as expected.
+   */
+  private static final String METADATA_NOT_AS_EXPECTED = "Metadata not as expected";
+
+
+  /**
    * Default constructor.
    */
   /* default */ MetadataTests()
@@ -39,7 +45,7 @@ final class MetadataTests
   /* default */ void testMetadataCorrect1()
    {
     final Metadata cleanMetadata = Metadata.of(0, ScenarioType.UNDEFINED);
-    assertEquals("0", cleanMetadata.stringValue(), "Metadata not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("0", cleanMetadata.stringValue(), METADATA_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -50,7 +56,7 @@ final class MetadataTests
   /* default */ void testMetadataCorrect2()
    {
     final Metadata cleanMetadata = Metadata.of(-1, ScenarioType.COMING);
-    assertEquals("COMING", cleanMetadata.stringValue(), "Metadata not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("COMING", cleanMetadata.stringValue(), METADATA_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -103,7 +109,7 @@ final class MetadataTests
   /* default */ void testStringValue1()
    {
     final Metadata metadata = Metadata.of(0, ScenarioType.UNDEFINED);
-    assertEquals("0", metadata.stringValue(), "Metadata not as expected"); //$NON-NLS-1$
+    assertEquals("0", metadata.stringValue(), METADATA_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -114,7 +120,7 @@ final class MetadataTests
   /* default */ void testStringValue2()
    {
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
-    assertEquals("COMING", metadata.stringValue(), "Metadata not as expected"); //$NON-NLS-1$
+    assertEquals("COMING", metadata.stringValue(), METADATA_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -122,7 +128,7 @@ final class MetadataTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Metadata.class).withNonnullFields("type").verify();
    }

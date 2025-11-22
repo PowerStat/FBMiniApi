@@ -30,6 +30,11 @@ final class AINTests
    */
   private static final String AIN0 = "000000000000";
 
+  /**
+   * AIN 0-0.
+   */
+  private static final String AIN_ZEROZERO = "000000000000-0";
+
 
   /**
    * Default constructor.
@@ -46,7 +51,7 @@ final class AINTests
    * @param ain AIN
    */
   @ParameterizedTest
-  @ValueSource(strings = {AINTests.AIN0, "00000 0000000", "00000 0000000-0", "000000000000-0", "Z0000000000000000", "Z000000000000000000", "tmp000000-0000", "tmp000000-00000", "tmp000000-000000", "tmp000000-0000000", "tmp000000-00000000", "tmp000000-000000000"})
+  @ValueSource(strings = {AINTests.AIN0, "00000 0000000", "00000 0000000-0", AIN_ZEROZERO, "Z0000000000000000", "Z000000000000000000", "tmp000000-0000", "tmp000000-00000", "tmp000000-000000", "tmp000000-0000000", "tmp000000-00000000", "tmp000000-000000000"})
   /* default */ void testAinCorrect(final String ain)
    {
     final AIN cleanAin = AIN.of(ain);
@@ -116,7 +121,7 @@ final class AINTests
   @Test
   /* default */ void testIsNoTemplate()
    {
-    final AIN ain = AIN.of("000000000000-0");
+    final AIN ain = AIN.of(AIN_ZEROZERO);
     assertFalse(ain.isTemplate(), "AIN is a template"); //$NON-NLS-1$
    }
 
@@ -138,16 +143,18 @@ final class AINTests
   @Test
   /* default */ void testIsNoZigbee()
    {
-    final AIN ain = AIN.of("000000000000-0");
+    final AIN ain = AIN.of(AIN_ZEROZERO);
     assertFalse(ain.isZigbee(), "AIN is a zigbee"); //$NON-NLS-1$
    }
 
 
   /**
    * Test isUnit.
+   *
+   * @param ain AIN
    */
   @ParameterizedTest
-  @ValueSource(strings = {"000000000000-0", "Z000000000000000000"})
+  @ValueSource(strings = {AIN_ZEROZERO, "Z000000000000000000"})
   /* default */ void testIsUnit(final String ain)
    {
     final AIN cleanAin = AIN.of(ain);
@@ -157,6 +164,8 @@ final class AINTests
 
   /**
    * Test isUnit.
+   *
+   * @param ain AIN
    */
   @ParameterizedTest
   @ValueSource(strings = {"000000000000", "Z0000000000000000"})
@@ -171,7 +180,7 @@ final class AINTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(AIN.class).withNonnullFields("aiNr").verify();
    }

@@ -100,7 +100,12 @@ public enum ApplyMask implements IValueObject
   /**
    * Send pushmail/app-notification.
    */
-  CUSTOM_NOTIFICATION(17);
+  CUSTOM_NOTIFICATION(17),
+
+  /**
+   * Triggers.
+   */
+  TRIGGERS(18);
 
 
   /**
@@ -158,7 +163,7 @@ public enum ApplyMask implements IValueObject
    */
   public int getAction()
    {
-    return this.action;
+    return action;
    }
 
 

@@ -55,6 +55,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class DeviceTests
  {
   /**
+   * AIN zero.
+   */
+  private static final String AIN_ZERO = "000000000000";
+
+
+  /**
    * Default constructor.
    */
   /* default */ DeviceTests()
@@ -69,7 +75,7 @@ final class DeviceTests
   @Test
   /* default */ void testDeviceCorrect1()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 1;
     final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
     final Version fwversion = Version.of(0, 1);
@@ -98,7 +104,7 @@ final class DeviceTests
     final GroupInfo groupinfo = GroupInfo.of(0, members);
     final Device cleanDevice = Device.of(identifier, id, functionbitmask, fwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switchState, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelControl, colorControl, etsiunitinfo, alert, blind, groupinfo);
     assertAll("Device", //$NON-NLS-1$
-      () -> assertEquals("000000000000", cleanDevice.stringValue(), "stringValue not as expected"), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertEquals(AIN_ZERO, cleanDevice.stringValue(), "stringValue not as expected"), //$NON-NLS-1$
       () -> assertEquals(identifier, cleanDevice.getIdentifier(), "Identifier not as expected"), //$NON-NLS-1$
       () -> assertEquals(id, cleanDevice.getId(), "Id not as expected"), //$NON-NLS-1$
       () -> assertEquals(functionbitmask, cleanDevice.getFunctionbitmask(), "Functionbitmask not as expected"), //$NON-NLS-1$
@@ -133,7 +139,7 @@ final class DeviceTests
   @Test
   /* default */ void testDeviceCorrect2()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 1;
     final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
     final Version fwversion = Version.of(0, 1);
@@ -162,7 +168,7 @@ final class DeviceTests
     final GroupInfo groupinfo = GroupInfo.of(0, members);
     final Device cleanDevice = Device.of(identifier, id, functionbitmask, fwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switchState, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelControl, colorControl, etsiunitinfo, alert, blind, groupinfo);
     assertAll("Device", //$NON-NLS-1$
-      () -> assertEquals("000000000000", cleanDevice.stringValue(), "stringValue not as expected"), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertEquals(AIN_ZERO, cleanDevice.stringValue(), "stringValue not as expected"), //$NON-NLS-1$
       () -> assertEquals(identifier, cleanDevice.getIdentifier(), "Identifier not as expected"), //$NON-NLS-1$
       () -> assertEquals(id, cleanDevice.getId(), "Id not as expected"), //$NON-NLS-1$
       () -> assertEquals(functionbitmask, cleanDevice.getFunctionbitmask(), "Functionbitmask not as expected"), //$NON-NLS-1$
@@ -198,7 +204,7 @@ final class DeviceTests
   @Test
   /* default */ void testDeviceCorrect3()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = EnumSet.noneOf(Functions.class);
     final Version fwversion = Version.of(0, 1);
@@ -223,7 +229,7 @@ final class DeviceTests
     final Blind blind = null;
     final GroupInfo groupinfo = null;
     final Device cleanDevice = Device.of(identifier, id, functionbitmask, fwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switchState, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelControl, colorControl, etsiunitinfo, alert, blind, groupinfo);
-    assertEquals("000000000000", cleanDevice.stringValue(), "Device not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(AIN_ZERO, cleanDevice.stringValue(), "Device not as expected"); //$NON-NLS-1$
    }
 
 
@@ -271,7 +277,7 @@ final class DeviceTests
   @Test
   /* default */ void testDeviceWrong2()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final Version fwversion = null;
@@ -309,7 +315,7 @@ final class DeviceTests
   @Test
   /* default */ void testDeviceWrong3()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = -1;
     final EnumSet<Functions> functionbitmask = null;
     final Version fwversion = Version.of(0, 1);
@@ -347,7 +353,7 @@ final class DeviceTests
   @Test
   /* default */ void testStringValue()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final Version fwversion = Version.of(0, 1);
@@ -372,7 +378,7 @@ final class DeviceTests
     final Blind blind = null;
     final GroupInfo groupinfo = null;
     final Device cleanDevice = Device.of(identifier, id, functionbitmask, fwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switchState, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelControl, colorControl, etsiunitinfo, alert, blind, groupinfo);
-    assertEquals("000000000000", cleanDevice.stringValue(), "Device not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(AIN_ZERO, cleanDevice.stringValue(), "Device not as expected"); //$NON-NLS-1$
    }
 
 
@@ -380,7 +386,7 @@ final class DeviceTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Device.class).withNonnullFields("identifier", "functionbitmask", "fwversion").verify();
    }
@@ -392,7 +398,7 @@ final class DeviceTests
   @Test
   /* default */ void testToString()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final Version fwversion = Version.of(0, 1);
@@ -428,7 +434,7 @@ final class DeviceTests
   @SuppressWarnings("java:S5785")
   /* default */ void testCompareTo()
    {
-    final AIN identifier = AIN.of("000000000000");
+    final AIN identifier = AIN.of(AIN_ZERO);
     final long id = 0;
     final EnumSet<Functions> functionbitmask = null;
     final Version fwversion = Version.of(0, 1);

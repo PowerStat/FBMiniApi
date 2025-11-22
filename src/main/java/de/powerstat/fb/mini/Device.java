@@ -559,6 +559,7 @@ public final class Device implements Comparable<Device>, IValueObject
    * @return true when equal, false otherwise
    * @see java.lang.Object#equals(java.lang.Object)
    */
+  @SuppressWarnings({"NestedIfDepth", "PMD.AvoidDeeplyNestedIfStmts"})
   @Override
   public boolean equals(final Object obj)
    {
@@ -680,7 +681,7 @@ public final class Device implements Comparable<Device>, IValueObject
   @Override
   public String toString()
    {
-    final var builder = new StringBuilder();
+    final var builder = new StringBuilder(282);
     builder.append("Device[identifier=").append(identifier)
       .append(", id=").append(id)
       .append(", functionbitmask=").append(functionbitmask)
@@ -731,6 +732,7 @@ public final class Device implements Comparable<Device>, IValueObject
    * @return 0: equal; 1: greater; -1: smaller
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
+  @SuppressWarnings({"NestedIfDepth", "PMD.AvoidDeeplyNestedIfStmts"})
   @Override
   public int compareTo(final Device obj)
    {

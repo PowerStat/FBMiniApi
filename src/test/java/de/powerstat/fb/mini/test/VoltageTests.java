@@ -25,6 +25,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 final class VoltageTests
  {
   /**
+   * Voltage.
+   */
+  private static final String VOLTAGE_228201 = "228201";
+
+  /**
+   * Not a voltage value.
+   */
+  private static final String NOT_A_VOLTAGE_VALUE = "Not a voltage value!";
+
+
+  /**
    * Default constructor.
    */
   /* default */ VoltageTests()
@@ -42,7 +53,7 @@ final class VoltageTests
   @ValueSource(longs = {0, 1, 228201})
   /* default */ void testIsVoltageValue(final long voltage)
    {
-    assertEquals(voltage, Voltage.of(voltage).longValue(), "Not an voltage value!"); //$NON-NLS-1$
+    assertEquals(voltage, Voltage.of(voltage).longValue(), NOT_A_VOLTAGE_VALUE);
    }
 
 
@@ -69,7 +80,7 @@ final class VoltageTests
   @Test
   /* default */ void testIsVoltageString()
    {
-    assertEquals(228, Voltage.of("228201").getVoltageVolt(), "Not an voltage value!"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(228, Voltage.of(VOLTAGE_228201).getVoltageVolt(), NOT_A_VOLTAGE_VALUE);
    }
 
 
@@ -79,7 +90,7 @@ final class VoltageTests
   @Test
   /* default */ void testVoltageStringValue()
    {
-    assertEquals("228201", Voltage.of("228201").stringValue(), "Not an voltage value!"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(VOLTAGE_228201, Voltage.of(VOLTAGE_228201).stringValue(), NOT_A_VOLTAGE_VALUE);
    }
 
 
@@ -87,7 +98,7 @@ final class VoltageTests
    * Equalsverifier.
    */
   @Test
-  public void equalsContract()
+  /* default */ void testEqualsContract()
    {
     EqualsVerifier.forClass(Voltage.class).verify();
    }
