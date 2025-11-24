@@ -5,6 +5,6 @@
 
 
 /**
- * FB json support.
+ * FB json support tests.
  */
-package de.powerstat.fb.mini.json;
+package de.powerstat.fb.mini.json.test;

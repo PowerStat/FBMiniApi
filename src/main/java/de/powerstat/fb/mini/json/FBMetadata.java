@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2024 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.json;
 
@@ -50,7 +51,7 @@ public final class FBMetadata
    */
   public int getIcon()
    {
-    return this.icon;
+    return icon;
    }
 
 
@@ -61,7 +62,7 @@ public final class FBMetadata
    */
   public String getType()
    {
-    return this.type;
+    return type;
    }
 
  }

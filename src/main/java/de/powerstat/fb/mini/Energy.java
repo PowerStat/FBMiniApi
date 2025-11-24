@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2020-2023 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
 
@@ -33,7 +34,7 @@ public final class Energy implements Comparable<Energy>, IValueObject
      {
       throw new IndexOutOfBoundsException("energy must be >= 0"); //$NON-NLS-1$
      }
-    this.energyWh = energy;
+    energyWh = energy;
    }
 
 
@@ -71,7 +72,7 @@ public final class Energy implements Comparable<Energy>, IValueObject
    */
   public long longValue()
    {
-    return this.energyWh;
+    return energyWh;
    }
 
 
@@ -83,7 +84,7 @@ public final class Energy implements Comparable<Energy>, IValueObject
   @Override
   public String stringValue()
    {
-    return String.valueOf(this.energyWh);
+    return String.valueOf(energyWh);
    }
 
 
@@ -94,7 +95,7 @@ public final class Energy implements Comparable<Energy>, IValueObject
    */
   public long getEnergyKiloWattHours()
    {
-    return this.energyWh / 1000;
+    return energyWh / 1000;
    }
 
 
@@ -107,7 +108,7 @@ public final class Energy implements Comparable<Energy>, IValueObject
   @Override
   public int hashCode()
    {
-    return Long.hashCode(this.energyWh);
+    return Long.hashCode(energyWh);
    }
 
 
@@ -125,12 +126,11 @@ public final class Energy implements Comparable<Energy>, IValueObject
      {
       return true;
      }
-    if (!(obj instanceof Energy))
+    if (!(obj instanceof final Energy other))
      {
       return false;
      }
-    final Energy other = (Energy)obj;
-    return this.energyWh == other.energyWh;
+    return energyWh == other.energyWh;
    }
 
 
@@ -148,7 +148,7 @@ public final class Energy implements Comparable<Energy>, IValueObject
   public String toString()
    {
     final var builder = new StringBuilder();
-    builder.append("Energy[energy=").append(this.energyWh).append(']'); //$NON-NLS-1$
+    builder.append("Energy[energy=").append(energyWh).append(']'); //$NON-NLS-1$
     return builder.toString();
    }
 
@@ -164,7 +164,7 @@ public final class Energy implements Comparable<Energy>, IValueObject
   public int compareTo(final Energy obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return Long.compare(this.energyWh, obj.energyWh);
+    return Long.compare(energyWh, obj.energyWh);
    }
 
  }

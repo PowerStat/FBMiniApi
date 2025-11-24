@@ -118,6 +118,9 @@ To look for dependency-track findings:
 
     mvn dependency-track:findings
 
+Apache-rat:
+     mvn apache-rat:check
+
 ## Usage
 
 For usage in your own projects please read the Javadoc's and follow the examples in the unittests.
