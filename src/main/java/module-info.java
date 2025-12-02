@@ -21,5 +21,8 @@ module de.powerstat.fb.mini
   requires org.apache.commons.codec;
   requires transitive javatuples;
   requires com.google.gson;
+  // opens de.powerstat.fb.mini to com.google.gson;
+  requires org.checkerframework.checker.qual;
+  requires org.jmolecules.ddd;
 
  }

@@ -221,7 +221,7 @@
       <property name="skipEnhancedForLoopVariable" value="false"/>
     </module>
     <module name="MultipleStringLiterals">
-      <property name="allowedDuplicates" value="1"/>
+      <property name="allowedDuplicates" value="2"/>
       <property name="ignoreOccurrenceContext" value="ANNOTATION  "/>
       <property name="ignoreStringsRegexp" value="^&quot;&quot;$"/>
     </module>

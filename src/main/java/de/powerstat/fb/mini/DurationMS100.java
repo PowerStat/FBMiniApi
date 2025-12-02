@@ -7,12 +7,16 @@ package de.powerstat.fb.mini;
 
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 
 
 /**
  * Duration in 100 ms (0-Integer.MAX_VALUE).
  */
+@ValueObject
 public final class DurationMS100 implements Comparable<DurationMS100>, IValueObject
  {
   /**
@@ -109,7 +113,7 @@ public final class DurationMS100 implements Comparable<DurationMS100>, IValueObj
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

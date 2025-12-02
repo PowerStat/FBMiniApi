@@ -7,12 +7,16 @@ package de.powerstat.fb.mini;
 
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 
 
 /**
  * TemperatureKelvin 2700-6500.
  */
+@ValueObject
 public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, IValueObject
  {
   /**
@@ -109,7 +113,7 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

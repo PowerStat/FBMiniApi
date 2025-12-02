@@ -8,12 +8,16 @@ package de.powerstat.fb.mini;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 
 
 /**
  * TR64 Action.
  */
+@ValueObject
 public final class Action implements Comparable<Action>, IValueObject
  {
   /**
@@ -99,7 +103,7 @@ public final class Action implements Comparable<Action>, IValueObject
    */
   @SuppressWarnings("PMD.SimplifyBooleanReturns")
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

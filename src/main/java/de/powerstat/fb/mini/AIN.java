@@ -8,6 +8,9 @@ package de.powerstat.fb.mini;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 
 
@@ -16,6 +19,7 @@ import de.powerstat.validation.interfaces.IValueObject;
  *
  * Identification of the actors or template, or MAC address of network device.
  */
+@ValueObject
 public final class AIN implements Comparable<AIN>, IValueObject
  {
   /**
@@ -66,7 +70,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
       throw new IllegalArgumentException(AIN_WITH_WRONG_LENGTH + ain.length());
      }
     final var intAIN = AIN.SPACE_REGEXP.matcher(ain).replaceAll(""); //$NON-NLS-1$
-    if ((intAIN.length() != 12) && (intAIN.length() != 14) && (intAIN.length() != 17) && (intAIN.length() != 19) && (!intAIN.startsWith(TMP)))
+    if ((intAIN.length() != 12) && (intAIN.length() != 14) && (intAIN.length() != 17) && (intAIN.length() != 19) && !intAIN.startsWith(TMP))
      {
       throw new IllegalArgumentException(AIN_WITH_WRONG_LENGTH + ain.length());
      }
@@ -109,7 +113,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
    */
   public boolean isTemplate()
    {
-    return (aiNr.startsWith(TMP));
+    return aiNr.startsWith(TMP);
    }
 
 
@@ -157,7 +161,7 @@ public final class AIN implements Comparable<AIN>, IValueObject
    */
   @SuppressWarnings("PMD.SimplifyBooleanReturns")
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

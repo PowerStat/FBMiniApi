@@ -5,7 +5,11 @@
 package de.powerstat.fb.mini;
 
 
+import java.util.Locale;
 import java.util.Objects;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
 
 import de.powerstat.validation.interfaces.IValueObject;
 
@@ -13,6 +17,7 @@ import de.powerstat.validation.interfaces.IValueObject;
 /**
  * Metadata.
  */
+@ValueObject
 public final class Metadata implements Comparable<Metadata>, IValueObject
  {
   /**
@@ -88,6 +93,28 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
 
 
   /**
+   * Return the value of this Metadata as a json string.
+   *
+   * @return THe value represented by this object after conversion to type json string.
+   */
+  public String jsonValue()
+   {
+    StringBuilder result = new StringBuilder();
+    result.append('{');
+    if (icon >= 0)
+     {
+      result.append("\"icon\": ").append(icon);
+     }
+    else
+     {
+      result.append("\"type\": \"").append(type.name().toLowerCase(Locale.getDefault())).append('"');
+     }
+    result.append('}');
+    return result.toString();
+   }
+
+
+  /**
    * Calculate hash code.
    *
    * @return Hash
@@ -108,7 +135,7 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

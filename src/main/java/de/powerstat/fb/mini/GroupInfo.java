@@ -4,16 +4,22 @@
  */
 package de.powerstat.fb.mini;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
+
 
 /**
  * Group info.
  */
+@ValueObject
 public final class GroupInfo implements Comparable<GroupInfo>, IValueObject
  {
   /**
@@ -102,7 +108,7 @@ public final class GroupInfo implements Comparable<GroupInfo>, IValueObject
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

@@ -5,12 +5,15 @@
 package de.powerstat.fb.mini;
 
 
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 
 
 /**
  * Subscription code.
  */
+@ValueObject
 public enum SubscriptionCode implements IValueObject
  {
   /**

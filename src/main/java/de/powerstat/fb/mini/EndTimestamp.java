@@ -8,6 +8,9 @@ package de.powerstat.fb.mini;
 import java.time.Instant;
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 import de.powerstat.validation.values.Seconds;
 
@@ -15,6 +18,7 @@ import de.powerstat.validation.values.Seconds;
 /**
  * End timestamp could be 0 or maximum 24 hours in the future.
  */
+@ValueObject
 public final class EndTimestamp implements Comparable<EndTimestamp>, IValueObject
  {
   /**
@@ -119,7 +123,7 @@ public final class EndTimestamp implements Comparable<EndTimestamp>, IValueObjec
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

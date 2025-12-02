@@ -12,6 +12,7 @@ open module de.powerstat.fb.mini
   exports de.powerstat.fb.mini;
 
   requires transitive java.xml;
+  // opens java.xml to org.mockito;
 
   requires org.apache.logging.log4j;
   requires transitive de.powerstat.validation;
@@ -21,6 +22,9 @@ open module de.powerstat.fb.mini
   requires org.apache.commons.codec;
   requires transitive javatuples;
   requires com.google.gson;
+  // opens de.powerstat.fb.mini to com.google.gson;
+  requires org.checkerframework.checker.qual;
+  requires org.jmolecules.ddd;
 
   requires com.github.spotbugs.annotations;
   requires org.junit.jupiter.api;
@@ -29,5 +33,9 @@ open module de.powerstat.fb.mini
   requires org.junit.platform.suite.api;
   requires org.mockito;
   requires nl.jqno.equalsverifier;
+
+  // requires org.jmolecules.ddd;
+  // requires io.cucumber.java;
+  // requires io.cucumber.junit.platform.engine;
 
  }

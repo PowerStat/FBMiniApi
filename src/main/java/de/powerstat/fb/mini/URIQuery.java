@@ -11,12 +11,16 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 
 /**
  * URI query.
  *
  * @param <T> Parameter type
  */
+@ValueObject
 public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
  {
   /**
@@ -84,7 +88,7 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {
@@ -95,9 +99,9 @@ public final class URIQuery<T extends URIQueryParameter> implements Iterable<T>
       return false;
      }
     final URIQuery<T> other = (URIQuery<T>)obj;
-    if ((queries.isEmpty()) || (other.queries.isEmpty()))
+    if (queries.isEmpty() || other.queries.isEmpty())
      {
-      return ((queries.isEmpty()) && (other.queries.isEmpty()));
+      return (queries.isEmpty() && other.queries.isEmpty());
      }
     return queries.equals(other.queries);
    }

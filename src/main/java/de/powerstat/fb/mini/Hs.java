@@ -5,8 +5,13 @@
 package de.powerstat.fb.mini;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
 
 import de.powerstat.validation.interfaces.IValueObject;
 
@@ -14,6 +19,7 @@ import de.powerstat.validation.interfaces.IValueObject;
 /**
  * Hs.
  */
+@ValueObject
 public final class Hs implements Comparable<Hs>, IValueObject
  {
   /**
@@ -68,7 +74,7 @@ public final class Hs implements Comparable<Hs>, IValueObject
     this.index = index;
     this.nameEnum = nameEnum;
     this.name = name;
-    this.colors = List.copyOf(colors);
+    this.colors = Collections.unmodifiableList(colors);
    }
 
 
@@ -91,6 +97,50 @@ public final class Hs implements Comparable<Hs>, IValueObject
 
 
   /**
+   * Get index value.
+   *
+   * @return Index value
+   */
+  public int indexValue()
+   {
+    return index;
+   }
+
+
+  /**
+   * Get nameEnum value.
+   *
+   * @return nameEnum value
+   */
+  public int nameEnumValue()
+   {
+    return nameEnum;
+   }
+
+
+  /**
+   * Get name.
+   *
+   * @return name.
+   */
+  public String nameValue()
+   {
+    return name;
+   }
+
+
+  /**
+   * Get color values.
+   *
+   * @return Color values.
+   */
+  public List<Color> colorValues()
+   {
+    return colors;
+   }
+
+
+  /**
    * Returns the value of this Hs as a string.
    *
    * @return The numeric value represented by this object after conversion to type string.
@@ -98,7 +148,7 @@ public final class Hs implements Comparable<Hs>, IValueObject
   @Override
   public String stringValue()
    {
-    return "";
+    return index + ", " + nameEnum + ", " + name + ", " + colors.stream().map(Color::stringValue).collect(Collectors.joining(", "));
    }
 
 
@@ -123,7 +173,7 @@ public final class Hs implements Comparable<Hs>, IValueObject
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

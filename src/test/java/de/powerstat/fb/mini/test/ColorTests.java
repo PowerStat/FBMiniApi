@@ -137,7 +137,7 @@ final class ColorTests
    /* default */ void testStringValue()
     {
      final Color color = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
-     assertEquals("", color.stringValue(), "Color not as expected"); //$NON-NLS-1$
+     assertEquals("1, Hue[hue=0], Saturation[saturation=0], Value[value=0]", color.stringValue(), "Color not as expected"); //$NON-NLS-1$
     }
 
 

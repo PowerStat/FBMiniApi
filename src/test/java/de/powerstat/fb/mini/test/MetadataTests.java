@@ -126,6 +126,28 @@ final class MetadataTests
 
 
   /**
+   * Test jsonValue.
+   */
+  @Test
+  /* default */ void testJsonValue1()
+   {
+    final Metadata metadata = Metadata.of(0, ScenarioType.UNDEFINED);
+    assertEquals("{\"icon\": 0}", metadata.jsonValue(), METADATA_NOT_AS_EXPECTED); //$NON-NLS-1$
+   }
+
+
+  /**
+   * Test jsonValue.
+   */
+  @Test
+  /* default */ void testJsonValue2()
+   {
+    final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
+    assertEquals("{\"type\": \"coming\"}", metadata.jsonValue(), METADATA_NOT_AS_EXPECTED); //$NON-NLS-1$
+   }
+
+
+  /**
    * Equalsverifier.
    */
   @Test

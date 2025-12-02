@@ -49,6 +49,7 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.javatuples.Pair;
 import org.javatuples.Quintet;
 import org.w3c.dom.Document;
@@ -83,9 +84,7 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
  *
  * TODO group identifer 5:3A:18-900
  * TODO Version number handling? (ask fritzbox for it's version)
- * TODO Rigths handling
- * TODO 1.35 -> 1.61
- * TODO XML results -> value objects
+ * TODO Rights handling
  */
 @SuppressWarnings({"java:S1160", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity"})
 public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
@@ -1066,7 +1065,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       AHASessionMini.LOGGER.info("setSwitchOn({})->{}<", ain.stringValue(), result); //$NON-NLS-1$
      }
-    return "1".equals((result.isEmpty()) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "1".equals(result.isEmpty() ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1092,7 +1091,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       AHASessionMini.LOGGER.info("setSwitchOff({})->{}<", ain.stringValue(), result); //$NON-NLS-1$
      }
-    return "0".equals((result.isEmpty()) ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "0".equals(result.isEmpty() ? "" : result.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1118,7 +1117,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       AHASessionMini.LOGGER.info("setSwitchToggle({})->{}<", ain.stringValue(), state); //$NON-NLS-1$
      }
-    return "1".equals((state.isEmpty()) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "1".equals(state.isEmpty() ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1148,7 +1147,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       throw new ProviderNotFoundException(AHASessionMini.INVALID);
      }
-    return "1".equals((state.isEmpty()) ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "1".equals(state.isEmpty() ? "" : state.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1173,7 +1172,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       AHASessionMini.LOGGER.info("getSwitchPresent({})->{}<", ain.stringValue(), present); //$NON-NLS-1$
      }
-    return "1".equals((present.isEmpty()) ? "" : present.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
+    return "1".equals(present.isEmpty() ? "" : present.substring(0, 1)); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -1262,7 +1261,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
     query.addEntry(URIQueryParameter.of(SWITCHCMD, "getswitchname"));
     final var name = getString(path, query);
-    return (name.isEmpty()) ? "" : name.substring(0, name.length() - 1); //$NON-NLS-1$
+    return name.isEmpty() ? "" : (name.substring(0, name.length() - 1)); //$NON-NLS-1$
    }
 
 
@@ -1562,7 +1561,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
                           break;
                         case "interfaces":
                           final String inter = subChildNode.getTextContent();
-                          List<Integer> interList = Arrays.asList(subChildNode.getTextContent().split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
+                          List<Integer> interList = Arrays.asList(inter.split(",")).stream().map(s -> Integer.parseInt(s.trim())).collect(Collectors.toList());
                           for (Integer interf : interList)
                            {
                             interfaces.add(HANFUNInterfaces.of(interf));
@@ -1689,7 +1688,6 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
                           TemperatureCelsius tchange = null;
                           if (subSubChildNodes.getLength() > 0)
                            {
-                            boolean state = false;
                             for (int subSubchildindex = 0; subSubchildindex < subSubChildNodes.getLength(); ++subSubchildindex)
                              {
                               final Node subSubChildNode = subSubChildNodes.item(subSubchildindex);
@@ -1932,7 +1930,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
     query.addEntry(URIQueryParameter.of(SWITCHCMD, "gettemperature"));
     final var temperature = getString(path, query);
-    return TemperatureCelsius.of((temperature.isEmpty()) ? "" : temperature.substring(0, temperature.length() - 1)); //$NON-NLS-1$
+    return TemperatureCelsius.of(temperature.isEmpty() ? "" : temperature.substring(0, temperature.length() - 1)); //$NON-NLS-1$
    }
 
 
@@ -1948,7 +1946,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   private static TemperatureCelsius temperatureConversion(final String fbTemperatureString)
    {
     assert fbTemperatureString != null;
-    final int fbTemperature = Integer.parseInt((fbTemperatureString.isEmpty()) ? "" : fbTemperatureString.substring(0, fbTemperatureString.length() - 1)); //$NON-NLS-1$
+    final int fbTemperature = Integer.parseInt(fbTemperatureString.isEmpty() ? "" : fbTemperatureString.substring(0, fbTemperatureString.length() - 1)); //$NON-NLS-1$
     long temperature;
     if (fbTemperature == 253)
      {
@@ -2158,7 +2156,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           for (int i = 0; i < content.length; ++i)
            {
             final long datetimepos = datetime - (grid * (count - (i + 1)));
-            temperatures.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : TemperatureCelsius.of(Long.parseLong(content[i])));
+            temperatures.put(UnixTimestamp.of(Seconds.of(datetimepos)), "-".equals(content[i]) ? null : TemperatureCelsius.of(Long.parseLong(content[i])));
            }
          }
        }
@@ -2187,7 +2185,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           for (int i = 0; i < content.length; ++i)
            {
             final long datetimepos = datetime - (grid * (count - (i + 1)));
-            humidities.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Percent.of(Integer.parseInt(content[i])));
+            humidities.put(UnixTimestamp.of(Seconds.of(datetimepos)), "-".equals(content[i]) ? null : Percent.of(Integer.parseInt(content[i])));
            }
          }
        }
@@ -2216,7 +2214,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           for (int i = 0; i < content.length; ++i)
            {
             final long datetimepos = datetime - (grid * (count - (i + 1)));
-            voltages.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Voltage.of(Long.parseLong(content[i])));
+            voltages.put(UnixTimestamp.of(Seconds.of(datetimepos)), "-".equals(content[i]) ? null : Voltage.of(Long.parseLong(content[i])));
            }
          }
        }
@@ -2245,7 +2243,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           for (int i = 0; i < content.length; ++i)
            {
             final long datetimepos = datetime - (grid * (count - (i + 1)));
-            powers.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Power.of(Long.parseLong(content[i])));
+            powers.put(UnixTimestamp.of(Seconds.of(datetimepos)), "-".equals(content[i]) ? null : Power.of(Long.parseLong(content[i])));
            }
          }
        }
@@ -2274,7 +2272,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           for (int i = 0; i < content.length; ++i)
            {
             final long datetimepos = datetime - (grid * (count - (i + 1)));
-            energies.put(UnixTimestamp.of(Seconds.of(datetimepos)), ("-".equals(content[i])) ? null : Energy.of(Long.parseLong(content[i])));
+            energies.put(UnixTimestamp.of(Seconds.of(datetimepos)), "-".equals(content[i]) ? null : Energy.of(Long.parseLong(content[i])));
            }
          }
        }
@@ -2801,23 +2799,17 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @throws NullPointerException If ain or metadata is null
    * @throws IllegalArgumentException if metadata has more than 200 bytes
    * @since 7.39
-   *
-   * TODO metadata -> value object
    */
-  public final void setMetaData(final AIN ain, final String metadata) throws IOException
+  public final void setMetaData(final AIN ain, final Metadata metadata) throws IOException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     Objects.requireNonNull(metadata, "metadata");
-    if (metadata.getBytes(StandardCharsets.UTF_8).length > 200)
-     {
-      throw new IllegalArgumentException("metatdata should not have more than 200 bytes"); //$NON-NLS-1$
-     }
     // TODO Check ain for template
     final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
     query.addEntry(URIQueryParameter.of(AIN_STR, ain.stringValue()));
     query.addEntry(URIQueryParameter.of(SWITCHCMD, "setmetadata"));
-    query.addEntry(URIQueryParameter.of(LEVEL2, metadata));
+    query.addEntry(URIQueryParameter.of("metadata", metadata.jsonValue()));
     /* final var result = */ getString(path, query);
    }
 
@@ -3122,12 +3114,12 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           AIN buttonIdentifier = null;
           long buttonId = 0;
           final NamedNodeMap attrs = child.getAttributes();
-          Node attr = attributes.getNamedItem(IDENTIFIER);
+          Node attr = attrs.getNamedItem(IDENTIFIER);
           if (attr != null)
            {
             buttonIdentifier = AIN.of(attr.getNodeValue());
            }
-          attr = attributes.getNamedItem(ID2);
+          attr = attrs.getNamedItem(ID2);
           if (attr != null)
            {
             buttonId = Long.parseLong(attr.getNodeValue());
@@ -3226,7 +3218,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           final EnumSet<ColorModes> supportedModes = EnumSet.noneOf(ColorModes.class);
           final NamedNodeMap attrs = child.getAttributes();
-          final int modes = Integer.parseInt(attributes.getNamedItem("supported_modes").getNodeValue());
+          final int modes = Integer.parseInt(attrs.getNamedItem("supported_modes").getNodeValue());
           if ((modes & 1) != 0)
            {
             supportedModes.add(ColorModes.HUE_SATURATION);
@@ -3235,9 +3227,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
            {
             supportedModes.add(ColorModes.COLOR_TEMPERATURE);
            }
-          final ColorModes currentMode = ColorModes.of(Integer.parseInt(attributes.getNamedItem("current_mode").getNodeValue()));
-          final boolean fullcolorsupport = "1".equals(attributes.getNamedItem("fullcolorsupport").getNodeValue());
-          final boolean mapped = "1".equals(attributes.getNamedItem("mapped").getNodeValue());
+          final ColorModes currentMode = ColorModes.of(Integer.parseInt(attrs.getNamedItem("current_mode").getNodeValue()));
+          final boolean fullcolorsupport = "1".equals(attrs.getNamedItem("fullcolorsupport").getNodeValue());
+          final boolean mapped = "1".equals(attrs.getNamedItem("mapped").getNodeValue());
 
           Hue hue = null;
           Saturation saturation = null;
@@ -3381,7 +3373,6 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
               TemperatureCelsius tchange = null;
               if (subSubChildNodes.getLength() > 0)
                {
-                boolean state = false;
                 for (int subSubchildindex = 0; subSubchildindex < subSubChildNodes.getLength(); ++subSubchildindex)
                  {
                   final Node subSubChildNode = subSubChildNodes.item(subSubchildindex);
@@ -3470,7 +3461,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public final boolean equals(final Object obj)
+  public final boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {
@@ -3480,7 +3471,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
      {
       return false;
      }
-    return (hostname.equals(other.hostname)) && (port.equals(other.port)) && (username.equals(other.username)) && (password.equals(other.password)) && (sid.equals(other.sid));
+    return hostname.equals(other.hostname) && port.equals(other.port) && username.equals(other.username) && password.equals(other.password) && sid.equals(other.sid);
    }
 
 

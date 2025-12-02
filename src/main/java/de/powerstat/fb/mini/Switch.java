@@ -7,12 +7,16 @@ package de.powerstat.fb.mini;
 
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 
 
 /**
  * Switch.
  */
+@ValueObject
 public final class Switch implements Comparable<Switch>, IValueObject
  {
   /**
@@ -146,7 +150,7 @@ public final class Switch implements Comparable<Switch>, IValueObject
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {
@@ -156,16 +160,16 @@ public final class Switch implements Comparable<Switch>, IValueObject
      {
       return false;
      }
-    boolean result = state == other.state;
+    boolean result = (state == other.state);
     if (result)
      {
-      result = mode == other.mode;
+      result = (mode == other.mode);
       if (result)
        {
-        result = lock == other.lock;
+        result = (lock == other.lock);
         if (result)
          {
-          result = devicelock == other.devicelock;
+          result = (devicelock == other.devicelock);
          }
        }
      }

@@ -5,9 +5,13 @@
 package de.powerstat.fb.mini.json;
 
 
+import org.jmolecules.ddd.annotation.ValueObject;
+
+
 /**
  * FB Metadata json support class.
  */
+@ValueObject
 public final class FBMetadata
  {
   /**
@@ -27,6 +31,7 @@ public final class FBMetadata
   public FBMetadata()
    {
     super();
+    type = "";
    }
 
 

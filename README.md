@@ -85,7 +85,15 @@ To run pmd:
 To run spotbugs:
 
     mvn spotbugs:check
+
+To run errorprone:
+
+    mvn -Perrorprone clean test -DSkipTests
     
+To run checkerframework:
+
+    mvn -Pcheckerframework clean test -DskipTests
+
 To run arch-unit:
 
     mvn arch-unit:arch-test

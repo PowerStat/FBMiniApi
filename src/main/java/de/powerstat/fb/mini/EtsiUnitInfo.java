@@ -8,12 +8,16 @@ package de.powerstat.fb.mini;
 import java.util.EnumSet;
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 
 
 /**
  * Etsi unit info.
  */
+@ValueObject
 public final class EtsiUnitInfo implements Comparable<EtsiUnitInfo>, IValueObject
  {
   /**
@@ -105,7 +109,7 @@ public final class EtsiUnitInfo implements Comparable<EtsiUnitInfo>, IValueObjec
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

@@ -10,6 +10,9 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 import de.powerstat.validation.values.Percent;
 
@@ -17,6 +20,7 @@ import de.powerstat.validation.values.Percent;
 /**
  * Device.
  */
+@ValueObject
 public final class Device implements Comparable<Device>, IValueObject
  {
   /**
@@ -203,7 +207,7 @@ public final class Device implements Comparable<Device>, IValueObject
     this.temperature = temperature;
     this.humidity = humidity;
     this.hkr = hkr;
-    this.buttons = (buttons == null) ? null : new ArrayList<>(buttons);
+    this.buttons = (buttons == null) ? new ArrayList<>() : new ArrayList<>(buttons);
     this.levelControl = levelControl;
     this.colorControl = colorControl;
     this.etsiunitinfo = etsiunitinfo;
@@ -562,7 +566,7 @@ public final class Device implements Comparable<Device>, IValueObject
    */
   @SuppressWarnings({"NestedIfDepth", "PMD.AvoidDeeplyNestedIfStmts"})
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

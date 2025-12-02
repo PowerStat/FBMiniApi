@@ -7,12 +7,16 @@ package de.powerstat.fb.mini;
 
 import java.util.Objects;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import de.powerstat.validation.interfaces.IValueObject;
 
 
 /**
  * Simple on off.
  */
+@ValueObject
 public final class SimpleOnOff implements Comparable<SimpleOnOff>, IValueObject
  {
   /**
@@ -88,7 +92,7 @@ public final class SimpleOnOff implements Comparable<SimpleOnOff>, IValueObject
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
-  public boolean equals(final Object obj)
+  public boolean equals(final @Nullable Object obj)
    {
     if (this == obj)
      {

@@ -66,7 +66,7 @@ final class HsTests
     colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
     final Hs cleanHs = Hs.of(index, 5569, ROT, colors);
-    assertEquals("", cleanHs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
+    assertEquals(index + ", 5569, Rot, 1, Hue[hue=0], Saturation[saturation=0], Value[value=0], 2, Hue[hue=0], Saturation[saturation=0], Value[value=0], 3, Hue[hue=0], Saturation[saturation=0], Value[value=0]", cleanHs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -81,7 +81,7 @@ final class HsTests
     colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
     final Hs cleanHs = Hs.of(1, 0, ROT, colors);
-    assertEquals("", cleanHs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
+    assertEquals("1, 0, Rot, 1, Hue[hue=0], Saturation[saturation=0], Value[value=0], 2, Hue[hue=0], Saturation[saturation=0], Value[value=0], 3, Hue[hue=0], Saturation[saturation=0], Value[value=0]", cleanHs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 
@@ -184,7 +184,7 @@ final class HsTests
     colors.add(Color.of(2, Hue.of(0), Saturation.of(0), Value.of(0)));
     colors.add(Color.of(3, Hue.of(0), Saturation.of(0), Value.of(0)));
     final Hs hs = Hs.of(1, 5569, ROT, colors);
-    assertEquals("", hs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
+    assertEquals("1, 5569, Rot, 1, Hue[hue=0], Saturation[saturation=0], Value[value=0], 2, Hue[hue=0], Saturation[saturation=0], Value[value=0], 3, Hue[hue=0], Saturation[saturation=0], Value[value=0]", hs.stringValue(), HS_NOT_AS_EXPECTED); //$NON-NLS-1$
    }
 
 

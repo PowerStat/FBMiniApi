@@ -424,7 +424,7 @@ final class DeviceTests
     final Blind blind = null;
     final GroupInfo groupinfo = null;
     final Device device = Device.of(identifier, id, functionbitmask, fwversion, manufacturer, productname, present, txbusy, name, batterylow, battery, switchState, simpleonoff, powermeter, temperature, humidity, hkr, buttons, levelControl, colorControl, etsiunitinfo, alert, blind, groupinfo);
-    assertEquals("Device[identifier=AIN[ain=000000000000], id=0, functionbitmask=[], fwversion=Version[major=0, minor=1], manufacturer=null, productname=null, present=false, txbusy=false, name=null, batterylow=false, battery=null, switch=null, simpleonoff=null, powermeter=null, temperature=null, humidity=null, hkr=null, buttons=null, levelControl=null, colorControl=null, etsiunitinfo=null, alert=null, blind=null, groupinfo=null]", device.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals("Device[identifier=AIN[ain=000000000000], id=0, functionbitmask=[], fwversion=Version[major=0, minor=1], manufacturer=null, productname=null, present=false, txbusy=false, name=null, batterylow=false, battery=null, switch=null, simpleonoff=null, powermeter=null, temperature=null, humidity=null, hkr=null, buttons=[], levelControl=null, colorControl=null, etsiunitinfo=null, alert=null, blind=null, groupinfo=null]", device.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
