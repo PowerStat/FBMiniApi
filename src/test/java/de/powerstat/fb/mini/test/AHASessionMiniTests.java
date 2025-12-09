@@ -49,8 +49,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.javatuples.Pair;
-import org.javatuples.Quintet;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -91,6 +89,8 @@ import de.powerstat.fb.mini.Template;
 import de.powerstat.fb.mini.UnixTimestamp;
 import de.powerstat.fb.mini.Version;
 import de.powerstat.fb.mini.Voltage;
+import de.powerstat.validation.containers.NTuple2nc;
+import de.powerstat.validation.containers.NTuple5nc;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Password;
 import de.powerstat.validation.values.Percent;
@@ -2155,7 +2155,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Quintet<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = ahasession.getBasicDeviceStats(AIN.of(AHASessionMiniTests.AIN1));
+    final NTuple5nc<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = ahasession.getBasicDeviceStats(AIN.of(AHASessionMiniTests.AIN1));
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -2641,7 +2641,7 @@ final class AHASessionMiniTests
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
-    final Pair<List<Hs>, List<TemperatureKelvin>> result = ahasession.getColorDefaults();
+    final NTuple2nc<List<Hs>, List<TemperatureKelvin>> result = ahasession.getColorDefaults();
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
@@ -3241,13 +3241,13 @@ final class AHASessionMiniTests
     /**
      * Constructor.
      *
-     * @param path URI path to match
+     * @param uripath URI path to match
      */
-    /* default */ HttpGetMatcher(final String path)
+    /* default */ HttpGetMatcher(final String uripath)
      {
       super();
-      Objects.requireNonNull(path, "path"); //$NON-NLS-1$
-      this.path = path;
+      Objects.requireNonNull(uripath, "uripath"); //$NON-NLS-1$
+      path = uripath;
      }
 
 

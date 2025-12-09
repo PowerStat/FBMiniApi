@@ -50,8 +50,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.javatuples.Pair;
-import org.javatuples.Quintet;
+import org.jmolecules.ddd.annotation.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -63,6 +62,8 @@ import com.google.gson.Gson;
 
 import de.powerstat.fb.mini.Alert.AlertState;
 import de.powerstat.fb.mini.json.FBMetadata;
+import de.powerstat.validation.containers.NTuple2nc;
+import de.powerstat.validation.containers.NTuple5nc;
 import de.powerstat.validation.values.Hostname;
 import de.powerstat.validation.values.Milliseconds;
 import de.powerstat.validation.values.Password;
@@ -75,18 +76,24 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
 
 
 /**
- * FB AHA session 1.35.
+ * FB AHA session 1.63.
  *
  * This class is not serializable because of session management!
+ *
+ * Die Home Automation Session benötigt immer die Smart-Home-Berechtigung.
+ * Ausserdem wird für einige Kommandos die "Eingeschränkte Einstellungen für Apps"-Berechtigung benötigt.
+ * Zu Berechtigungen siehe "Actions and User Rights" in der TR064-Specifikation.
  *
  * @author Kai Hofmann
  * @see <a href="https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/AHA-HTTP-Interface.pdf">AHA-HTTP-Interface</a>
  *
  * TODO group identifer 5:3A:18-900
- * TODO Version number handling? (ask fritzbox for it's version)
  * TODO Rights handling
+ * TODO Der HTTPS-Port ist auf der FRITZ!Box konfigurierbar. Er kann über den X_AVM-DE_RemoteAccess TR-064-Service und der dazugehörigen GetInfo-Action mit der "NewPort"-Variable abgefragt werden.
  */
 @SuppressWarnings({"java:S1160", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity"})
+@Service
+// @InfrastructureLayer
 public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
  {
   /**
@@ -2116,13 +2123,13 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    * Get basic device statistics.
    *
    * @param ain AIN
-   * @return Quintet&lt;SortedMap&lt;UnixTimestamp, Temperature&gt;, SortedMap&lt;UnixTimestamp, Percent&gt;, SortedMap&lt;UnixTimestamp, Voltage&gt;, SortedMap&lt;UnixTimestamp, Power&gt;, SortedMap&lt;UnixTimestamp, Energy&gt;&gt;
+   * @return &lt;SortedMap&lt;UnixTimestamp, Temperature&gt;, SortedMap&lt;UnixTimestamp, Percent&gt;, SortedMap&lt;UnixTimestamp, Voltage&gt;, SortedMap&lt;UnixTimestamp, Power&gt;, SortedMap&lt;UnixTimestamp, Energy&gt;&gt;
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 6.98
    */
   @SuppressWarnings("PMD.NPathComplexity")
-  public final Quintet<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> getBasicDeviceStats(final AIN ain) throws IOException, SAXException
+  public final NTuple5nc<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> getBasicDeviceStats(final AIN ain) throws IOException, SAXException
    {
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
@@ -2278,7 +2285,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
        }
      }
 
-    final Quintet<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = Quintet.with(temperatures, humidities, voltages, powers, energies);
+    final NTuple5nc<SortedMap<UnixTimestamp, TemperatureCelsius>, SortedMap<UnixTimestamp, Percent>, SortedMap<UnixTimestamp, Voltage>, SortedMap<UnixTimestamp, Power>, SortedMap<UnixTimestamp, Energy>> devicestats = NTuple5nc.of(temperatures, humidities, voltages, powers, energies);
     return devicestats;
    }
 
@@ -2544,14 +2551,14 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   /**
    * Get color defaults.
    *
-   * @return Color defaults
+   * @return Color defaults (NTuple2nc)
    * @throws ClientProtocolException Client protocol exception
    * @throws UnsupportedEncodingException Unsupported encoding exception
    * @throws IOException IO exception
    * @throws SAXException SAX exception
    * @since 7.15
    */
-  public final Pair<List<Hs>, List<TemperatureKelvin>> getColorDefaults() throws IOException, SAXException
+  public final NTuple2nc<List<Hs>, List<TemperatureKelvin>> getColorDefaults() throws IOException, SAXException
    {
     final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
@@ -2600,7 +2607,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
       final TemperatureKelvin tk = TemperatureKelvin.of(value);
       temperatureDefaults.add(tk);
      }
-    final Pair<List<Hs>, List<TemperatureKelvin>> colorDefaults = Pair.with(hsdefaults, temperatureDefaults);
+    final NTuple2nc<List<Hs>, List<TemperatureKelvin>> colorDefaults = NTuple2nc.of(hsdefaults, temperatureDefaults);
     return colorDefaults;
    }
 
@@ -3516,18 +3523,3 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
    }
 
  }
-
-/* TODO
-1.43: Vorlagen Beispiel mit sub_templates erweitert
-*/
-/*
-Der HTTPS-Port ist auf der FRITZ!Box konfigurierbar. Er kann über den X_AVM-DE_RemoteAccess TR-064-Service und der
-dazugehörigen GetInfo-Action mit der "NewPort"-Variable abgefragt werden. Siehe TR064-Specifikation in [1].
-
-Die AVM Home Automation Session benötigt immer die Smart-Home-Berechtigung. Ausserdem wird für einige
-Kommandos die "Eingeschränkte FRITZ!Box Einstellungen für Apps"-Berechtigung benötigt.
-Zu Berechtigungen siehe "Actions and User Rights" in der TR064-Specifikation in [1].
-
-Die HTTP Response enthält den zum Kommando zugehörigen Status als Text. Der Content-Type ist "text/plain; charset=utf-8".
-Ausnahme bei getdevicelistinfos, getsubscriptionstate und getbasicdevicestats: Die HTTP Response enthält den Inhalt als XML. Der Content-Type ist "text/xml; charset=utf-8".
-*/

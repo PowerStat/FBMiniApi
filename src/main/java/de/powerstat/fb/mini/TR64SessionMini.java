@@ -46,6 +46,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jmolecules.ddd.annotation.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -66,6 +67,8 @@ import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.Ha
  * @author Kai Hofmann
  */
 @SuppressWarnings({"java:S1160", "java:S1130"})
+@Service
+//@InfrastructureLayer
 public class TR64SessionMini implements Comparable<TR64SessionMini>
  {
   /**

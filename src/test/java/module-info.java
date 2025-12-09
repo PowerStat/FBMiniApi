@@ -15,12 +15,11 @@ open module de.powerstat.fb.mini
   // opens java.xml to org.mockito;
 
   requires org.apache.logging.log4j;
-  requires transitive de.powerstat.validation;
+  requires de.powerstat.validation;
 
-  requires transitive org.apache.httpcomponents.httpclient;
+  requires org.apache.httpcomponents.httpclient;
   requires org.apache.httpcomponents.httpcore;
   requires org.apache.commons.codec;
-  requires transitive javatuples;
   requires com.google.gson;
   // opens de.powerstat.fb.mini to com.google.gson;
   requires org.checkerframework.checker.qual;
