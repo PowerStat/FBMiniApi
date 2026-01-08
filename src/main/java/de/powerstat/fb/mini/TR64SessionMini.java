@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2015-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -51,12 +51,12 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import de.powerstat.validation.values.Hostname;
-import de.powerstat.validation.values.Password;
-import de.powerstat.validation.values.Port;
-import de.powerstat.validation.values.Username;
-import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy;
-import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.HandleEMail;
+import de.powerstat.ddd.values.comm.Hostname;
+import de.powerstat.ddd.values.comm.Password;
+import de.powerstat.ddd.values.comm.Port;
+import de.powerstat.ddd.values.comm.Username;
+import de.powerstat.ddd.values.strategies.UsernameConfigurableStrategy;
+import de.powerstat.ddd.values.strategies.UsernameConfigurableStrategy.HandleEMail;
 
 
 /**
@@ -185,7 +185,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     Objects.requireNonNull(username, "username"); //$NON-NLS-1$
     Objects.requireNonNull(password, "password"); //$NON-NLS-1$
     final CredentialsProvider credsProvider = new BasicCredentialsProvider();
-    credsProvider.setCredentials(new AuthScope(hostname.stringValue(), port.intValue()), new UsernamePasswordCredentials(username.stringValue(), password.stringValue()));
+    credsProvider.setCredentials(new AuthScope(hostname.stringValue(), port.port()), new UsernamePasswordCredentials(username.stringValue(), password.stringValue()));
     final CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(new SSLContextBuilder().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build())).setDefaultCredentialsProvider(credsProvider).build();
 
     final var factory = DocumentBuilderFactory.newInstance();
@@ -296,7 +296,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   public final Document getDoc(final URIPath urlPath) throws IOException, SAXException
    {
     Objects.requireNonNull(urlPath, "urlPath"); //$NON-NLS-1$
-    try (CloseableHttpResponse response = httpclient.execute(new HttpGet(HTTPS + hostname.stringValue() + ":" + port.intValue() + urlPath.stringValue()))) //$NON-NLS-1$
+    try (CloseableHttpResponse response = httpclient.execute(new HttpGet(HTTPS + hostname.stringValue() + ":" + port.port() + urlPath.stringValue()))) //$NON-NLS-1$
      {
       if (LOGGER.isDebugEnabled())
        {
@@ -346,7 +346,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
     requestBuffer.append("    </u:").append(action.stringValue()).append(">  </s:Body></s:Envelope>"); //$NON-NLS-1$ //$NON-NLS-2$
     // LOGGER.info(sb.toString());
 
-    final var httpPost = new HttpPost(HTTPS + hostname.stringValue() + ":" + port.intValue() + controlURL.stringValue()); //$NON-NLS-1$
+    final var httpPost = new HttpPost(HTTPS + hostname.stringValue() + ":" + port.port() + controlURL.stringValue()); //$NON-NLS-1$
     httpPost.setHeader("SoapAction", "\"" + serviceType.stringValue() + "#" + action.stringValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     httpPost.setHeader("USER-AGENT", "PowerStats FB TR64 mini client"); //$NON-NLS-1$ //$NON-NLS-2$
     httpPost.setHeader("Content-Type", "text/xml; charset=utf-8"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -418,7 +418,7 @@ public class TR64SessionMini implements Comparable<TR64SessionMini>
   @Override
   public String toString()
    {
-    return new StringBuilder().append("TR64SessionMini[hostname=").append(hostname.stringValue()).append(", port=").append(port.intValue()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
+    return new StringBuilder().append("TR64SessionMini[hostname=").append(hostname.stringValue()).append(", port=").append(port.port()).append(']').toString(); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

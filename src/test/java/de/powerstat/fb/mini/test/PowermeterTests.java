@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Energy;
 import de.powerstat.fb.mini.Power;
@@ -49,9 +48,9 @@ final class PowermeterTests
    {
     final Powermeter cleanPowermeter = Powermeter.of(Voltage.of(0), Power.of(0), Energy.of(0));
     assertAll("testPowermeterCorrect", //$NON-NLS-1$
-      () -> assertEquals(0, cleanPowermeter.getVoltage().longValue(), "Voltage not as expected"), //$NON-NLS-1$
-      () -> assertEquals(0, cleanPowermeter.getPower().longValue(), "Power not as expected"), //$NON-NLS-1$
-      () -> assertEquals(0, cleanPowermeter.getEnergy().longValue(), "Energy not as expected") //$NON-NLS-1$
+      () -> assertEquals(0, cleanPowermeter.voltage().voltage(), "Voltage not as expected"), //$NON-NLS-1$
+      () -> assertEquals(0, cleanPowermeter.power().powerMW(), "Power not as expected"), //$NON-NLS-1$
+      () -> assertEquals(0, cleanPowermeter.energy().energyWh(), "Energy not as expected") //$NON-NLS-1$
     );
    }
 
@@ -106,27 +105,6 @@ final class PowermeterTests
    {
     final Powermeter powermeter = Powermeter.of(Voltage.of(0), Power.of(1), Energy.of(2));
     assertEquals("1", powermeter.stringValue(), "Powermeter not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Powermeter.class).withNonnullFields("voltage", "power", "energy").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Powermeter powermeter = Powermeter.of(Voltage.of(0), Power.of(1), Energy.of(2));
-    assertEquals("Powermeter[voltage=Voltage[voltage=0], power=Power[power=1], energy=Energy[energy=2]]", powermeter.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

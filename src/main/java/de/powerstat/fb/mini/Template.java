@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -13,7 +13,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**

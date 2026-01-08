@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Metadata;
 import de.powerstat.fb.mini.ScenarioType;
@@ -144,27 +143,6 @@ final class MetadataTests
    {
     final Metadata metadata = Metadata.of(-1, ScenarioType.COMING);
     assertEquals("{\"type\": \"coming\"}", metadata.jsonValue(), METADATA_NOT_AS_EXPECTED); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Metadata.class).withNonnullFields("type").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Metadata metadata = Metadata.of(0, ScenarioType.UNDEFINED);
-    assertEquals("Metadata[icon=0, type=UNDEFINED]", metadata.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

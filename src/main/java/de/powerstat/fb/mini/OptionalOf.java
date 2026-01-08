@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -11,32 +11,25 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Optional of a specific type.
  *
  * @param <T> Use only value objects
+ * @param value Value Object or null
  */
 @ValueObject
-public final class OptionalOf<T extends IValueObject> // extends Hue & Saturation & TemperatureKelvin
+public record OptionalOf<T extends IValueObject>(T value) // extends Hue & Saturation & TemperatureKelvin
  {
-  /**
-   * Value object.
-   */
-  private final IValueObject value;
-
-
   /**
    * Constructor.
    *
    * @param value Value Object or null
    */
-  public OptionalOf(final T value)
+  public OptionalOf
    {
-    super();
-    this.value = value;
    }
 
 
@@ -60,61 +53,6 @@ public final class OptionalOf<T extends IValueObject> // extends Hue & Saturatio
   public int intValue()
    {
     return (value == null) ? -1 : Integer.parseInt(value.stringValue());
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(value);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @throws NoSuchElementException If there is no entry in this GroupOf
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final OptionalOf<?> other))
-     {
-      return false;
-     }
-    return value.equals(other.value);
-   }
-
-
-  /**
-   * Returns the string representation of this OptionalOf.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "OptionalOf&lt;&gt;[, ...]"
-   *
-   * @return String representation of this OptionalOf
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(20);
-    builder.append("OptionalOf<>[value=").append(value).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
  }

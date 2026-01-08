@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,36 +10,29 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Level 0-255.
+ *
+ * @param level Level (0-255)
  */
 @ValueObject
-public final class Level implements Comparable<Level>, IValueObject
+public record Level(int level) implements Comparable<Level>, IValueObject
  {
-  /**
-   * Level 0-255.
-   */
-  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
-  private final int level;
-
-
   /**
    * Constructor.
    *
    * @param level Level (0-255)
    * @throws IndexOutOfBoundsException If level ist &lt; 0 or &gt; 255
    */
-  private Level(final int level)
+  public Level
    {
-    super();
     if ((level < 0) || (level > 255))
      {
       throw new IndexOutOfBoundsException("level must be >= 0 and <= 255"); //$NON-NLS-1$
      }
-    this.level = level;
    }
 
 
@@ -71,17 +64,6 @@ public final class Level implements Comparable<Level>, IValueObject
 
 
   /**
-   * Returns the value of this Level as an int.
-   *
-   * @return The numeric value represented by this object after conversion to type int (0-255)
-   */
-  public int intValue()
-   {
-    return level;
-   }
-
-
-  /**
    * Returns the value of this Level as a String.
    *
    * @return The numeric value represented by this object after conversion to type String
@@ -90,60 +72,6 @@ public final class Level implements Comparable<Level>, IValueObject
   public String stringValue()
    {
     return String.valueOf(level);
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Integer.hashCode(level);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Level other))
-     {
-      return false;
-     }
-    return level == other.level;
-   }
-
-
-  /**
-   * Returns the string representation of this Level.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Level[level=255]"
-   *
-   * @return String representation of this Level (0-255)
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder();
-    builder.append("Level[level=").append(level).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

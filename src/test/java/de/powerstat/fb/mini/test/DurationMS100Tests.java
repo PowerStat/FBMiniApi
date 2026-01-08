@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.DurationMS100;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +42,7 @@ final class DurationMS100Tests
   @ValueSource(ints = {0, Integer.MAX_VALUE})
   /* default */ void testIsDurationMS100Value(final int duration)
    {
-    assertEquals(duration, DurationMS100.of(duration).intValue(), "Not a duration value!"); //$NON-NLS-1$
+    assertEquals(duration, DurationMS100.of(duration).duration(), "Not a duration value!"); //$NON-NLS-1$
    }
 
 
@@ -70,28 +69,7 @@ final class DurationMS100Tests
   @Test
   /* default */ void testIsDurationMS100String()
    {
-    assertEquals(127, DurationMS100.of("127").intValue(), "Not a duration value!"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(DurationMS100.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final DurationMS100 duration = DurationMS100.of(1);
-    assertEquals("DurationMS100[duration=1]", duration.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(127, DurationMS100.of("127").duration(), "Not a duration value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Hue;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +42,7 @@ final class HueTests
   @ValueSource(ints = {0, 180, 359})
   /* default */ void testIsHueValue(final int hue)
    {
-    assertEquals(hue, Hue.of(hue).intValue(), "Not a hue value!"); //$NON-NLS-1$
+    assertEquals(hue, Hue.of(hue).hue(), "Not a hue value!"); //$NON-NLS-1$
    }
 
 
@@ -70,28 +69,7 @@ final class HueTests
   @Test
   /* default */ void testIsHueString()
    {
-    assertEquals(180, Hue.of("180").intValue(), "Not a hue value!"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Hue.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Hue hue = Hue.of(1);
-    assertEquals("Hue[hue=1]", hue.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(180, Hue.of("180").hue(), "Not a hue value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

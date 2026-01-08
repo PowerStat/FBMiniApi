@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Level;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +42,7 @@ final class LevelTests
   @ValueSource(ints = {0, 127, 255})
   /* default */ void testIsLevelValue(final int level)
    {
-    assertEquals(level, Level.of(level).intValue(), "Not a level value!"); //$NON-NLS-1$
+    assertEquals(level, Level.of(level).level(), "Not a level value!"); //$NON-NLS-1$
    }
 
 
@@ -70,28 +69,7 @@ final class LevelTests
   @Test
   /* default */ void testIsLevelString()
    {
-    assertEquals(127, Level.of("127").intValue(), "Not a level value!"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Level.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Level level = Level.of(1);
-    assertEquals("Level[level=1]", level.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(127, Level.of("127").level(), "Not a level value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

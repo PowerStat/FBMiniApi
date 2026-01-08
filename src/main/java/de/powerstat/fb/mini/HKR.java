@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,107 +10,35 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
-import de.powerstat.validation.values.Percent;
+import de.powerstat.ddd.interfaces.IValueObject;
+import de.powerstat.ddd.values.science.Percent;
 
 
 /**
  * HKR.
+ *
+ * @param tist Actual temperature
+ * @param tsoll Target temperature
+ * @param absenk Reduced temperature
+ * @param komfort Convenience temperature
+ * @param lock Keylock on UI/API true/false or null when unknown or error
+ * @param devicelock Keylock on device true/false or null when unknown or error
+ * @param errorcode Error code
+ * @param windowsopenactive Window open active
+ * @param windowopenactiveendtime Window open active end time
+ * @param boostactive Boost mode active
+ * @param boostactiveendtime Boost mode active end time
+ * @param batterylow Battery low
+ * @param battery Battery loading level in percent
+ * @param nextchange Next temperature change
+ * @param summeractive Heater off mode
+ * @param holidayactive Holiday period
+ * @param adaptiveHeatingActive Adaptive heating active
+ * @param adaptiveHeatingRunning Adaptive heating running
  */
 @ValueObject
-public final class HKR implements Comparable<HKR>, IValueObject
+public record HKR(TemperatureCelsius tist, TemperatureCelsius tsoll, TemperatureCelsius absenk, TemperatureCelsius komfort, Boolean lock, Boolean devicelock, HkrErrorCodes errorcode, boolean windowsopenactive, UnixTimestamp windowopenactiveendtime, boolean boostactive, UnixTimestamp boostactiveendtime, boolean batterylow, Percent battery, HkrNextChange nextchange, boolean summeractive, boolean holidayactive, boolean adaptiveHeatingActive, boolean adaptiveHeatingRunning) implements Comparable<HKR>, IValueObject
  {
-  /**
-   * Actual temperature.
-   */
-  private final TemperatureCelsius tist;
-
-  /**
-   * Target temperature.
-   */
-  private final TemperatureCelsius tsoll;
-
-  /**
-   * Reduced temperature.
-   */
-  private final TemperatureCelsius absenk;
-
-  /**
-   * Convenience temperature.
-   */
-  private final TemperatureCelsius komfort;
-
-  /**
-   * Keylock on UI/API true/false or null when unknown or error.
-   */
-  private final Boolean lock;
-
-  /**
-   * Keylock on device true/false or null when unknown or error.
-   */
-  private final Boolean devicelock;
-
-  /**
-   * Error code.
-   */
-  private final HkrErrorCodes errorcode;
-
-  /**
-   * Window open active.
-   */
-  private final boolean windowsopenactive;
-
-  /**
-   * Window open active end time.
-   */
-  private final UnixTimestamp windowopenactiveendtime;
-
-  /**
-   * Boost mode active.
-   */
-  private final boolean boostactive;
-
-  /**
-   * Boost mode active end time.
-   */
-  private final UnixTimestamp boostactiveendtime;
-
-  /**
-   * Battery low.
-   */
-  private final boolean batterylow;
-
-  /**
-   * Battery loading level in percent.
-   */
-  private final Percent battery;
-
-  /**
-   * Next temperature change.
-   */
-  private final HkrNextChange nextchange;
-
-  /**
-   * Heater off mode.
-   */
-  private final boolean summeractive;
-
-  /**
-   * Holiday period.
-   */
-  private final boolean holidayactive;
-
-  /**
-   * Adaptive heating active.
-   */
-  private final boolean adaptiveHeatingActive;
-
-  /**
-   * Adaptive heating running.
-   */
-  private final boolean adaptiveHeatingRunning;
-
-
   /**
    * Constructor.
    *
@@ -133,7 +61,7 @@ public final class HKR implements Comparable<HKR>, IValueObject
    * @param adaptiveHeatingActive Adaptive heating active
    * @param adaptiveHeatingRunning Adaptive heating running
    */
-  private HKR(final TemperatureCelsius tist, final TemperatureCelsius tsoll, final TemperatureCelsius absenk, final TemperatureCelsius komfort, final Boolean lock, final Boolean devicelock, final HkrErrorCodes errorcode, final boolean windowsopenactive, final UnixTimestamp windowopenactiveendtime, final boolean boostactive, final UnixTimestamp boostactiveendtime, final boolean batterylow, final Percent battery, final HkrNextChange nextchange, final boolean summeractive, final boolean holidayactive, final boolean adaptiveHeatingActive, final boolean adaptiveHeatingRunning)
+  public HKR
    {
     Objects.requireNonNull(absenk, "absenk"); //$NON-NLS-1$
     Objects.requireNonNull(komfort, "komfort"); //$NON-NLS-1$
@@ -142,24 +70,6 @@ public final class HKR implements Comparable<HKR>, IValueObject
     // Objects.requireNonNull(boostactiveendtime, "boostactiveendtime"); //$NON-NLS-1$
     Objects.requireNonNull(battery, "battery"); //$NON-NLS-1$
     Objects.requireNonNull(nextchange, "nextchange"); //$NON-NLS-1$
-    this.tist = tist;
-    this.tsoll = tsoll;
-    this.absenk = absenk;
-    this.komfort = komfort;
-    this.lock = lock;
-    this.devicelock = devicelock;
-    this.errorcode = errorcode;
-    this.windowsopenactive = windowsopenactive;
-    this.windowopenactiveendtime = windowopenactiveendtime;
-    this.boostactive = boostactive;
-    this.boostactiveendtime = boostactiveendtime;
-    this.batterylow = batterylow;
-    this.battery = battery;
-    this.nextchange = nextchange;
-    this.summeractive = summeractive;
-    this.holidayactive = holidayactive;
-    this.adaptiveHeatingActive = adaptiveHeatingActive;
-    this.adaptiveHeatingRunning = adaptiveHeatingRunning;
    }
 
 
@@ -201,162 +111,6 @@ public final class HKR implements Comparable<HKR>, IValueObject
   public String stringValue()
    {
     return (tist == null) ? "" : tist.stringValue();
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
-   }
-
-
-  /**
-   * Equal fields.
-   *
-   * @param <T> Field type
-   * @param obj1 Field 1 (this)
-   * @param obj2 Field 2 (other)
-   * @return true: equal; false: not equal
-   */
-  private static <T> boolean equalField(final T obj1, final T obj2)
-   {
-    return (obj1 == null) ? (obj2 == null) : obj1.equals(obj2);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @SuppressWarnings({"NestedIfDepth", "PMD.AvoidDeeplyNestedIfStmts"})
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final HKR other))
-     {
-      return false;
-     }
-    boolean result = equalField(tist, other.tist);
-    if (result)
-     {
-      result = equalField(tsoll, other.tsoll);
-      if (result)
-       {
-        result = absenk.equals(other.absenk);
-        if (result)
-         {
-          result = komfort.equals(other.komfort);
-          if (result)
-           {
-            result = equalField(lock, other.lock);
-            if (result)
-             {
-              result = equalField(devicelock, other.devicelock);
-              if (result)
-               {
-                result = (errorcode == other.errorcode);
-                if (result)
-                 {
-                  result = windowsopenactive == other.windowsopenactive;
-                  if (result)
-                   {
-                    result = equalField(windowopenactiveendtime, other.windowopenactiveendtime);
-                    if (result)
-                     {
-                      result = boostactive == other.boostactive;
-                      if (result)
-                       {
-                        result = equalField(boostactiveendtime, other.boostactiveendtime);
-                        if (result)
-                         {
-                          result = batterylow == other.batterylow;
-                          if (result)
-                           {
-                            result = battery.equals(other.battery);
-                            if (result)
-                             {
-                              result = nextchange.equals(other.nextchange);
-                              if (result)
-                               {
-                                result = summeractive == other.summeractive;
-                                if (result)
-                                 {
-                                  result = holidayactive == other.holidayactive;
-                                  if (result)
-                                   {
-                                    result = adaptiveHeatingActive == other.adaptiveHeatingActive;
-                                    if (result)
-                                     {
-                                      result = adaptiveHeatingRunning == other.adaptiveHeatingRunning;
-                                     }
-                                   }
-                                 }
-                               }
-                             }
-                           }
-                         }
-                       }
-                     }
-                   }
-                 }
-               }
-             }
-           }
-         }
-       }
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this HKR.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "HKR[]"
-   *
-   * @return String representation of this HKR
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(266);
-    builder.append("HKR[tist=").append(tist)
-      .append(", tsoll=").append(tsoll)
-      .append(", absenk=").append(absenk)
-      .append(", komfort=").append(komfort)
-      .append(", lock=").append(lock)
-      .append(", devicelock=").append(devicelock)
-      .append(", errorcode=").append(errorcode)
-      .append(", windowsopenactive=").append(windowsopenactive)
-      .append(", windowopenactiveendtime=").append(windowopenactiveendtime)
-      .append(", boostactive=").append(boostactive)
-      .append(", boostactiveendtime=").append(boostactiveendtime)
-      .append(", batterylow=").append(batterylow)
-      .append(", battery=").append(battery)
-      .append(", nextchange=").append(nextchange)
-      .append(", summeractive=").append(summeractive)
-      .append(", holidayactive=").append(holidayactive)
-      .append(", adaptiveHeatingActive=").append(adaptiveHeatingActive)
-      .append(", adaptiveHeatingRunning=").append(adaptiveHeatingRunning)
-      .append(']');
-    return builder.toString();
    }
 
 

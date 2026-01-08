@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.AIN;
 import de.powerstat.fb.mini.Trigger;
@@ -58,9 +57,9 @@ final class TriggerTests
    {
     final Trigger cleanTrigger = Trigger.of(AIN.of(AIN_ZERO), name, true);
     assertAll("testFactory", //$NON-NLS-1$
-      () -> assertEquals(AIN.of(AIN_ZERO), cleanTrigger.ainValue(), "ain not as expected"), //$NON-NLS-1$
-      () -> assertEquals(name, cleanTrigger.stringValue(), "name not as expected"), //$NON-NLS-1$
-      () -> assertTrue(cleanTrigger.isActive(), "active state not as expected") //$NON-NLS-1$
+      () -> assertEquals(AIN.of(AIN_ZERO), cleanTrigger.ain(), "ain not as expected"), //$NON-NLS-1$
+      () -> assertEquals(name, cleanTrigger.name(), "name not as expected"), //$NON-NLS-1$
+      () -> assertTrue(cleanTrigger.active(), "active state not as expected") //$NON-NLS-1$
     );
    }
 
@@ -74,9 +73,9 @@ final class TriggerTests
    {
     final Trigger cleanTrigger = Trigger.of(AIN.of(AIN_ZERO), ABC, false);
     assertAll("testFactory", //$NON-NLS-1$
-      () -> assertEquals(AIN.of(AIN_ZERO), cleanTrigger.ainValue(), "ain not as expected"), //$NON-NLS-1$
-      () -> assertEquals(ABC, cleanTrigger.stringValue(), "name not as expected"), //$NON-NLS-1$
-      () -> assertFalse(cleanTrigger.isActive(), "active state not as expected") //$NON-NLS-1$
+      () -> assertEquals(AIN.of(AIN_ZERO), cleanTrigger.ain(), "ain not as expected"), //$NON-NLS-1$
+      () -> assertEquals(ABC, cleanTrigger.name(), "name not as expected"), //$NON-NLS-1$
+      () -> assertFalse(cleanTrigger.active(), "active state not as expected") //$NON-NLS-1$
     );
    }
 
@@ -134,27 +133,6 @@ final class TriggerTests
    {
     final Trigger trigger = Trigger.of(AIN.of(AIN_ZERO), ABC, true);
     assertEquals(ABC, trigger.stringValue(), "Trigger not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Trigger.class).withNonnullFields("ain", "name").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Trigger trigger = Trigger.of(AIN.of(AIN_ZERO), ABC, true);
-    assertEquals("Trigger[ain=AIN[ain=000000000000], name=abc, active=true]", trigger.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

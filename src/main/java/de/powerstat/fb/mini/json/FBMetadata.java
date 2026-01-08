@@ -12,26 +12,14 @@ import org.jmolecules.ddd.annotation.ValueObject;
  * FB Metadata json support class.
  */
 @ValueObject
-public final class FBMetadata
+public record FBMetadata(int icon, String type)
  {
-  /**
-   * Icon number.
-   */
-  private int icon;
-
-  /**
-   * Scenario type string.
-   */
-  private String type;
-
-
   /**
    * Default constructor.
    */
   public FBMetadata()
    {
-    super();
-    type = "";
+    this(0, "");
    }
 
 
@@ -41,33 +29,8 @@ public final class FBMetadata
    * @param icon Icon number
    * @param type Type
    */
-  public FBMetadata(final int icon, final String type)
+  public FBMetadata
    {
-    super();
-    this.icon = icon;
-    this.type = type;
-   }
-
-
-  /**
-   * Get icon.
-   *
-   * @return Icon
-   */
-  public int getIcon()
-   {
-    return icon;
-   }
-
-
-  /**
-   * Get type.
-   *
-   * @return Type
-   */
-  public String getType()
-   {
-    return type;
    }
 
  }

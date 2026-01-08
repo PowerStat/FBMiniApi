@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,36 +10,15 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Button.
  */
 @ValueObject
-public final class Button implements Comparable<Button>, IValueObject
+public record Button(AIN identifier, long id, String name, UnixTimestamp lastpressed) implements Comparable<Button>, IValueObject
  {
-  /**
-   * Identifier.
-   */
-  private final AIN identifier;
-
-  /**
-   * Id.
-   */
-  private final long id;
-
-  /**
-   * Name.
-   */
-  private final String name;
-
-  /**
-   * Last pressed unix timestamp.
-   */
-  private final UnixTimestamp lastpressedtimestamp;
-
-
   /**
    * Constructor.
    *
@@ -49,9 +28,8 @@ public final class Button implements Comparable<Button>, IValueObject
    * @param lastpressed Last pressed unix timestamp
    * @throws IllegalArgumentException When id &lt; 0 or name.length() > 40
    */
-  private Button(final AIN identifier, final long id, final String name, final UnixTimestamp lastpressed)
+  public Button
    {
-    super();
     if (id < 0)
      {
       throw new IllegalArgumentException("id < 0"); //$NON-NLS-1$
@@ -60,10 +38,6 @@ public final class Button implements Comparable<Button>, IValueObject
      {
       throw new IllegalArgumentException("name to long: " + name.length()); //$NON-NLS-1$
      }
-    this.identifier = identifier;
-    this.id = id;
-    this.name = name;
-    lastpressedtimestamp = lastpressed;
    }
 
 
@@ -96,121 +70,6 @@ public final class Button implements Comparable<Button>, IValueObject
 
 
   /**
-   * Get identifier.
-   *
-   * @return Identifier
-   */
-  public AIN getIdentifier()
-   {
-    return identifier;
-   }
-
-
-  /**
-   * Get id.
-   *
-   * @return Id
-   */
-  public long getId()
-   {
-    return id;
-   }
-
-
-  /**
-   * Get name.
-   *
-   * @return Name
-   */
-  public String getName()
-   {
-    return name;
-   }
-
-
-  /**
-   * Get last presses timestamp.
-   *
-   * @return UnixTimestamp
-   */
-  public UnixTimestamp getLastPressedTimestamp()
-   {
-    return lastpressedtimestamp;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(identifier, id, name, lastpressedtimestamp);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Button other))
-     {
-      return false;
-     }
-    boolean result = identifier.equals(other.identifier);
-    if (result)
-     {
-      result = (id == other.id);
-      if (result)
-       {
-        result = name.equals(other.name);
-        if (result)
-         {
-          result = lastpressedtimestamp.equals(other.lastpressedtimestamp);
-         }
-       }
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this Button.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Button[identifier=000000000000, id=0, name=, lastpressedtimestamp=]"
-   *
-   * @return String representation of this AIN Button
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(54);
-    builder.append("Button[identifier=").append(identifier)
-      .append(", id=").append(id)
-      .append(", name=").append(name)
-      .append(" ,lastpressedtimestamp=").append(lastpressedtimestamp)
-      .append(']');
-    return builder.toString();
-   }
-
-
-  /**
    * Compare with another object.
    *
    * @param obj Object to compare with
@@ -230,7 +89,7 @@ public final class Button implements Comparable<Button>, IValueObject
         result = name.compareTo(obj.name);
         if (result == 0)
          {
-          result = lastpressedtimestamp.compareTo(obj.lastpressedtimestamp);
+          result = lastpressed.compareTo(obj.lastpressed);
          }
        }
      }

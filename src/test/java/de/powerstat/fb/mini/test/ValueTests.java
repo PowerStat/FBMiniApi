@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Value;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +42,7 @@ final class ValueTests
   @ValueSource(ints = {0, 127, 255})
   /* default */ void testIsValueValue(final int value)
    {
-    assertEquals(value, Value.of(value).intValue(), "Not a value value!"); //$NON-NLS-1$
+    assertEquals(value, Value.of(value).value(), "Not a value value!"); //$NON-NLS-1$
    }
 
 
@@ -70,28 +69,7 @@ final class ValueTests
   @Test
   /* default */ void testIsValueString()
    {
-    assertEquals(127, Value.of("127").intValue(), "Not a value value!"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Value.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Value value = Value.of(1);
-    assertEquals("Value[value=1]", value.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(127, Value.of("127").value(), "Not a value value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

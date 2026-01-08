@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Energy;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -54,7 +53,7 @@ final class EnergyTests
   @ValueSource(longs = {0, 1, 75519})
   /* default */ void testIsEnergyValue(final long energy)
    {
-    assertEquals(energy, Energy.of(energy).longValue(), NOT_AN_ENERGY_VALUE);
+    assertEquals(energy, Energy.of(energy).energyWh(), NOT_AN_ENERGY_VALUE);
    }
 
 
@@ -92,27 +91,6 @@ final class EnergyTests
   /* default */ void testStringValue()
    {
     assertEquals(ENERGY_75519, Energy.of(ENERGY_75519).stringValue(), NOT_AN_ENERGY_VALUE);
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Energy.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Energy energy = Energy.of(1);
-    assertEquals("Energy[energy=1]", energy.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

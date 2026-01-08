@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.SimpleOnOff;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +42,7 @@ final class SimpleOnOffTests
   /* default */ void testSimpleOnOffCorrect(final boolean state)
    {
     final SimpleOnOff cleanState = SimpleOnOff.of(state);
-    assertEquals(state, cleanState.booleanValue(), "SimpleOnOff not as expected"); //$NON-NLS-1$
+    assertEquals(state, cleanState.state(), "SimpleOnOff not as expected"); //$NON-NLS-1$
    }
 
 
@@ -55,27 +54,6 @@ final class SimpleOnOffTests
    {
     final SimpleOnOff state = SimpleOnOff.of(false);
     assertEquals("false", state.stringValue(), "SimpleOnOff not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(SimpleOnOff.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final SimpleOnOff state = SimpleOnOff.of(false);
-    assertEquals("SimpleOnOff[state=false]", state.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

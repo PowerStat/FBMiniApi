@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.AIN;
 import de.powerstat.fb.mini.SubscriptionCode;
@@ -95,7 +94,7 @@ final class SubscriptionStateTests
   /* default */ void testCodeValue()
    {
     final SubscriptionCode code = SubscriptionCode.of(0);
-    assertEquals(code, SubscriptionState.of(code, AIN.of(AIN_ZERO)).subscriptionCodeValue(), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
+    assertEquals(code, SubscriptionState.of(code, AIN.of(AIN_ZERO)).code(), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
    }
 
 
@@ -106,28 +105,7 @@ final class SubscriptionStateTests
   /* default */ void testAINValue()
    {
     final AIN ain = AIN.of(AIN_ZERO);
-    assertEquals(ain, SubscriptionState.of(SubscriptionCode.of(0), ain).ainValue(), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(SubscriptionState.class).withNonnullFields("code", "latestain").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final SubscriptionState state = SubscriptionState.of(SubscriptionCode.of(0), AIN.of(AIN_ZERO));
-    assertEquals("SubscriptionState[code=NO_PROGRESS, AIN[ain=000000000000]]", state.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(ain, SubscriptionState.of(SubscriptionCode.of(0), ain).latestain(), SUBSCRIPTION_STATE_NOT_AS_EXPECTED);
    }
 
 

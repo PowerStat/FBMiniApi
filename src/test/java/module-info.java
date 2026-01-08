@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 
@@ -15,7 +15,7 @@ open module de.powerstat.fb.mini
   // opens java.xml to org.mockito;
 
   requires org.apache.logging.log4j;
-  requires de.powerstat.validation;
+  requires de.powerstat.ddd;
 
   requires org.apache.httpcomponents.httpclient;
   requires org.apache.httpcomponents.httpcore;

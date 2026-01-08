@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.URIQueryParameter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -151,27 +150,6 @@ final class URIQueryParameterTests
       /* final URIQueryParameter param = */ URIQueryParameter.of("", VALUE_123);
      }, ILLEGAL_ARGUMENT_EXCEPTION_EXPECTED
     );
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(URIQueryParameter.class).withNonnullFields("key").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final URIQueryParameter param = URIQueryParameter.of(ABC, VALUE_123);
-    assertEquals("URIQueryParameter[key=abc, value=123]", param.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

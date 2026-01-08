@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.EnumSet;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.EtsiUnitInfo;
 import de.powerstat.fb.mini.HANFUNInterfaces;
@@ -68,27 +67,6 @@ final class EtsiUnitInfoTests
    {
     final EtsiUnitInfo cleanEtsiUnitInfo = EtsiUnitInfo.of(0, HANFUNUnits.SIMPLE_BUTTON, EnumSet.of(HANFUNInterfaces.KEEP_ALIVE));
     assertEquals("0", cleanEtsiUnitInfo.stringValue(), "EtsiUnitInfo not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(EtsiUnitInfo.class).withNonnullFields("unittype", "interfaces").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final EtsiUnitInfo cleanEtsiUnitInfo = EtsiUnitInfo.of(0, HANFUNUnits.SIMPLE_BUTTON, EnumSet.of(HANFUNInterfaces.KEEP_ALIVE));
-    assertEquals("EtsiUnitInfo[etsideviceid=0, unittype=SIMPLE_BUTTON, interfaces=[KEEP_ALIVE]]", cleanEtsiUnitInfo.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

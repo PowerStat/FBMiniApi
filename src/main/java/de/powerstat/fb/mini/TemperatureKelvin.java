@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,35 +10,29 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * TemperatureKelvin 2700-6500.
+ *
+ * @param temperature TemperatureKelvin (2700-6500)
  */
 @ValueObject
-public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, IValueObject
+public record TemperatureKelvin(int temperature) implements Comparable<TemperatureKelvin>, IValueObject
  {
-  /**
-   * TemperatureKelvin 2700-6500.
-   */
-  private final int temperature;
-
-
   /**
    * Constructor.
    *
    * @param temperature TemperatureKelvin (2700-6500)
    * @throws IndexOutOfBoundsException If temperature ist &lt; 2700 or &gt; 6500
    */
-  private TemperatureKelvin(final int temperature)
+  public TemperatureKelvin
    {
-    super();
     if ((temperature < 2700) || (temperature > 6500))
      {
       throw new IndexOutOfBoundsException("temperature must be >= 2700 and <= 6500"); //$NON-NLS-1$
      }
-    this.temperature = temperature;
    }
 
 
@@ -70,17 +64,6 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
 
 
   /**
-   * Returns the value of this TemperatureKelvin as an int.
-   *
-   * @return The numeric value represented by this object after conversion to type int (2700-6500)
-   */
-  public int intValue()
-   {
-    return temperature;
-   }
-
-
-  /**
    * Returns the value of this TemperatureKelvin as a String.
    *
    * @return The numeric value represented by this object after conversion to type String
@@ -89,60 +72,6 @@ public final class TemperatureKelvin implements Comparable<TemperatureKelvin>, I
   public String stringValue()
    {
     return String.valueOf(temperature);
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Integer.hashCode(temperature);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final TemperatureKelvin other))
-     {
-      return false;
-     }
-    return temperature == other.temperature;
-   }
-
-
-  /**
-   * Returns the string representation of this TemperatureKelvin.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "TemperatureKelvin[temperature=2700]"
-   *
-   * @return String representation of this TemperatureKelvin (2700-6500)
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(31);
-    builder.append("TemperatureKelvin[temperature=").append(temperature).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

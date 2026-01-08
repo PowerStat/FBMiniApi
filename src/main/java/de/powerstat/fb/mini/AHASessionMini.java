@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2015-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -62,17 +62,17 @@ import com.google.gson.Gson;
 
 import de.powerstat.fb.mini.Alert.AlertState;
 import de.powerstat.fb.mini.json.FBMetadata;
-import de.powerstat.validation.containers.NTuple2nc;
-import de.powerstat.validation.containers.NTuple5nc;
-import de.powerstat.validation.values.Hostname;
-import de.powerstat.validation.values.Milliseconds;
-import de.powerstat.validation.values.Password;
-import de.powerstat.validation.values.Percent;
-import de.powerstat.validation.values.Port;
-import de.powerstat.validation.values.Seconds;
-import de.powerstat.validation.values.Username;
-import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy;
-import de.powerstat.validation.values.strategies.UsernameConfigurableStrategy.HandleEMail;
+import de.powerstat.ddd.containers.NTuple2nc;
+import de.powerstat.ddd.containers.NTuple5nc;
+import de.powerstat.ddd.values.comm.Hostname;
+import de.powerstat.ddd.values.time.Milliseconds;
+import de.powerstat.ddd.values.comm.Password;
+import de.powerstat.ddd.values.science.Percent;
+import de.powerstat.ddd.values.comm.Port;
+import de.powerstat.ddd.values.time.Seconds;
+import de.powerstat.ddd.values.comm.Username;
+import de.powerstat.ddd.values.strategies.UsernameConfigurableStrategy;
+import de.powerstat.ddd.values.strategies.UsernameConfigurableStrategy.HandleEMail;
 
 
 /**
@@ -608,7 +608,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
          {
           AHASessionMini.LOGGER.debug("Checking timeout"); //$NON-NLS-1$
          }
-        if ((lastAccess + AHASessionMini.TIMEOUT.longValue()) >= System.currentTimeMillis())
+        if ((lastAccess + AHASessionMini.TIMEOUT.milliseconds()) >= System.currentTimeMillis())
          {
           if (AHASessionMini.LOGGER.isDebugEnabled())
            {
@@ -618,7 +618,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
           // TODO check disconnect and login again
           // TODO update device infos
          }
-        Thread.sleep((lastAccess + AHASessionMini.TIMEOUT.longValue()) - System.currentTimeMillis());
+        Thread.sleep((lastAccess + AHASessionMini.TIMEOUT.milliseconds()) - System.currentTimeMillis());
        }
       catch (final InterruptedException e)
        {
@@ -652,9 +652,9 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     assert (urlPath != null) && (urlQuery != null);
     if (AHASessionMini.LOGGER.isDebugEnabled())
      {
-      AHASessionMini.LOGGER.debug("url: https://{}:{}{}{}", hostname.stringValue(), port.intValue(), urlPath.stringValue(), urlQuery.stringValue()); //$NON-NLS-1$
+      AHASessionMini.LOGGER.debug("url: https://{}:{}{}{}", hostname.stringValue(), port.port(), urlPath.stringValue(), urlQuery.stringValue()); //$NON-NLS-1$
      }
-    try (CloseableHttpResponse response = httpclient.execute(new HttpGet("https://" + hostname.stringValue() + ":" + port.intValue() + urlPath.stringValue() + urlQuery.stringValue()))) //$NON-NLS-1$ //$NON-NLS-2$
+    try (CloseableHttpResponse response = httpclient.execute(new HttpGet("https://" + hostname.stringValue() + ":" + port.port() + urlPath.stringValue() + urlQuery.stringValue()))) //$NON-NLS-1$ //$NON-NLS-2$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
@@ -726,7 +726,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
   private String getString(final URIPath urlPath, final URIQuery<URIQueryParameter> urlQuery) throws IOException
    {
     assert (urlPath != null) && (urlQuery != null);
-    try (CloseableHttpResponse response = httpclient.execute(new HttpGet("https://" + hostname.stringValue() + ":" + port.intValue() + urlPath.stringValue() + urlQuery.stringValue() + "&sid=" + sid.stringValue())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    try (CloseableHttpResponse response = httpclient.execute(new HttpGet("https://" + hostname.stringValue() + ":" + port.port() + urlPath.stringValue() + urlQuery.stringValue() + "&sid=" + sid.stringValue())))//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
      {
       final int responseCode = response.getStatusLine().getStatusCode();
       if (responseCode != HttpURLConnection.HTTP_OK)
@@ -2054,21 +2054,21 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
     Objects.requireNonNull(ain, AHASessionMini.AIN_STR);
     Objects.requireNonNull(temperature, TEMPERATURE);
     long fbTemperature;
-    if (temperature.longValue() == 0)
+    if (temperature.temperatureCelsius() == 0)
      {
       fbTemperature = 253;
      }
-    else if (temperature.longValue() == 300)
+    else if (temperature.temperatureCelsius() == 300)
      {
       fbTemperature = 254;
      }
-    else if ((temperature.longValue() < 80) || (temperature.longValue() > 280))
+    else if ((temperature.temperatureCelsius() < 80) || (temperature.temperatureCelsius() > 280))
      {
       throw new IndexOutOfBoundsException("Illegal temperature value!"); //$NON-NLS-1$
      }
     else
      {
-      fbTemperature = (temperature.longValue() * 2) / 10;
+      fbTemperature = (temperature.temperatureCelsius() * 2) / 10;
      }
     final URIPath path = URIPath.of(WEBSERVICES_HOMEAUTOSWITCH_LUA);
     final URIQuery<URIQueryParameter> query = new URIQuery<>();
@@ -2353,7 +2353,7 @@ public class AHASessionMini implements Runnable, Comparable<AHASessionMini>
             final FBMetadata md = gson.fromJson(json, FBMetadata.class);
             if (md != null)
              {
-              metadata = Metadata.of((md.getIcon() == 0) ? -1 : md.getIcon(), ScenarioType.of(md.getType().toUpperCase(Locale.getDefault())));
+              metadata = Metadata.of((md.icon() == 0) ? -1 : md.icon(), ScenarioType.of(md.type().toUpperCase(Locale.getDefault())));
              }
             break;
            }

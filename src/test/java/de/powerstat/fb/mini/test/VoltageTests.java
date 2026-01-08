@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Voltage;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -54,7 +53,7 @@ final class VoltageTests
   @ValueSource(longs = {0, 1, 228201})
   /* default */ void testIsVoltageValue(final long voltage)
    {
-    assertEquals(voltage, Voltage.of(voltage).longValue(), NOT_A_VOLTAGE_VALUE);
+    assertEquals(voltage, Voltage.of(voltage).voltage(), NOT_A_VOLTAGE_VALUE);
    }
 
 
@@ -92,27 +91,6 @@ final class VoltageTests
   /* default */ void testVoltageStringValue()
    {
     assertEquals(VOLTAGE_228201, Voltage.of(VOLTAGE_228201).stringValue(), NOT_A_VOLTAGE_VALUE);
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Voltage.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Voltage voltage = Voltage.of(1);
-    assertEquals("Voltage[voltage=1]", voltage.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

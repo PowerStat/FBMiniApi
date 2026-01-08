@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2021-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -11,14 +11,16 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Session identifier.
+ *
+ * @param sessionId Session identifier
  */
 @ValueObject
-public final class SID implements Comparable<SID>, IValueObject
+public record SID(String sessionId) implements Comparable<SID>, IValueObject
  {
   /**
    * SID zero.
@@ -37,29 +39,21 @@ public final class SID implements Comparable<SID>, IValueObject
 
 
   /**
-   * Session identifier.
-   */
-  private final String sessionId;
-
-
-  /**
    * Constructor.
    *
-   * @param sid Session identifier
+   * @param sessionId Session identifier
    */
-  private SID(final String sid)
+  public SID
    {
-    super();
-    Objects.requireNonNull(sid, "sessionid"); //$NON-NLS-1$
-    if (sid.length() != 16)
+    Objects.requireNonNull(sessionId, "sessionid"); //$NON-NLS-1$
+    if (sessionId.length() != 16)
      {
       throw new IllegalArgumentException("sessionid with wrong length"); //$NON-NLS-1$
      }
-    if (!SID.SID_REGEXP.matcher(sid).matches())
+    if (!SID.SID_REGEXP.matcher(sessionId).matches())
      {
       throw new IllegalArgumentException("sessionid with wrong format"); //$NON-NLS-1$
      }
-    sessionId = sid;
    }
 
 
@@ -106,60 +100,6 @@ public final class SID implements Comparable<SID>, IValueObject
   public boolean isValidSession()
    {
     return !SID_ZERO.equals(sessionId);
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return sessionId.hashCode();
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final SID other))
-     {
-      return false;
-     }
-    return sessionId.equals(other.sessionId);
-   }
-
-
-  /**
-   * Returns the string representation of this SID.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "SID[sid=0000000000000000]"
-   *
-   * @return String representation of this SID
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder();
-    builder.append("SID[sid=").append(sessionId).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

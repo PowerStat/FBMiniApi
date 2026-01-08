@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.test;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.UnixTimestamp;
-import de.powerstat.validation.values.Seconds;
+import de.powerstat.ddd.values.time.Seconds;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -91,29 +91,7 @@ final class UnixTimestampTests
    {
     final long now = Instant.now().getEpochSecond() + 10;
     final Seconds secs = Seconds.of(now);
-    assertEquals(secs, UnixTimestamp.of(String.valueOf(now)).secondsValue(), "Result not as expected!"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(UnixTimestamp.class).withNonnullFields("seconds").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Seconds now = Seconds.of(0);
-    final UnixTimestamp timestamp = UnixTimestamp.of(now);
-    assertEquals("UnixTimestamp[seconds=Seconds[seconds=0]]", timestamp.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(secs, UnixTimestamp.of(String.valueOf(now)).seconds(), "Result not as expected!"); //$NON-NLS-1$
    }
 
 

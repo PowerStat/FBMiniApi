@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,36 +10,20 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Switch.
+ *
+ * @param state true: on; false: off; unknown: null
+ * @param mode true: auto; false: manuell; unknown: null
+ * @param lock true: locked; false: unlocked; unknown: null
+ * @param devicelock true: locked; false: unlocked; unknown: null
  */
 @ValueObject
-public final class Switch implements Comparable<Switch>, IValueObject
+public record Switch(Boolean state, Boolean mode, Boolean lock, Boolean devicelock) implements Comparable<Switch>, IValueObject
  {
-  /**
-   * State true: on; false: off; unknown: null.
-   */
-  private final Boolean state;
-
-  /**
-   * Mode: true: auto; false: manuell; unknown: null.
-   */
-  private final Boolean mode;
-
-  /**
-   * Lock: true: locked; false: unlocked; unknown: null.
-   */
-  private final Boolean lock;
-
-  /**
-   * Device lock: true: locked; false: unlocked; unknown: null.
-   */
-  private final Boolean devicelock;
-
-
   /**
    * Constructor.
    *
@@ -48,13 +32,8 @@ public final class Switch implements Comparable<Switch>, IValueObject
    * @param lock true: locked; false: unlocked; unknown: null
    * @param devicelock true: locked; false: unlocked; unknown: null
    */
-  private Switch(final Boolean state, final Boolean mode, final Boolean lock, final Boolean devicelock)
+  public Switch
    {
-    super();
-    this.state = state;
-    this.mode = mode;
-    this.lock = lock;
-    this.devicelock = devicelock;
    }
 
 
@@ -82,121 +61,6 @@ public final class Switch implements Comparable<Switch>, IValueObject
   public String stringValue()
    {
     return String.valueOf(state);
-   }
-
-
-  /**
-   * Get state.
-   *
-   * @return State.
-   */
-  public Boolean getState()
-   {
-    return state;
-   }
-
-
-  /**
-   * Get mode.
-   *
-   * @return Mode.
-   */
-  public Boolean getMode()
-   {
-    return mode;
-   }
-
-
-  /**
-   * Get lock.
-   *
-   * @return Lock.
-   */
-  public Boolean getLock()
-   {
-    return lock;
-   }
-
-
-  /**
-   * Get device lock.
-   *
-   * @return Device lock.
-   */
-  public Boolean getDevicelock()
-   {
-    return devicelock;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(state, mode, lock, devicelock);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Switch other))
-     {
-      return false;
-     }
-    boolean result = (state == other.state);
-    if (result)
-     {
-      result = (mode == other.mode);
-      if (result)
-       {
-        result = (lock == other.lock);
-        if (result)
-         {
-          result = (devicelock == other.devicelock);
-         }
-       }
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this Switch.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Switch[state=false, mode=false, lock=false, devicelock=false]"
-   *
-   * @return String representation of this Switch
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(41);
-    builder.append("Switch[state=").append(state)
-      .append(", mode=").append(mode)
-      .append(", lock=").append(lock)
-      .append(", devicelock=").append(devicelock)
-      .append(']');
-    return builder.toString();
    }
 
 

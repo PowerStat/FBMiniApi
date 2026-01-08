@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.test;
@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.time.Instant;
 
@@ -20,8 +19,8 @@ import de.powerstat.fb.mini.HkrErrorCodes;
 import de.powerstat.fb.mini.HkrNextChange;
 import de.powerstat.fb.mini.TemperatureCelsius;
 import de.powerstat.fb.mini.UnixTimestamp;
-import de.powerstat.validation.values.Percent;
-import de.powerstat.validation.values.Seconds;
+import de.powerstat.ddd.values.science.Percent;
+import de.powerstat.ddd.values.time.Seconds;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -261,46 +260,6 @@ final class HKRTests
     final boolean adaptiveHeatingRunning = false;
     final HKR cleanHkr = HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
     assertEquals("180", cleanHkr.stringValue(), "HKR not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(HKR.class).withNonnullFields("absenk", "komfort", "errorcode", "battery", "nextchange").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final TemperatureCelsius tist = null;
-    final TemperatureCelsius tsoll = null;
-    final TemperatureCelsius absenk = TemperatureCelsius.of(180);
-    final TemperatureCelsius komfort = TemperatureCelsius.of(200);
-    final Boolean lock = null;
-    final Boolean devicelock = null;
-    final HkrErrorCodes errorcode = HkrErrorCodes.NO_ERROR;
-    final boolean windowsopenactive = false;
-    final UnixTimestamp windowopenactiveendtime = null;
-    final boolean boostactive = false;
-    final UnixTimestamp boostactiveendtime = null;
-    final boolean batterylow = false;
-    final Percent battery = Percent.of(100);
-    final UnixTimestamp tstamp = UnixTimestamp.of(Seconds.of(Instant.now().getEpochSecond() + 3600));
-    final HkrNextChange nextchange = HkrNextChange.of(tstamp, TemperatureCelsius.of(200));
-    final boolean summeractive = false;
-    final boolean holidayactive = false;
-    final boolean adaptiveHeatingActive = false;
-    final boolean adaptiveHeatingRunning = false;
-    final HKR hkr = HKR.of(tist, tsoll, absenk, komfort, lock, devicelock, errorcode, windowsopenactive, windowopenactiveendtime, boostactive, boostactiveendtime, batterylow, battery, nextchange, summeractive, holidayactive, adaptiveHeatingActive, adaptiveHeatingRunning);
-    assertEquals("HKR[tist=null, tsoll=null, absenk=TemperatureCelsius[temperature=180], komfort=TemperatureCelsius[temperature=200], lock=null, devicelock=null, errorcode=NO_ERROR, windowsopenactive=false, windowopenactiveendtime=null, boostactive=false, boostactiveendtime=null, batterylow=false, battery=Percent[percent=100], nextchange=HkrNextChange[endperiod=UnixTimestamp[seconds=Seconds[seconds=" + tstamp.longValue() + "]], tchange=TemperatureCelsius[temperature=200]], summeractive=false, holidayactive=false, adaptiveHeatingActive=false, adaptiveHeatingRunning=false]", hkr.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

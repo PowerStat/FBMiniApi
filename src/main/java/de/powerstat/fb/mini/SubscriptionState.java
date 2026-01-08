@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,26 +10,18 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Subscription state.
+ *
+ * @param code Subscription code
+ * @param latestain Latest AIN
  */
 @ValueObject
-public final class SubscriptionState implements Comparable<SubscriptionState>, IValueObject
+public record SubscriptionState(SubscriptionCode code, AIN latestain) implements Comparable<SubscriptionState>, IValueObject
  {
-  /**
-   * Subscription code.
-   */
-  private final SubscriptionCode code;
-
-  /**
-   * Latest ain.
-   */
-  private final AIN latestain;
-
-
   /**
    * Constructor.
    *
@@ -37,12 +29,9 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
    * @param latestain Latest AIN
    * @throws NullPointerException When code is null
    */
-  private SubscriptionState(final SubscriptionCode code, final AIN latestain)
+  public SubscriptionState
    {
-    super();
     Objects.requireNonNull(code, "code"); //$NON-NLS-1$
-    this.code = code;
-    this.latestain = latestain;
    }
 
 
@@ -68,87 +57,6 @@ public final class SubscriptionState implements Comparable<SubscriptionState>, I
   public String stringValue()
    {
     return code.stringValue();
-   }
-
-
-  /**
-   * Returns the SubScriptionCode of this SubscriptionState.
-   *
-   * @return The SubScriptionCode represented by this object.
-   */
-  public SubscriptionCode subscriptionCodeValue()
-   {
-    return code;
-   }
-
-
-  /**
-   * Returns the AIN of this SubscriptionState.
-   *
-   * @return The AIN represented by this object.
-   */
-  public AIN ainValue()
-   {
-    return latestain;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(code, latestain);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final SubscriptionState other))
-     {
-      return false;
-     }
-    boolean result = (code == other.code);
-    if (result)
-     {
-      result = latestain.equals(other.latestain);
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this SubscriptionState.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "SubscriptionState[code=SubscriptionCode[code=0], latestain=AIN[ain=000000000000]]"
-   *
-   * @return String representation of this SubscriptionState
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(26);
-    builder.append("SubscriptionState[code=").append(code).append(", ").append(latestain).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

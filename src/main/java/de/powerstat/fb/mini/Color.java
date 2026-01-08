@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,36 +10,20 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Color.
+ *
+ * @param index Index (1-3)
+ * @param hue Hue
+ * @param saturation Saturation
+ * @param value Value
  */
 @ValueObject
-public final class Color implements Comparable<Color>, IValueObject
+public record Color(int index, Hue hue, Saturation saturation, Value value) implements Comparable<Color>, IValueObject
  {
-  /**
-   * Index 1-3.
-   */
-  private final int index;
-
-  /**
-   * Hue.
-   */
-  private final Hue hue;
-
-  /**
-   * Saturation.
-   */
-  private final Saturation saturation;
-
-  /**
-   * Value.
-   */
-  private final Value value;
-
-
   /**
    * Constructor.
    *
@@ -50,9 +34,8 @@ public final class Color implements Comparable<Color>, IValueObject
    * @throws NullPointerException if hue, saturation or value is null
    * @throws IndexOutOfBundsException if index is not 1-3
    */
-  private Color(final int index, final Hue hue, final Saturation saturation, final Value value)
+  public Color
    {
-    super();
     Objects.requireNonNull(hue, "hue"); //$NON-NLS-1$
     Objects.requireNonNull(saturation, "saturation"); //$NON-NLS-1$
     Objects.requireNonNull(value, "value"); //$NON-NLS-1$
@@ -60,10 +43,6 @@ public final class Color implements Comparable<Color>, IValueObject
      {
       throw new IndexOutOfBoundsException("Index < 1 or > 3");
      }
-    this.index = index;
-    this.hue = hue;
-    this.saturation = saturation;
-    this.value = value;
    }
 
 
@@ -93,117 +72,6 @@ public final class Color implements Comparable<Color>, IValueObject
   public String stringValue()
    {
     return index + ", " + hue + ", " + saturation + ", " + value;
-   }
-
-
-  /**
-   * Returns the index of this Color.
-   *
-   * @return The index represented by this object.
-   */
-  public int intValue()
-   {
-    return index;
-   }
-
-
-  /**
-   * Returns the hue of this Color.
-   *
-   * @return The hue represented by this object.
-   */
-  public Hue hueValue()
-   {
-    return hue;
-   }
-
-
-  /**
-   * Returns the saturation of this Color.
-   *
-   * @return The saturation represented by this object.
-   */
-  public Saturation saturationValue()
-   {
-    return saturation;
-   }
-
-
-  /**
-   * Returns the value of this Color.
-   *
-   * @return The value represented by this object.
-   */
-  public Value valueValue()
-   {
-    return value;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(index, hue, saturation, value);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Color other))
-     {
-      return false;
-     }
-    boolean result = (index == other.index);
-    if (result)
-     {
-      result = hue.equals(other.hue);
-      if (result)
-       {
-        result = saturation.equals(other.saturation);
-        if (result)
-         {
-          result = value.equals(other.value);
-         }
-       }
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this Color.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Color[index=1, hue=Hue[hue=0], saturation=Saturation[saturation=0], value=Value[value=0]]"
-   *
-   * @return String representation of this Color
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(40);
-    builder.append("Color[index=").append(index).append(", hue=").append(hue).append(", saturation=").append(saturation).append(", value=").append(value).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,31 +10,19 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Trigger.
+ *
+ * @param ain AIN
+ * @param name Name
+ * @param active true: active; false: inactive
  */
 @ValueObject
-public final class Trigger implements Comparable<Trigger>, IValueObject
+public record Trigger(AIN ain, String name, boolean active) implements Comparable<Trigger>, IValueObject
  {
-  /**
-   * AIN.
-   */
-  private final AIN ain;
-
-  /**
-   * Trigger name.
-   */
-  private final String name;
-
-  /**
-   * Active or inactive.
-   */
-  private final boolean active;
-
-
   /**
    * Constructor.
    *
@@ -42,19 +30,15 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
    * @param name Name
    * @param active true: active; false: inactive
    */
-  private Trigger(final AIN ain, final String name, final boolean active)
+  public Trigger
    {
-    super();
     Objects.requireNonNull(ain, "ain"); //$NON-NLS-1$
     Objects.requireNonNull(name, "name"); //$NON-NLS-1$
     if (name.isEmpty() || (name.length() > 40))
      {
       throw new IllegalArgumentException("name with wrong length: " + name.length()); //$NON-NLS-1$
      }
-    // Name regexp
-    this.ain = ain;
-    this.active = active;
-    this.name = name;
+    // TODO Name regexp
    }
 
 
@@ -81,91 +65,6 @@ public final class Trigger implements Comparable<Trigger>, IValueObject
   public String stringValue()
    {
     return name;
-   }
-
-
-  /**
-   * Returns the AIN of this Trigger.
-   *
-   * @return The ain represented by this object.
-   */
-  public AIN ainValue()
-   {
-    return ain;
-   }
-
-
-  /**
-   * Returns the active value of this Trigger.
-   *
-   * @return The active value represented by this object.
-   */
-  public boolean isActive()
-   {
-    return active;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(ain, name, active);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Trigger other))
-     {
-      return false;
-     }
-    boolean result = ain.equals(other.ain);
-    if (result)
-     {
-      result = name.equals(other.name);
-      if (result)
-       {
-        result = (active == other.active);
-       }
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this Trigger.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Trigger[AIN[ain=000000000000], name=abc, active=true]"
-   *
-   * @return String representation of this Trigger
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(29);
-    builder.append("Trigger[ain=").append(ain).append(", name=").append(name).append(", active=").append(active).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

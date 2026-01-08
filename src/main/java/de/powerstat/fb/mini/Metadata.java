@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -11,26 +11,18 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Metadata.
+ *
+ * @param icon Icon id > 0 or -1 if undefined
+ * @param type ScenarioType
  */
 @ValueObject
-public final class Metadata implements Comparable<Metadata>, IValueObject
+public record Metadata(int icon, ScenarioType type) implements Comparable<Metadata>, IValueObject
  {
-  /**
-   * Icon id for icon font or -1 if undefined.
-   */
-  private final int icon;
-
-  /**
-   * Scenario type.
-   */
-  private final ScenarioType type;
-
-
   /**
    * Constructor.
    *
@@ -41,9 +33,8 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
    * @throws NullPointerException if type is null
    * @throws IndexOutOfBoundsException If icon ist &lt; -1
    */
-  private Metadata(final int icon, final ScenarioType type)
+  public Metadata
    {
-    super();
     Objects.requireNonNull(type, "type"); //$NON-NLS-1$
     if (icon < -1)
      {
@@ -53,12 +44,10 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
      {
       throw new IllegalArgumentException("One of icon or type must be set");
      }
-    if ((icon >= -0) && (ScenarioType.UNDEFINED != type))
+    if ((icon >= 0) && (ScenarioType.UNDEFINED != type))
      {
       throw new IllegalArgumentException("Only one of icon or type must be set");
      }
-    this.icon = icon;
-    this.type = type;
    }
 
 
@@ -111,65 +100,6 @@ public final class Metadata implements Comparable<Metadata>, IValueObject
      }
     result.append('}');
     return result.toString();
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(icon, type);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Metadata other))
-     {
-      return false;
-     }
-    boolean result = (icon == other.icon);
-    if (result) // && (icon == -1)
-     {
-      result = (type == other.type);
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this Metadata.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Metadata[icon=0, type=UNDEFINED]"
-   *
-   * @return String representation of this Metadata
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(22);
-    builder.append("Metadata[icon=").append(icon).append(", type=").append(type).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

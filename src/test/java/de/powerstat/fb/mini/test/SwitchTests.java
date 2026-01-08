@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Switch;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -40,10 +39,10 @@ final class SwitchTests
    {
     final Switch cleanSwitch = Switch.of(false, false, false, false);
     assertAll("testSwitchCorrect1", //$NON-NLS-1$
-      () -> assertFalse(cleanSwitch.getState(), "State not as expected"), //$NON-NLS-1$
-      () -> assertFalse(cleanSwitch.getMode(), "Mode not as expected"), //$NON-NLS-1$
-      () -> assertFalse(cleanSwitch.getLock(), "Lock not as expected"), //$NON-NLS-1$
-      () -> assertFalse(cleanSwitch.getDevicelock(), "Devicelock not as expected") //$NON-NLS-1$
+      () -> assertFalse(cleanSwitch.state(), "State not as expected"), //$NON-NLS-1$
+      () -> assertFalse(cleanSwitch.mode(), "Mode not as expected"), //$NON-NLS-1$
+      () -> assertFalse(cleanSwitch.lock(), "Lock not as expected"), //$NON-NLS-1$
+      () -> assertFalse(cleanSwitch.devicelock(), "Devicelock not as expected") //$NON-NLS-1$
     );
    }
 
@@ -56,10 +55,10 @@ final class SwitchTests
    {
     final Switch cleanSwitch = Switch.of(true, true, true, true);
     assertAll("testSwitchCorrect2", //$NON-NLS-1$
-      () -> assertTrue(cleanSwitch.getState(), "State not as expected"), //$NON-NLS-1$
-      () -> assertTrue(cleanSwitch.getMode(), "Mode not as expected"), //$NON-NLS-1$
-      () -> assertTrue(cleanSwitch.getLock(), "Lock not as expected"), //$NON-NLS-1$
-      () -> assertTrue(cleanSwitch.getDevicelock(), "Devicelock not as expected") //$NON-NLS-1$
+      () -> assertTrue(cleanSwitch.state(), "State not as expected"), //$NON-NLS-1$
+      () -> assertTrue(cleanSwitch.mode(), "Mode not as expected"), //$NON-NLS-1$
+      () -> assertTrue(cleanSwitch.lock(), "Lock not as expected"), //$NON-NLS-1$
+      () -> assertTrue(cleanSwitch.devicelock(), "Devicelock not as expected") //$NON-NLS-1$
     );
    }
 
@@ -72,27 +71,6 @@ final class SwitchTests
    {
     final Switch cleanSwitch = Switch.of(false, false, false, false);
     assertEquals("false", cleanSwitch.stringValue(), "Switch not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Switch.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Switch switchState = Switch.of(false, false, false, false);
-    assertEquals("Switch[state=false, mode=false, lock=false, devicelock=false]", switchState.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

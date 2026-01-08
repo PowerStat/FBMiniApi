@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.test;
@@ -44,8 +44,8 @@ import de.powerstat.fb.mini.TemperatureCelsius;
 import de.powerstat.fb.mini.UnixTimestamp;
 import de.powerstat.fb.mini.Version;
 import de.powerstat.fb.mini.Voltage;
-import de.powerstat.validation.values.Percent;
-import de.powerstat.validation.values.Seconds;
+import de.powerstat.ddd.values.science.Percent;
+import de.powerstat.ddd.values.time.Seconds;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 

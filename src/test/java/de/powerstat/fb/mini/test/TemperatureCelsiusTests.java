@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.TemperatureCelsius;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +42,7 @@ final class TemperatureCelsiusTests
   @ValueSource(longs = {-2732, 0, 200})
   /* default */ void testIsTemperatureValue(final long temperature)
    {
-    assertEquals(temperature, TemperatureCelsius.of(temperature).longValue(), "Not a temperature value!"); //$NON-NLS-1$
+    assertEquals(temperature, TemperatureCelsius.of(temperature).temperatureCelsius(), "Not a temperature value!"); //$NON-NLS-1$
    }
 
 
@@ -71,27 +70,6 @@ final class TemperatureCelsiusTests
   /* default */ void testIsTemperatureString()
    {
     assertEquals(20, TemperatureCelsius.of("200").getTemperatureCelsius(), "Not a temperature value!"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(TemperatureCelsius.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final TemperatureCelsius temperature = TemperatureCelsius.of(200);
-    assertEquals("TemperatureCelsius[temperature=200]", temperature.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 
@@ -126,7 +104,7 @@ final class TemperatureCelsiusTests
     final TemperatureCelsius temperature1 = TemperatureCelsius.of(200);
     final TemperatureCelsius temperature2 = TemperatureCelsius.of(100);
     final TemperatureCelsius newTemperature = temperature1.add(temperature2);
-    assertEquals(300, newTemperature.longValue(), "add not equal"); //$NON-NLS-1$
+    assertEquals(300, newTemperature.temperatureCelsius(), "add not equal"); //$NON-NLS-1$
    }
 
 
@@ -139,7 +117,7 @@ final class TemperatureCelsiusTests
     final TemperatureCelsius temperature1 = TemperatureCelsius.of(200);
     final TemperatureCelsius temperature2 = TemperatureCelsius.of(100);
     final TemperatureCelsius newTemperature = temperature1.subtract(temperature2);
-    assertEquals(100, newTemperature.longValue(), "subtract not equal"); //$NON-NLS-1$
+    assertEquals(100, newTemperature.temperatureCelsius(), "subtract not equal"); //$NON-NLS-1$
    }
 
  }

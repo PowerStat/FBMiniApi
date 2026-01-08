@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Blind;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -50,27 +49,6 @@ final class BlindTests
    {
     final Blind cleanBlind = Blind.of(false, false);
     assertEquals("false", cleanBlind.stringValue(), "Blind not as expected"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Blind.class).withNonnullFields("mode", "endpositionsset").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Blind blind = Blind.of(false, false);
-    assertEquals("Blind[mode=false, endpositionsset=false]", blind.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

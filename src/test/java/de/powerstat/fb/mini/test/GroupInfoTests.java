@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,29 +102,6 @@ final class GroupInfoTests
     members.add(1L);
     final GroupInfo groupInfo = GroupInfo.of(0, members);
     assertEquals("0", groupInfo.stringValue(), "GroupInfo not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(GroupInfo.class).withNonnullFields("members").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final List<Long> members = new ArrayList<>();
-    members.add(1L);
-    final GroupInfo groupInfo = GroupInfo.of(0, members);
-    assertEquals("GroupInfo[masterdeviceid=0, members=[1]]", groupInfo.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

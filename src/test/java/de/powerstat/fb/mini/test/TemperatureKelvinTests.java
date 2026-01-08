@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.TemperatureKelvin;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +42,7 @@ final class TemperatureKelvinTests
   @ValueSource(ints = {2700, 6500})
   /* default */ void testIsTemperatureKelvinValue(final int temperature)
    {
-    assertEquals(temperature, TemperatureKelvin.of(temperature).intValue(), "Not a temperature value!"); //$NON-NLS-1$
+    assertEquals(temperature, TemperatureKelvin.of(temperature).temperature(), "Not a temperature value!"); //$NON-NLS-1$
    }
 
 
@@ -70,28 +69,7 @@ final class TemperatureKelvinTests
   @Test
   /* default */ void testIsTemperatureKelvinString()
    {
-    assertEquals(3000, TemperatureKelvin.of("3000").intValue(), "Not a temperature value!"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(TemperatureKelvin.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final TemperatureKelvin temperature = TemperatureKelvin.of(2700);
-    assertEquals("TemperatureKelvin[temperature=2700]", temperature.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(3000, TemperatureKelvin.of("3000").temperature(), "Not a temperature value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

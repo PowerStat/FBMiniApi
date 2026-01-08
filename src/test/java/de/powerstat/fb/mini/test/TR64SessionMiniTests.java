@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.test;
@@ -48,8 +48,8 @@ import de.powerstat.fb.mini.TR64SessionMini;
 import de.powerstat.fb.mini.Action;
 import de.powerstat.fb.mini.ServiceType;
 import de.powerstat.fb.mini.URIPath;
-import de.powerstat.validation.values.Hostname;
-import de.powerstat.validation.values.Port;
+import de.powerstat.ddd.values.comm.Hostname;
+import de.powerstat.ddd.values.comm.Port;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 

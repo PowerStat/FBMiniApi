@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,36 +10,29 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Voltage in 0,001V.
+ *
+ * @param voltage Voltage in 0,001V. (must be &gt;= 0)
  */
 @ValueObject
-public final class Voltage implements Comparable<Voltage>, IValueObject
+public record Voltage(long voltage) implements Comparable<Voltage>, IValueObject
  {
-  /**
-   * Voltage in 0,001V.
-   */
-  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
-  private final long voltage;
-
-
   /**
    * Constructor.
    *
    * @param voltage Voltage in 0,001V. (must be &gt;= 0)
    * @throws IndexOutOfBoundsException If voltage is less than zero
    */
-  private Voltage(final long voltage)
+  public Voltage
    {
-    super();
     if (voltage < 0)
      {
       throw new IndexOutOfBoundsException("voltage must be >= 0"); //$NON-NLS-1$
      }
-    this.voltage = voltage;
    }
 
 
@@ -71,17 +64,6 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
 
 
   /**
-   * Returns the value of this Voltage as a long in 0,001V.
-   *
-   * @return The numeric value represented by this object after conversion to type long in 0,001V.
-   */
-  public long longValue()
-   {
-    return voltage;
-   }
-
-
-  /**
    * Returns the value of this Voltage as a String in 0,001V.
    *
    * @return The numeric value represented by this object after conversion to type String in 0,001V.
@@ -101,60 +83,6 @@ public final class Voltage implements Comparable<Voltage>, IValueObject
   public long getVoltageVolt()
    {
     return voltage / 1000;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Long.hashCode(voltage);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Voltage other))
-     {
-      return false;
-     }
-    return voltage == other.voltage;
-   }
-
-
-  /**
-   * Returns the string representation of this Voltage in 0,001V.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Voltage[Voltage=228201]"
-   *
-   * @return String representation of this Voltage in 0,001V
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(17);
-    builder.append("Voltage[voltage=").append(voltage).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

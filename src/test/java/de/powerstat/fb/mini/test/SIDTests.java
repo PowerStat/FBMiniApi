@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.SID;
 
@@ -127,27 +126,6 @@ final class SIDTests
   /* default */ void testIsValidSessionTrue()
    {
     assertTrue(SID.of(SID_ONE).isValidSession(), "Session not as expected."); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(SID.class).withNonnullFields("sessionId").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final SID sid = SID.of(SID_ONE);
-    assertEquals("SID[sid=0000000000000001]", sid.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

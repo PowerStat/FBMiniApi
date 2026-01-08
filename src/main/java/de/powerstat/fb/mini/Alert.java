@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,26 +10,17 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  *  Alert.
+ *
+ * @param state Alert state
  */
 @ValueObject
-public final class Alert implements Comparable<Alert>, IValueObject
+public record Alert(AlertState state, UnixTimestamp lastalertchgtimestamp) implements Comparable<Alert>, IValueObject
  {
-  /**
-   * Alert state.
-   */
-  private final AlertState state;
-
-  /**
-   * Last alert change timestamp.
-   */
-  private final UnixTimestamp lastalertchgtimestamp;
-
-
   /**
    * Enum for handling of alert state.
    */
@@ -158,11 +149,8 @@ public final class Alert implements Comparable<Alert>, IValueObject
    * @param state Alert state
    * @param lastalertchgtimestamp Last alert change timestamp
    */
-  private Alert(final AlertState state, final UnixTimestamp lastalertchgtimestamp)
+  public Alert
    {
-    super();
-    this.state = state;
-    this.lastalertchgtimestamp = lastalertchgtimestamp;
    }
 
 
@@ -188,65 +176,6 @@ public final class Alert implements Comparable<Alert>, IValueObject
   public String stringValue()
    {
     return state.toString();
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(state, lastalertchgtimestamp);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Alert other))
-     {
-      return false;
-     }
-    boolean result = (state == other.state);
-    if (result)
-     {
-      result = lastalertchgtimestamp.equals(other.lastalertchgtimestamp);
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this Alert.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Alert[state=, lastalertchgtimestamp=]"
-   *
-   * @return String representation of this Alert
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(37);
-    builder.append("Alert[state=").append(state).append(", lastalertchgtimestamp=").append(lastalertchgtimestamp).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

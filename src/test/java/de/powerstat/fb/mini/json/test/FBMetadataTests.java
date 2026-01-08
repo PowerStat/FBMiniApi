@@ -55,8 +55,8 @@ final class FBMetadataTests
    {
     final FBMetadata cleanData = new FBMetadata(1, "test");
     assertAll("testFBMetadataCorrect2", //$NON-NLS-1$
-      () -> assertEquals(1, cleanData.getIcon(), FB_METADATA_NOT_AS_EXPECTED),
-      () -> assertEquals("test", cleanData.getType(), FB_METADATA_NOT_AS_EXPECTED) //$NON-NLS-1$
+      () -> assertEquals(1, cleanData.icon(), FB_METADATA_NOT_AS_EXPECTED),
+      () -> assertEquals("test", cleanData.type(), FB_METADATA_NOT_AS_EXPECTED) //$NON-NLS-1$
     );
 
    }

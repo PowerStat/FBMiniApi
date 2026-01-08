@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.test;
@@ -11,12 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.AIN;
 import de.powerstat.fb.mini.Button;
 import de.powerstat.fb.mini.UnixTimestamp;
-import de.powerstat.validation.values.Seconds;
+import de.powerstat.ddd.values.time.Seconds;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -103,7 +102,7 @@ final class ButtonTests
   /* default */ void testGetIdentifier()
    {
     final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
-    assertEquals(AIN_ZERO, cleanButton.getIdentifier().stringValue(), "getIdentifier not as expected"); //$NON-NLS-1$
+    assertEquals(AIN_ZERO, cleanButton.identifier().stringValue(), "identifier not as expected"); //$NON-NLS-1$
    }
 
 
@@ -114,7 +113,7 @@ final class ButtonTests
   /* default */ void testGetId()
    {
     final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 1L, TEST, UnixTimestamp.of(Seconds.of(0L)));
-    assertEquals(1L, cleanButton.getId(), "getId not as expected"); //$NON-NLS-1$
+    assertEquals(1L, cleanButton.id(), "id not as expected"); //$NON-NLS-1$
    }
 
 
@@ -125,7 +124,7 @@ final class ButtonTests
   /* default */ void testGetName()
    {
     final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
-    assertEquals(TEST, cleanButton.getName(), "getName not as expected"); //$NON-NLS-1$
+    assertEquals(TEST, cleanButton.name(), "name not as expected"); //$NON-NLS-1$
    }
 
 
@@ -136,7 +135,7 @@ final class ButtonTests
   /* default */ void testGetLastPressedTimestamp()
    {
     final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
-    assertEquals(0L, cleanButton.getLastPressedTimestamp().longValue(), "getLastPressedTimestamp not as expected"); //$NON-NLS-1$
+    assertEquals(0L, cleanButton.lastpressed().longValue(), "lastpressed not as expected"); //$NON-NLS-1$
    }
 
 
@@ -148,27 +147,6 @@ final class ButtonTests
    {
     final Button cleanButton = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
     assertEquals(TEST, cleanButton.stringValue(), "sringValue not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Button.class).withNonnullFields("identifier", "name", "lastpressedtimestamp").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Button button = Button.of(AIN.of(AIN_ZERO), 0L, TEST, UnixTimestamp.of(Seconds.of(0L)));
-    assertEquals("Button[identifier=AIN[ain=000000000000], id=0, name=Test ,lastpressedtimestamp=UnixTimestamp[seconds=Seconds[seconds=0]]]", button.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

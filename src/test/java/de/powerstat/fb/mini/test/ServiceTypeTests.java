@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.ServiceType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -96,27 +95,6 @@ final class ServiceTypeTests
    {
     final ServiceType type = ServiceType.of(URN);
     assertEquals(URN, type.stringValue(), "ServiceType not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(ServiceType.class).withNonnullFields("serviceType").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final ServiceType type = ServiceType.of(URN);
-    assertEquals("ServiceType[serviceType=urn:dslforum-org:service:DeviceConfig:1]", type.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

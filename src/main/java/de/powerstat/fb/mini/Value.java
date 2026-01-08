@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,36 +10,29 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Value 0-255.
+ *
+ * @param value Value (0-255)
  */
 @ValueObject
-public final class Value implements Comparable<Value>, IValueObject
+public record Value(int value) implements Comparable<Value>, IValueObject
  {
-  /**
-   * Value 0-255.
-   */
-  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
-  private final int value;
-
-
   /**
    * Constructor.
    *
    * @param value Value (0-255)
    * @throws IndexOutOfBoundsException If value ist &lt; 0 or &gt; 255
    */
-  private Value(final int value)
+  public Value
    {
-    super();
     if ((value < 0) || (value > 255))
      {
       throw new IndexOutOfBoundsException("value must be >= 0 and <= 255"); //$NON-NLS-1$
      }
-    this.value = value;
    }
 
 
@@ -71,17 +64,6 @@ public final class Value implements Comparable<Value>, IValueObject
 
 
   /**
-   * Returns the value of this Value as an int.
-   *
-   * @return The numeric value represented by this object after conversion to type int (0-255)
-   */
-  public int intValue()
-   {
-    return value;
-   }
-
-
-  /**
    * Returns the value of this Value as a String.
    *
    * @return The numeric value represented by this object after conversion to type String
@@ -90,60 +72,6 @@ public final class Value implements Comparable<Value>, IValueObject
   public String stringValue()
    {
     return String.valueOf(value);
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Integer.hashCode(value);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Value other))
-     {
-      return false;
-     }
-    return value == other.value;
-   }
-
-
-  /**
-   * Returns the string representation of this Value.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Value[value=255]"
-   *
-   * @return String representation of this Value (0-255)
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder();
-    builder.append("Value[value=").append(value).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

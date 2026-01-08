@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Temperature;
 import de.powerstat.fb.mini.TemperatureCelsius;
@@ -45,7 +44,7 @@ final class TemperatureTests
   /* default */ void testTemperatureCorrect1()
    {
     final Temperature cleanTemperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(0));
-    assertEquals(200, cleanTemperature.temperatureValue().longValue(), TEMPERATURE_NOT_AS_EXPECTED);
+    assertEquals(200, cleanTemperature.temperatureValue().temperatureCelsius(), TEMPERATURE_NOT_AS_EXPECTED);
    }
 
 
@@ -56,7 +55,7 @@ final class TemperatureTests
   /* default */ void testTemperatureCorrect2()
    {
     final Temperature cleanTemperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(10));
-    assertEquals(210, cleanTemperature.temperatureValue().longValue(), TEMPERATURE_NOT_AS_EXPECTED);
+    assertEquals(210, cleanTemperature.temperatureValue().temperatureCelsius(), TEMPERATURE_NOT_AS_EXPECTED);
    }
 
 
@@ -67,7 +66,7 @@ final class TemperatureTests
   /* default */ void testGetTemperature()
    {
     final Temperature cleanTemperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(0));
-    assertEquals(200, cleanTemperature.getTemperature().longValue(), "getTemperature not as expected"); //$NON-NLS-1$
+    assertEquals(200, cleanTemperature.temperature().temperatureCelsius(), "getTemperature not as expected"); //$NON-NLS-1$
    }
 
 
@@ -78,7 +77,7 @@ final class TemperatureTests
   /* default */ void testGetOffset()
    {
     final Temperature cleanTemperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(0));
-    assertEquals(0, cleanTemperature.getOffset().longValue(), "getOffset not as expected"); //$NON-NLS-1$
+    assertEquals(0, cleanTemperature.offset().temperatureCelsius(), "getOffset not as expected"); //$NON-NLS-1$
    }
 
 
@@ -90,27 +89,6 @@ final class TemperatureTests
    {
     final Temperature cleanTemperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(0));
     assertEquals("200", cleanTemperature.stringValue(), TEMPERATURE_NOT_AS_EXPECTED); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Temperature.class).withNonnullFields("temperature", "offset").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Temperature temperature = Temperature.of(TemperatureCelsius.of(200), TemperatureCelsius.of(0));
-    assertEquals("Temperature[temperature=TemperatureCelsius[temperature=200], offset=TemperatureCelsius[temperature=0]]", temperature.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

@@ -54,10 +54,10 @@ final class ColorTests
     final Value value = Value.of(0);
     final Color cleanColor = Color.of(1, hue, saturation, value);
     assertAll("testColorCorrect", //$NON-NLS-1$
-      () -> assertEquals(1, cleanColor.intValue(), "index is not equal"), //$NON-NLS-1$
-      () -> assertEquals(hue, cleanColor.hueValue(), "hue is not equal"), //$NON-NLS-1$
-      () -> assertEquals(saturation, cleanColor.saturationValue(), "saturation is not equal"), //$NON-NLS-1$
-      () -> assertEquals(value, cleanColor.valueValue(), "value is not equal") //$NON-NLS-1$
+      () -> assertEquals(1, cleanColor.index(), "index is not equal"), //$NON-NLS-1$
+      () -> assertEquals(hue, cleanColor.hue(), "hue is not equal"), //$NON-NLS-1$
+      () -> assertEquals(saturation, cleanColor.saturation(), "saturation is not equal"), //$NON-NLS-1$
+      () -> assertEquals(value, cleanColor.value(), "value is not equal") //$NON-NLS-1$
     );
    }
 
@@ -138,27 +138,6 @@ final class ColorTests
     {
      final Color color = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
      assertEquals("1, Hue[hue=0], Saturation[saturation=0], Value[value=0]", color.stringValue(), "Color not as expected"); //$NON-NLS-1$
-    }
-
-
-   /**
-    * Equalsverifier.
-    */
-   @Test
-   /* default */ void testEqualsContract()
-    {
-     EqualsVerifier.forClass(Color.class).withNonnullFields("hue", "saturation", "value").verify();
-    }
-
-
-   /**
-    * Test toString.
-    */
-   @Test
-   /* default */ void testToString()
-    {
-     final Color color = Color.of(1, Hue.of(0), Saturation.of(0), Value.of(0));
-     assertEquals("Color[index=1, hue=Hue[hue=0], saturation=Saturation[saturation=0], value=Value[value=0]]", color.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 

@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Power;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -42,7 +41,7 @@ final class PowerTests
   @ValueSource(longs = {0, 1, 10150, -1})
   /* default */ void testIsPowerValue(final long power)
    {
-    assertEquals(power, Power.of(power).longValue(), "Not a power value!"); //$NON-NLS-1$
+    assertEquals(power, Power.of(power).powerMW(), "Not a power value!"); //$NON-NLS-1$
    }
 
 
@@ -53,27 +52,6 @@ final class PowerTests
   /* default */ void testIsPowerString()
    {
     assertEquals(10, Power.of("10150").getPowerWatt(), "Not a power value!"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Power.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Power power = Power.of(1);
-    assertEquals("Power[power=1]", power.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

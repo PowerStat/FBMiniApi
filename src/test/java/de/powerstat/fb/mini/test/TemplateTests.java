@@ -573,7 +573,9 @@ final class TemplateTests
   @Test
   /* default */ void testEqualsContract()
    {
-    EqualsVerifier.forClass(Template.class).set(Mode.skipMockito()).withNonnullFields("identifier", "functionbitmask", "name", "metadata", "devices", "triggers", "subtemplates", "applymask").verify();
+    Metadata mdata1 = Metadata.of(0, ScenarioType.UNDEFINED);
+    Metadata mdata2 = Metadata.of(-1, ScenarioType.COMING);
+    EqualsVerifier.forClass(Template.class).set(Mode.skipMockito()).withNonnullFields("identifier", "functionbitmask", "name", "metadata", "devices", "triggers", "subtemplates", "applymask").withPrefabValuesForField("metadata", mdata1, mdata2).verify();
    }
 
 

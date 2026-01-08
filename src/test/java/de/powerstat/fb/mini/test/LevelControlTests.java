@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.test;
@@ -10,11 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Level;
 import de.powerstat.fb.mini.LevelControl;
-import de.powerstat.validation.values.Percent;
+import de.powerstat.ddd.values.science.Percent;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -52,27 +51,6 @@ final class LevelControlTests
    {
     final LevelControl cleanLevelControl = LevelControl.of(Level.of(128), Percent.of(50));
     assertEquals("128", cleanLevelControl.stringValue(), "LevelControl not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(LevelControl.class).withNonnullFields("level", "levelpercentage").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final LevelControl levelControl = LevelControl.of(Level.of(128), Percent.of(50));
-    assertEquals("LevelControl[level=Level[level=128], levelpercentage=Percent[percent=50]]", levelControl.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

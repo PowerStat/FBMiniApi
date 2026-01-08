@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,26 +10,18 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Hkr next change.
+ *
+ * @param endperiod Next change timestamp
+ * @param tchange Target temperature
  */
 @ValueObject
-public final class HkrNextChange implements Comparable<HkrNextChange>, IValueObject
+public record HkrNextChange(UnixTimestamp endperiod, TemperatureCelsius tchange) implements Comparable<HkrNextChange>, IValueObject
  {
-  /**
-   * Next change timestamp.
-   */
-  private final UnixTimestamp endperiod;
-
-  /**
-   * Target temperature.
-   */
-  private final TemperatureCelsius tchange;
-
-
   /**
    * Constructor.
    *
@@ -37,13 +29,10 @@ public final class HkrNextChange implements Comparable<HkrNextChange>, IValueObj
    * @param tchange Target temperature
    * @throws NullPointerException When one of the parameters is null
    */
-  private HkrNextChange(final UnixTimestamp endperiod, final TemperatureCelsius tchange)
+  public HkrNextChange
    {
-    super();
     Objects.requireNonNull(endperiod, "endperiod"); //$NON-NLS-1$
     Objects.requireNonNull(tchange, "tchange"); //$NON-NLS-1$
-    this.endperiod = endperiod;
-    this.tchange = tchange;
    }
 
 
@@ -70,65 +59,6 @@ public final class HkrNextChange implements Comparable<HkrNextChange>, IValueObj
   public String stringValue()
    {
     return endperiod.stringValue();
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(endperiod, tchange);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final HkrNextChange other))
-     {
-      return false;
-     }
-    boolean result = endperiod.equals(other.endperiod);
-    if (result)
-     {
-      result = tchange.equals(other.tchange);
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this HkrNextChange.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "HkrNextChange[endperiod=, tchange=]"
-   *
-   * @return String representation of this HkrNextChange
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(35);
-    builder.append("HkrNextChange[endperiod=").append(endperiod).append(", tchange=").append(tchange).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

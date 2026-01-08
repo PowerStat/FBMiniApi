@@ -332,30 +332,6 @@ final class ColorControlTests
 
 
   /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(ColorControl.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final EnumSet<ColorModes> supportedModes = EnumSet.allOf(ColorModes.class);
-    final Hue hue = Hue.of(0);
-    final Saturation saturation = Saturation.of(0);
-    final ColorControl colorControl = ColorControl.of(supportedModes, ColorModes.HUE_SATURATION, false, false, hue, saturation, hue, saturation, null);
-    assertEquals("ColorControl[supportedModes=[HUE_SATURATION, COLOR_TEMPERATURE], currentMode=HUE_SATURATION, fullcolorsupport=false, mapped=false, hue=Hue[hue=0], saturation=Saturation[saturation=0], unmappedHue=Hue[hue=0], unmappedSaturation=Saturation[saturation=0], temperature=null]", colorControl.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
    * Test compareTo.
    */
   @Test

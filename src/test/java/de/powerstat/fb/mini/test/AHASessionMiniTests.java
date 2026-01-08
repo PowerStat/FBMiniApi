@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2019-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.test;
@@ -89,14 +89,14 @@ import de.powerstat.fb.mini.Template;
 import de.powerstat.fb.mini.UnixTimestamp;
 import de.powerstat.fb.mini.Version;
 import de.powerstat.fb.mini.Voltage;
-import de.powerstat.validation.containers.NTuple2nc;
-import de.powerstat.validation.containers.NTuple5nc;
-import de.powerstat.validation.values.Hostname;
-import de.powerstat.validation.values.Password;
-import de.powerstat.validation.values.Percent;
-import de.powerstat.validation.values.Port;
-import de.powerstat.validation.values.Seconds;
-import de.powerstat.validation.values.Username;
+import de.powerstat.ddd.containers.NTuple2nc;
+import de.powerstat.ddd.containers.NTuple5nc;
+import de.powerstat.ddd.values.comm.Hostname;
+import de.powerstat.ddd.values.comm.Password;
+import de.powerstat.ddd.values.science.Percent;
+import de.powerstat.ddd.values.comm.Port;
+import de.powerstat.ddd.values.time.Seconds;
+import de.powerstat.ddd.values.comm.Username;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -328,6 +328,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse2.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse2.getEntity()).thenReturn(mockHttpEntity2);
 
+    LOGGER.debug("loginurl: /login_sid.lua?response=deadbeef-" + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest(("deadbeef-" + AHASessionMiniTests.FBPASSWORD).getBytes(Charset.forName("utf-16le"))))) + "&username=&version=2");
     when(mockHttpclient.execute(argThat(new HttpGetMatcher("/login_sid.lua?response=deadbeef-" + new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest(("deadbeef-" + AHASessionMiniTests.FBPASSWORD).getBytes(Charset.forName("utf-16le"))))) + "&username=&version=2")))).thenReturn(mockCloseableHttpResponse2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     // ----------
@@ -1422,7 +1423,7 @@ final class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(powerValue.replace(LINEBREAK, "")), power.longValue(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertEquals(Long.parseLong(powerValue.replace(LINEBREAK, "")), power.powerMW(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -1524,7 +1525,7 @@ final class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(energyValue.replace(LINEBREAK, "")), energy.longValue(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$
+      () -> assertEquals(Long.parseLong(energyValue.replace(LINEBREAK, "")), energy.energyWh(), "Switch power not as expected"), //$NON-NLS-1$ //$NON-NLS-2$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -1734,7 +1735,7 @@ final class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals(Long.parseLong(temperatureValue.replace(LINEBREAK, "")), temperature.longValue(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$
+      () -> assertEquals(Long.parseLong(temperatureValue.replace(LINEBREAK, "")), temperature.temperatureCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -1848,7 +1849,7 @@ final class AHASessionMiniTests
          {
           expected = 300;
          }
-        assertEquals(expected, temperature.longValue(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED);
+        assertEquals(expected, temperature.temperatureCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED);
        },
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
@@ -1953,7 +1954,7 @@ final class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals((Long.parseLong(komfort.replace(LINEBREAK, "")) * 10) / 2, temperature.longValue(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$
+      () -> assertEquals((Long.parseLong(komfort.replace(LINEBREAK, "")) * 10) / 2, temperature.temperatureCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -2005,7 +2006,7 @@ final class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals((Long.parseLong(absenk.replace(LINEBREAK, "")) * 10) / 2, temperature.longValue(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$
+      () -> assertEquals((Long.parseLong(absenk.replace(LINEBREAK, "")) * 10) / 2, temperature.temperatureCelsius(), AHASessionMiniTests.TEMPERATURE_NOT_AS_EXPECTED), //$NON-NLS-1$
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }
@@ -2345,7 +2346,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&level=" + level.intValue() + "&switchcmd=setlevel&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&level=" + level.level() + "&switchcmd=setlevel&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -2392,7 +2393,7 @@ final class AHASessionMiniTests
     when(mockCloseableHttpResponse5.getStatusLine()).thenReturn(mockStatusLineOk);
     when(mockCloseableHttpResponse5.getEntity()).thenReturn(mockHttpEntity5);
 
-    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&level=" + level.intValue() + "&switchcmd=setlevelpercentage&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
+    when(mockHttpclient.execute(argThat(new HttpGetMatcher("/webservices/homeautoswitch.lua?ain=000000000001&level=" + level.percent() + "&switchcmd=setlevelpercentage&sid=0000000000004711")))).thenReturn(mockCloseableHttpResponse5); //$NON-NLS-1$
 
     final AHASessionMini ahasession = AHASessionMini.newInstance(mockHttpclient, getDocBuilder(), AHASessionMiniTests.FRITZ_BOX, 443, "", AHASessionMiniTests.FBPASSWORD); //$NON-NLS-1$
     final boolean successLogon = ahasession.logon();
@@ -3110,8 +3111,8 @@ final class AHASessionMiniTests
     final boolean successLogoff = ahasession.logoff();
     assertAll(
       () -> assertTrue(successLogon, AHASessionMiniTests.LOGON_FAILED),
-      () -> assertEquals("OTHER_ERROR", state.subscriptionCodeValue().stringValue(), "SubscriptionCode not as expected"),
-      () -> assertEquals(AIN1, state.ainValue().stringValue(), "AIN not as expected"),
+      () -> assertEquals("OTHER_ERROR", state.code().stringValue(), "SubscriptionCode not as expected"),
+      () -> assertEquals(AIN1, state.latestain().stringValue(), "AIN not as expected"),
       () -> assertTrue(successLogoff, AHASessionMiniTests.LOGOFF_FAILED)
     );
    }

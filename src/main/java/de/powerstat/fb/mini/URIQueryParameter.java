@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,26 +10,18 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * URI query parameter.
+ *
+ * @param key Parameter key name
+ * @param value Parameter value could be null
  */
 @ValueObject
-public final class URIQueryParameter implements Comparable<URIQueryParameter>, IValueObject
+public record URIQueryParameter(String key, String value) implements Comparable<URIQueryParameter>, IValueObject
  {
-  /**
-   * Parameter key.
-   */
-  private final String key;
-
-  /**
-   * Paramater value.
-   */
-  private final String value;
-
-
   /**
    * Constructor.
    *
@@ -38,9 +30,8 @@ public final class URIQueryParameter implements Comparable<URIQueryParameter>, I
    * @throws NullPointerException When key is null
    * @throws IllegalArgumentException When key is empty/blank
    */
-  private URIQueryParameter(final String key, final String value)
+  public URIQueryParameter
    {
-    super();
     Objects.requireNonNull(key, "key"); //$NON-NLS-1$
     if (key.isBlank())
      {
@@ -48,8 +39,6 @@ public final class URIQueryParameter implements Comparable<URIQueryParameter>, I
      }
     // TODO length check, regexp ?
     // TODO uri encoding
-    this.key = key;
-    this.value = value;
    }
 
 
@@ -93,85 +82,6 @@ public final class URIQueryParameter implements Comparable<URIQueryParameter>, I
   public String stringValue()
    {
     return key + ((value == null) ? "" : ("=" + value));
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(key, value);
-   }
-
-
-  /**
-   * Equal fields.
-   *
-   * @param <T> Field type
-   * @param obj1 Field 1 (this)
-   * @param obj2 Field 2 (other)
-   * @return true: equal; false: not equal
-   */
-  private static <T> boolean equalField(final T obj1, final T obj2)
-   {
-    return (obj1 == null) ? (obj2 == null) : obj1.equals(obj2);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final URIQueryParameter other))
-     {
-      return false;
-     }
-    boolean result = key.equals(other.key);
-    if (result)
-     {
-      result = equalField(value, other.value);
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this URIQueryParameter.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "URIQueryParameter[key=abc, value=123]"
-   *
-   * @return String representation of this URIQueryParameter
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    // TODO uri decoding ?
-    final var builder = new StringBuilder(31);
-    builder.append("URIQueryParameter[key=").append(key);
-    if (value != null)
-     {
-      builder.append(", value=").append(value);
-     }
-    builder.append(']');
-    return builder.toString();
    }
 
 

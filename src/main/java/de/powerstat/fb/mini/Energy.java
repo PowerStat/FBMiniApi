@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2020-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,35 +10,29 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Energy in Wh.
+ *
+ * @param energy Energy in Wh. (must be &gt;= 0)
  */
 @ValueObject
-public final class Energy implements Comparable<Energy>, IValueObject
+public record Energy(long energyWh) implements Comparable<Energy>, IValueObject
  {
-  /**
-   * Energy in Wh.
-   */
-  private final long energyWh;
-
-
   /**
    * Constructor.
    *
    * @param energy Energy in Wh. (must be &gt;= 0)
    * @throws IndexOutOfBoundsException If energy is less than zero
    */
-  private Energy(final long energy)
+  public Energy
    {
-    super();
-    if (energy < 0)
+    if (energyWh < 0)
      {
       throw new IndexOutOfBoundsException("energy must be >= 0"); //$NON-NLS-1$
      }
-    energyWh = energy;
    }
 
 
@@ -70,17 +64,6 @@ public final class Energy implements Comparable<Energy>, IValueObject
 
 
   /**
-   * Returns the value of this Energy as a long in watt hours.
-   *
-   * @return The numeric value represented by this object after conversion to type long in Wh.
-   */
-  public long longValue()
-   {
-    return energyWh;
-   }
-
-
-  /**
    * Returns the value of this Energy as a String in watt hours.
    *
    * @return The numeric value represented by this object after conversion to type String in Wh.
@@ -100,60 +83,6 @@ public final class Energy implements Comparable<Energy>, IValueObject
   public long getEnergyKiloWattHours()
    {
     return energyWh / 1000;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Long.hashCode(energyWh);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Energy other))
-     {
-      return false;
-     }
-    return energyWh == other.energyWh;
-   }
-
-
-  /**
-   * Returns the string representation of this Energy in Wh.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Energy[energy=75519]"
-   *
-   * @return String representation of this Energy in Wh
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder();
-    builder.append("Energy[energy=").append(energyWh).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

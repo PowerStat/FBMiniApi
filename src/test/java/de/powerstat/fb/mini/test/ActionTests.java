@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Action;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -97,27 +96,6 @@ final class ActionTests
    {
     final Action action = Action.of(GET_PERSISTENT_DATA);
     assertEquals(GET_PERSISTENT_DATA, action.stringValue(), "Action not as expected"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Action.class).withNonnullFields("action").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Action action = Action.of(GET_PERSISTENT_DATA);
-    assertEquals("Action[action=GetPersistentData]", action.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

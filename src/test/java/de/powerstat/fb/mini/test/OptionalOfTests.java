@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini.test;
@@ -12,7 +12,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Level;
 import de.powerstat.fb.mini.OptionalOf;
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
@@ -44,7 +44,7 @@ final class OptionalOfTests
   /* default */ void testToString1()
    {
     final OptionalOf<Level> level = new OptionalOf<>(Level.of(1));
-    assertEquals("OptionalOf<>[value=Level[level=1]]", level.toString(), TO_STRING_NOT_EQUAL); //$NON-NLS-1$
+    assertEquals("OptionalOf[value=Level[level=1]]", level.toString(), TO_STRING_NOT_EQUAL); //$NON-NLS-1$
    }
 
 
@@ -75,27 +75,6 @@ final class OptionalOfTests
   /* default */ void testIsValue()
    {
     assertEquals(50, (new OptionalOf<>(Level.of(50))).intValue(), "Not a value!"); //$NON-NLS-1$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(OptionalOf.class).withNonnullFields("value").verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final OptionalOf<Level> level = new OptionalOf<>(Level.of(1));
-    assertEquals("OptionalOf<>[value=Level[level=1]]", level.toString(), TO_STRING_NOT_EQUAL); //$NON-NLS-1$
    }
 
  }

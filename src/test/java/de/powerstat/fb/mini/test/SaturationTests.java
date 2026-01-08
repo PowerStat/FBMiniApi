@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Saturation;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,7 +42,7 @@ final class SaturationTests
   @ValueSource(ints = {0, 127, 255})
   /* default */ void testIsSaturationValue(final int saturation)
    {
-    assertEquals(saturation, Saturation.of(saturation).intValue(), "Not a saturation value!"); //$NON-NLS-1$
+    assertEquals(saturation, Saturation.of(saturation).saturation(), "Not a saturation value!"); //$NON-NLS-1$
    }
 
 
@@ -70,28 +69,7 @@ final class SaturationTests
   @Test
   /* default */ void testIsSaturationString()
    {
-    assertEquals(127, Saturation.of("127").intValue(), "Not a saturation value!"); //$NON-NLS-1$ //$NON-NLS-2$
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Saturation.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Saturation saturation = Saturation.of(1);
-    assertEquals("Saturation[saturation=1]", saturation.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
+    assertEquals(127, Saturation.of("127").saturation(), "Not a saturation value!"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

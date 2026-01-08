@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,26 +10,18 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Version major.minor.
+ *
+ * @param major Major version number
+ * @param minor Minor version number
  */
 @ValueObject
-public final class Version implements Comparable<Version>, IValueObject
+public record Version(int major, int minor) implements Comparable<Version>, IValueObject
  {
-  /**
-   * Major version number.
-   */
-  private final int major;
-
-  /**
-   * Minor version number.
-   */
-  private final int minor;
-
-
   /**
    * Constructor.
    *
@@ -37,9 +29,8 @@ public final class Version implements Comparable<Version>, IValueObject
    * @param minor Minor version number
    * @throws IllegalArgumentException When major or minor &lt; 0
    */
-  private Version(final int major, final int minor)
+  public Version
    {
-    super();
     if (major < 0)
      {
       throw new IllegalArgumentException("Major version number must be >= 0");
@@ -48,8 +39,6 @@ public final class Version implements Comparable<Version>, IValueObject
      {
       throw new IllegalArgumentException("Minor version number must be >= 0");
      }
-    this.major = major;
-    this.minor = minor;
    }
 
 
@@ -94,65 +83,6 @@ public final class Version implements Comparable<Version>, IValueObject
   public String stringValue()
    {
     return major + "." + minor;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(major, minor);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final Version other))
-     {
-      return false;
-     }
-    boolean result = major == other.major;
-    if (result)
-     {
-      result = minor == other.minor;
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this Version.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "Version[major=1, minor=0]"
-   *
-   * @return String representation of this Version
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(23);
-    builder.append("Version[major=").append(major).append(", minor=").append(minor).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 

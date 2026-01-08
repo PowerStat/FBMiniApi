@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -11,16 +11,18 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
+import de.powerstat.ddd.interfaces.IValueObject;
 
 
 /**
  * Service type.
  *
  * TR64 URN service type.
+ *
+ * @param type Service type string
  */
 @ValueObject
-public final class ServiceType implements Comparable<ServiceType>, IValueObject
+public record ServiceType(String type) implements Comparable<ServiceType>, IValueObject
  {
   /**
    * ServiceType regexp.
@@ -28,12 +30,6 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
    * urn:dslforum-org:service:[a-zA-Z0-9_-]+:[1-9]
    */
   private static final Pattern TYPE_REGEXP = Pattern.compile("^urn:dslforum-org:service:[a-zA-Z0-9_-]{1,37}:[1-9]$"); //$NON-NLS-1$
-
-  /**
-   * Service type.
-   */
-  @SuppressWarnings("PMD.AvoidFieldNameMatchingTypeName")
-  private final String serviceType;
 
 
   /**
@@ -43,9 +39,8 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
    * @throws NullPointerException if type is null
    * @throws IllegalArgumentException if type is not a correct type
    */
-  private ServiceType(final String type)
+  public ServiceType
    {
-    super();
     Objects.requireNonNull(type, "type"); //$NON-NLS-1$
     if ((type.length() < 28) || (type.length() > 64))
      {
@@ -55,7 +50,6 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
      {
       throw new IllegalArgumentException("type with wrong format"); //$NON-NLS-1$
      }
-    serviceType = type;
    }
 
 
@@ -79,61 +73,7 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
   @Override
   public String stringValue()
    {
-    return serviceType;
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return serviceType.hashCode();
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final ServiceType other))
-     {
-      return false;
-     }
-    return serviceType.equals(other.serviceType);
-   }
-
-
-  /**
-   * Returns the string representation of this ServiceType.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "ServiceType[serviceType=urn:dslforum-org:service:DeviceConfig:1]"
-   *
-   * @return String representation of this ServiceType
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(25);
-    builder.append("ServiceType[serviceType=").append(serviceType).append(']'); //$NON-NLS-1$
-    return builder.toString();
+    return type;
    }
 
 
@@ -148,7 +88,7 @@ public final class ServiceType implements Comparable<ServiceType>, IValueObject
   public int compareTo(final ServiceType obj)
    {
     Objects.requireNonNull(obj, "obj"); //$NON-NLS-1$
-    return serviceType.compareTo(obj.serviceType);
+    return type.compareTo(obj.type);
    }
 
  }

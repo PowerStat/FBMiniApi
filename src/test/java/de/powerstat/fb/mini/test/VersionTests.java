@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import de.powerstat.fb.mini.Version;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -143,27 +142,6 @@ final class VersionTests
    {
     final Version version = Version.of(1, 0);
     assertEquals(VERSION_1_0, version.stringValue(), VERSION_NOT_AS_EXPECTED);
-   }
-
-
-  /**
-   * Equalsverifier.
-   */
-  @Test
-  /* default */ void testEqualsContract()
-   {
-    EqualsVerifier.forClass(Version.class).verify();
-   }
-
-
-  /**
-   * Test toString.
-   */
-  @Test
-  /* default */ void testToString()
-   {
-    final Version version = Version.of(1, 0);
-    assertEquals("Version[major=1, minor=0]", version.toString(), "toString not equal"); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 

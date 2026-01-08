@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Dipl.-Inform. Kai Hofmann. All rights reserved!
+ * Copyright (C) 2024-2026 Dipl.-Inform. Kai Hofmann. All rights reserved!
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements; and to You under the Apache License, Version 2.0.
  */
 package de.powerstat.fb.mini;
@@ -10,27 +10,19 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jmolecules.ddd.annotation.ValueObject;
 
-import de.powerstat.validation.interfaces.IValueObject;
-import de.powerstat.validation.values.Percent;
+import de.powerstat.ddd.interfaces.IValueObject;
+import de.powerstat.ddd.values.science.Percent;
 
 
 /**
  * Level control.
+ *
+ * @param level Level
+ * @param levelpercentage Level in percent
  */
 @ValueObject
-public final class LevelControl implements Comparable<LevelControl>, IValueObject
+public record LevelControl(Level level, Percent levelpercentage) implements Comparable<LevelControl>, IValueObject
  {
-  /**
-   * Level.
-   */
-  private final Level level;
-
-  /**
-   * Level percentage.
-   */
-  private final Percent levelpercentage;
-
-
   /**
    * Constructor.
    *
@@ -38,13 +30,10 @@ public final class LevelControl implements Comparable<LevelControl>, IValueObjec
    * @param levelpercentage Level in percent
    * @throws NullPointerException When level or levelpercentage is null
    */
-  private LevelControl(final Level level, final Percent levelpercentage)
+  public LevelControl
    {
-    super();
     Objects.requireNonNull(level, "level"); //$NON-NLS-1$
     Objects.requireNonNull(levelpercentage, "levelpercentage"); //$NON-NLS-1$
-    this.level = level;
-    this.levelpercentage = levelpercentage;
    }
 
 
@@ -71,65 +60,6 @@ public final class LevelControl implements Comparable<LevelControl>, IValueObjec
   public String stringValue()
    {
     return level.stringValue();
-   }
-
-
-  /**
-   * Calculate hash code.
-   *
-   * @return Hash
-   * @see java.lang.Object#hashCode()
-   */
-  @Override
-  public int hashCode()
-   {
-    return Objects.hash(level, levelpercentage);
-   }
-
-
-  /**
-   * Is equal with another object.
-   *
-   * @param obj Object
-   * @return true when equal, false otherwise
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
-  @Override
-  public boolean equals(final @Nullable Object obj)
-   {
-    if (this == obj)
-     {
-      return true;
-     }
-    if (!(obj instanceof final LevelControl other))
-     {
-      return false;
-     }
-    boolean result = level.equals(other.level);
-    if (result)
-     {
-      result = levelpercentage.equals(other.levelpercentage);
-     }
-    return result;
-   }
-
-
-  /**
-   * Returns the string representation of this LevelControl.
-   *
-   * The exact details of this representation are unspecified and subject to change, but the following may be regarded as typical:
-   *
-   * "LevelControl[level=, levelpercentage=]"
-   *
-   * @return String representation of this LevelControl
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString()
-   {
-    final var builder = new StringBuilder(38);
-    builder.append("LevelControl[level=").append(level).append(", levelpercentage=").append(levelpercentage).append(']'); //$NON-NLS-1$
-    return builder.toString();
    }
 
 
